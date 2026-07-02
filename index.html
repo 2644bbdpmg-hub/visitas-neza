@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)file:///Users/renedamianmercado/Downloads/index_4.html -->
+<!-- saved from url=(0054)file:///Users/renedamianmercado/Downloads/index_5.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
@@ -66,23 +66,83 @@ textarea{resize:vertical;}
 .stat-l{font-size:9px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-top:4px;}
 ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:2px;}
 </style>
-</head>
+<link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script><link rel="stylesheet" href="./Index_files/leaflet.css"><script src="./Index_files/leaflet.js"></script></head>
 <body>
-<div id="root"><div class="login-wrap"><div class="login-card">
-      <div style="text-align:center;margin-bottom:24px;">
-        <div style="width:52px;height:52px;background:var(--naranja);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px;">📍</div>
-        <div style="font-size:19px;font-weight:800;">Supervisión de Visitas</div>
-        <div style="font-size:11px;color:var(--sub);margin-top:3px;letter-spacing:1px;text-transform:uppercase;">Cuartel Nezahualcóyotl</div>
+<div id="root">
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="logo">📍</div>
+      <div>
+        <div style="font-size:14px;font-weight:800;">Supervisión de Visitas</div>
+        <div id="sync_indicator" style="font-size:10px;color:#16a34a;font-weight:600;">● En línea</div>
       </div>
-      <div style="font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">¿Quién accede?</div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <button onclick="setRole(&#39;admin&#39;)" style="background:#1e293b;border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;">🔑 DOZ</button>
-        <button onclick="setRole(1)" style="background:#f8fafc;border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:14px;font-weight:600;padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;">👤 Nezahualcóyotl 1</button><button onclick="setRole(2)" style="background:#f8fafc;border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:14px;font-weight:600;padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;">👤 Nezahualcóyotl 2</button><button onclick="setRole(3)" style="background:#f8fafc;border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:14px;font-weight:600;padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;">👤 Nezahualcóyotl 3</button><button onclick="setRole(4)" style="background:#f8fafc;border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:14px;font-weight:600;padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;">👤 Nezahualcóyotl 4</button><button onclick="setRole(5)" style="background:#f8fafc;border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:14px;font-weight:600;padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;">👤 RCV Neza</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:12px;font-weight:700;">DOZ</span>
+      <button class="btn btn-g btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </div>
+  <div class="tabs"><button class="tab " onclick="switchTab(&#39;REG&#39;)">📋 Registro</button><button class="tab " onclick="switchTab(&#39;DIST&#39;)">📊 Distribución</button><button class="tab " onclick="switchTab(&#39;CAL&#39;)">📅 Calendario</button><button class="tab on" onclick="switchTab(&#39;MAP&#39;)">🗺️ Mapa</button><button class="tab " onclick="switchTab(&#39;RES&#39;)">🏆 Resumen</button></div>
+  <div class="page" style="max-width:100%;padding:0;">
+    <div style="padding:16px 16px 0;">
+      <div class="stats" style="margin-bottom:14px;">
+        <div class="stat"><div class="stat-n" style="color:var(--naranja);">22</div><div class="stat-l">Días reg.</div></div>
+        <div class="stat"><div class="stat-n" style="color:#16a34a;">1</div><div class="stat-l">Puntos GPS</div></div>
+        <div class="stat"><div class="stat-n" style="color:var(--sub);">22</div><div class="stat-l">Sin GPS</div></div>
       </div>
-      <div style="text-align:center;margin-top:14px;">
-        <button onclick="openRec()" style="background:transparent;border:none;color:#cbd5e1;font-size:12px;cursor:pointer;text-decoration:underline;">¿Olvidaste tu PIN?</button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+        <button onclick="MAP_FILTER=null;renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid #e2e8f0;background:transparent;cursor:pointer;transition:all .15s;">
+          <div style="width:6px;height:6px;border-radius:50%;background:#1e293b;"></div>
+          <span style="font-size:10px;font-weight:700;color:#1e293b;">Todos</span>
+          <span style="font-size:9px;color:var(--sub);">1</span>
+        </button>
+        <button onclick="MAP_FILTER=0;renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid #1e293b;background:#1e293b;cursor:pointer;transition:all .15s;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#fff;"></div>
+            <span style="font-size:10px;font-weight:700;color:#fff;">DOZ</span>
+            <span style="font-size:9px;color:#ffffff88;">1</span>
+          </button><button onclick="MAP_FILTER=1;renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid #2563eb40;background:transparent;cursor:pointer;transition:all .15s;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#2563eb;"></div>
+            <span style="font-size:10px;font-weight:700;color:#2563eb;">Nezahualcóyotl 1</span>
+            <span style="font-size:9px;color:var(--sub);">0</span>
+          </button><button onclick="MAP_FILTER=2;renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid #16a34a40;background:transparent;cursor:pointer;transition:all .15s;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#16a34a;"></div>
+            <span style="font-size:10px;font-weight:700;color:#16a34a;">Nezahualcóyotl 2</span>
+            <span style="font-size:9px;color:var(--sub);">0</span>
+          </button><button onclick="MAP_FILTER=3;renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid #9333ea40;background:transparent;cursor:pointer;transition:all .15s;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#9333ea;"></div>
+            <span style="font-size:10px;font-weight:700;color:#9333ea;">Nezahualcóyotl 3</span>
+            <span style="font-size:9px;color:var(--sub);">0</span>
+          </button><button onclick="MAP_FILTER=4;renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid #e85d0440;background:transparent;cursor:pointer;transition:all .15s;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#e85d04;"></div>
+            <span style="font-size:10px;font-weight:700;color:#e85d04;">Nezahualcóyotl 4</span>
+            <span style="font-size:9px;color:var(--sub);">0</span>
+          </button><button onclick="MAP_FILTER=5;renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid #0891b240;background:transparent;cursor:pointer;transition:all .15s;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#0891b2;"></div>
+            <span style="font-size:10px;font-weight:700;color:#0891b2;">RCV Neza</span>
+            <span style="font-size:9px;color:var(--sub);">0</span>
+          </button>
       </div>
-    </div></div></div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:10px;padding:6px 10px;background:#f8fafc;border-radius:8px;">
+        Mostrando: <b style="color:#1e293b;">DOZ</b>
+        — <button onclick="MAP_FILTER=null;renderMapaView()" style="background:transparent;border:none;color:var(--naranja);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline;">Ver todos</button>
+      </div>
+    </div>
+    <div id="mapa-div" style="height: calc(-220px + 100vh); width: 100%; min-height: 350px; position: relative;" class="leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(0px, 0px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 19; transform: translate3d(0px, 0px, 0px) scale(1);"><img alt="" src="./Index_files/3646.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(592px, 244px, 0px); opacity: 1;"><img alt="" src="./Index_files/3646(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(848px, 244px, 0px); opacity: 1;"><img alt="" src="./Index_files/3645.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(592px, -12px, 0px); opacity: 1;"><img alt="" src="./Index_files/3645(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(848px, -12px, 0px); opacity: 1;"><img alt="" src="./Index_files/3647.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(592px, 500px, 0px); opacity: 1;"><img alt="" src="./Index_files/3647(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(848px, 500px, 0px); opacity: 1;"><img alt="" src="./Index_files/3646(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(336px, 244px, 0px); opacity: 1;"><img alt="" src="./Index_files/3646(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1104px, 244px, 0px); opacity: 1;"><img alt="" src="./Index_files/3645(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(336px, -12px, 0px); opacity: 1;"><img alt="" src="./Index_files/3645(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1104px, -12px, 0px); opacity: 1;"><img alt="" src="./Index_files/3647(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(336px, 500px, 0px); opacity: 1;"><img alt="" src="./Index_files/3647(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1104px, 500px, 0px); opacity: 1;"><img alt="" src="./Index_files/3646(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(80px, 244px, 0px); opacity: 1;"><img alt="" src="./Index_files/3646(5).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1360px, 244px, 0px); opacity: 1;"><img alt="" src="./Index_files/3645(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(80px, -12px, 0px); opacity: 1;"><img alt="" src="./Index_files/3645(5).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1360px, -12px, 0px); opacity: 1;"><img alt="" src="./Index_files/3647(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(80px, 500px, 0px); opacity: 1;"><img alt="" src="./Index_files/3647(5).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1360px, 500px, 0px); opacity: 1;"><img alt="" src="./Index_files/3646(6).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-176px, 244px, 0px); opacity: 1;"><img alt="" src="./Index_files/3646(7).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1616px, 244px, 0px); opacity: 1;"><img alt="" src="./Index_files/3645(6).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-176px, -12px, 0px); opacity: 1;"><img alt="" src="./Index_files/3645(7).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1616px, -12px, 0px); opacity: 1;"><img alt="" src="./Index_files/3647(6).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-176px, 500px, 0px); opacity: 1;"><img alt="" src="./Index_files/3647(7).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1616px, 500px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -7px; margin-top: -7px; width: 14px; height: 14px; transform: translate3d(847px, 352px, 0px); z-index: 352;"><div style="width:12px;height:12px;background:#1e293b;border:2.5px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3);"></div></div></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(471807px, 933484px, 0px) scale(4096);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="file:///Users/renedamianmercado/Downloads/index_5.html#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="file:///Users/renedamianmercado/Downloads/index_5.html#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control"><a href="https://leafletjs.com/" title="A JavaScript library for interactive maps"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"></path><path fill="#FFD500" d="M0 4h12v3H0z"></path><path fill="#E0BC00" d="M0 7h12v1H0z"></path></svg> Leaflet</a> <span aria-hidden="true">|</span> © OpenStreetMap</div></div></div></div>
+       <div style="padding:14px 16px;">
+         <div style="font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Últimas ubicaciones</div>
+         <div class="rrow" style="border-left-color:#1e293b;margin-bottom:7px;">
+             <div style="flex:1;">
+               <div style="font-size:10px;font-weight:700;color:#1e293b;">DOZ · 🌆 Cierre</div>
+               <div style="font-size:13px;font-weight:700;">Gcc Juan Escutia <span style="font-size:10px;color:var(--sub);">8034</span></div>
+             </div>
+             <div style="text-align:right;flex-shrink:0;">
+               <div style="font-size:11px;color:var(--sub);">02-jul · 04:35 p.m.</div>
+               <a href="https://www.google.com/maps?q=19.376568,-99.009017" target="_blank" style="font-size:10px;color:var(--naranja);font-weight:700;text-decoration:none;">Ver en Maps ↗</a>
+             </div>
+           </div>
+       </div>
+  </div>
+  <div style="text-align:center;padding:16px;font-size:10px;color:#cbd5e1;letter-spacing:.8px;">CUARTEL NEZAHUALCÓYOTL · 5 REGIONALES · 34 GERENCIAS</div></div>
 <div id="modal" class="modal-bg"></div>
 <div id="toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);border-radius:24px;padding:12px 22px;color:#fff;font-size:13px;font-weight:700;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);"></div>
 <script>
@@ -610,7 +670,7 @@ function renderDist(){
 // ══════════════════════════════════════
 //  CALENDARIO
 // ══════════════════════════════════════
-let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null,CAL_FILTER=null,DIST_TARGET=null,PERIOD='all';
+let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null,CAL_FILTER=null,DIST_TARGET=null,PERIOD='all',MAP_FILTER=null;
 function renderCal(){
   const isA=SES.role==="admin",rid=isA?null:SES.rid;
   const fd1=new Date(CY,CM,1),ld=new Date(CY,CM+1,0);
@@ -838,11 +898,12 @@ function renderMapa(){
   const total=dias.length, conGPS=pts.length, sinGPS=total-Math.floor(conGPS/2);
 
   setTimeout(()=>{
-    if(!pts.length) return;
+    const ptsVisible=MAP_FILTER!==null?pts.filter(p=>p.rid===MAP_FILTER):pts;
+    if(!ptsVisible.length) return;
     const mapEl=document.getElementById("mapa-div");
     if(!mapEl||mapEl._map) return;
-    const avgLat=pts.reduce((a,v)=>a+v.lat,0)/pts.length;
-    const avgLng=pts.reduce((a,v)=>a+v.lng,0)/pts.length;
+    const avgLat=ptsVisible.reduce((a,v)=>a+v.lat,0)/ptsVisible.length;
+    const avgLng=ptsVisible.reduce((a,v)=>a+v.lng,0)/ptsVisible.length;
 
     // Cargar Leaflet dinámicamente
     const link=document.createElement("link");
@@ -854,7 +915,7 @@ function renderMapa(){
       const map=L.map("mapa-div").setView([avgLat,avgLng],13);
       mapEl._map=map;
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap",maxZoom:19}).addTo(map);
-      pts.forEach(p=>{
+      ptsVisible.forEach(p=>{
         const col=COLORS[p.rid]||"#e85d04";
         const icon=L.divIcon({className:"",
           html:`<div style="width:${p.tipo==="apertura"?14:12}px;height:${p.tipo==="apertura"?14:12}px;background:${col};border:2.5px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3);"></div>`,
@@ -870,11 +931,13 @@ function renderMapa(){
             <a href="${gmaps}" target="_blank" style="font-size:11px;color:#e85d04;font-weight:700;text-decoration:none;display:block;margin-top:6px;">📌 Ver en Google Maps ↗</a>
           </div>`);
       });
-      if(pts.length>1) map.fitBounds(L.latLngBounds(pts.map(p=>[p.lat,p.lng])),{padding:[30,30]});
+      if(ptsVisible.length>1) map.fitBounds(L.latLngBounds(ptsVisible.map(p=>[p.lat,p.lng])),{padding:[30,30]});
     };
     document.head.appendChild(script);
   },200);
 
+  // Guardar referencia para re-render del mapa
+  window._mapaData = {pts, MAP_FILTER};
   return`<div class="page" style="max-width:100%;padding:0;">
     <div style="padding:16px 16px 0;">
       <div class="stats" style="margin-bottom:14px;">
@@ -883,13 +946,22 @@ function renderMapa(){
         <div class="stat"><div class="stat-n" style="color:var(--sub);">${sinGPS}</div><div class="stat-l">Sin GPS</div></div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
-        ${REGS.map(r=>{const bc=COLORS[r.id]||"#e85d04";const n=pts.filter(p=>p.rid===r.id).length;
-          return`<div style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:3px 9px;background:${bc}18;border:1px solid ${bc}40;">
-            <div style="width:6px;height:6px;border-radius:50%;background:${bc};"></div>
-            <span style="font-size:10px;font-weight:700;color:${bc};">${r.n}</span>
-            <span style="font-size:9px;color:var(--sub);">${n}</span>
-          </div>`;}).join("")}
+        <button onclick="MAP_FILTER=null;renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid ${MAP_FILTER===null?'#1e293b':'#e2e8f0'};background:${MAP_FILTER===null?'#1e293b':'transparent'};cursor:pointer;transition:all .15s;">
+          <div style="width:6px;height:6px;border-radius:50%;background:${MAP_FILTER===null?'#fff':'#1e293b'};"></div>
+          <span style="font-size:10px;font-weight:700;color:${MAP_FILTER===null?'#fff':'#1e293b'};">Todos</span>
+          <span style="font-size:9px;color:${MAP_FILTER===null?'#ffffff88':'var(--sub)'};">${pts.length}</span>
+        </button>
+        ${REGS.map(r=>{const bc=COLORS[r.id]||"#e85d04";const n=pts.filter(p=>p.rid===r.id).length;const act=MAP_FILTER===r.id;
+          return`<button onclick="MAP_FILTER=${r.id};renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid ${act?bc:bc+'40'};background:${act?bc:'transparent'};cursor:pointer;transition:all .15s;">
+            <div style="width:6px;height:6px;border-radius:50%;background:${act?'#fff':bc};"></div>
+            <span style="font-size:10px;font-weight:700;color:${act?'#fff':bc};">${r.n}</span>
+            <span style="font-size:9px;color:${act?'#ffffff88':'var(--sub)'};">${n}</span>
+          </button>`;}).join("")}
       </div>
+      ${MAP_FILTER!==null?`<div style="font-size:11px;color:var(--sub);margin-bottom:10px;padding:6px 10px;background:#f8fafc;border-radius:8px;">
+        Mostrando: <b style="color:${COLORS[MAP_FILTER]||'#e85d04'};">${(REGS.find(r=>r.id===MAP_FILTER)||{}).n||""}</b>
+        — <button onclick="MAP_FILTER=null;renderMapaView()" style="background:transparent;border:none;color:var(--naranja);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline;">Ver todos</button>
+      </div>`:""}
     </div>
     ${pts.length===0
       ?`<div style="text-align:center;padding:48px 24px;">
@@ -900,7 +972,7 @@ function renderMapa(){
       :`<div id="mapa-div" style="height:calc(100vh - 220px);width:100%;min-height:350px;"></div>
        <div style="padding:14px 16px;">
          <div style="font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Últimas ubicaciones</div>
-         ${pts.slice().reverse().slice(0,10).map(p=>{
+         ${(MAP_FILTER!==null?pts.filter(p=>p.rid===MAP_FILTER):pts).slice().reverse().slice(0,10).map(p=>{
            const reg=getReg(p.rid),ger=getGer(p.gid),bc=COLORS[p.rid]||"#e85d04";
            return`<div class="rrow" style="border-left-color:${bc};margin-bottom:7px;">
              <div style="flex:1;">
@@ -921,9 +993,16 @@ function renderMapa(){
 // ══════════════════════════════════════
 //  RENDER
 // ══════════════════════════════════════
+function renderMapaView(){
+  // Destruir mapa existente para forzar re-render con filtro
+  const mapEl=document.getElementById("mapa-div");
+  if(mapEl&&mapEl._map){mapEl._map.remove();mapEl._map=null;}
+  VIEW="MAP"; R();
+}
 function switchTab(v){
   VIEW=v;
-  if(v==="REG") syncNow(true); // al volver a registro, sincronizar y mostrar datos frescos
+  if(v!=="MAP") MAP_FILTER=null; // resetear filtro del mapa al salir
+  if(v==="REG") syncNow(true);
   else R();
 }
 function R(){
