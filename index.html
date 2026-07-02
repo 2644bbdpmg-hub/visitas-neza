@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///Users/renedamianmercado/Downloads/index.html -->
+<!-- saved from url=(0054)file:///Users/renedamianmercado/Downloads/index_4.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
@@ -220,6 +220,23 @@ function stopPoll(){
 }
 
 function getDias(){ return Object.entries(DIAS).map(([k,v])=>({...v,_k:k})); }
+function getFilteredDias(){
+  const all=getDias();
+  if(PERIOD==="all") return all;
+  const hoy=new Date();
+  if(PERIOD==="month"){
+    const y=hoy.getFullYear(),m=hoy.getMonth();
+    return all.filter(d=>{const dt=pd(d.fecha);return dt.getFullYear()===y&&dt.getMonth()===m;});
+  }
+  if(PERIOD==="week"){
+    const day=hoy.getDay(),mon=new Date(hoy);
+    mon.setDate(hoy.getDate()-(day===0?6:day-1));mon.setHours(0,0,0,0);
+    const sun=new Date(mon);sun.setDate(mon.getDate()+6);sun.setHours(23,59,59,999);
+    return all.filter(d=>{const dt=pd(d.fecha);return dt>=mon&&dt<=sun;});
+  }
+  return all;
+}
+function periodLabel(){return PERIOD==="week"?"Esta semana":PERIOD==="month"?"Este mes":"Histórico";}
 function getDiaHoy(rid){ return getDias().find(d=>d.rid===rid&&d.fecha===HOY)||null; }
 
 // ══════════════════════════════════════
@@ -239,11 +256,11 @@ function dur(h1,h2){
   const hr=Math.floor(d/60),mn=d%60;return hr>0?`${hr}h${mn>0?" "+mn+"min":""}`:`${mn}min`;
 }
 function visitCount(gid,rid){
-  return getDias().filter(d=>d.rid===rid&&(d.ap?.gid===gid||d.ci?.gid===gid)).length;
+  return getFilteredDias().filter(d=>d.rid===rid&&(d.ap?.gid===gid||d.ci?.gid===gid)).length;
 }
 function equityScore(rid){
   const gs=gersByR(rid);
-  const c=gs.map(g=>visitCount(g.id,rid));
+  const c=gs.map(g=>visitCount(g.id,rid)); // visitCount ya usa getFilteredDias
   const total=c.reduce((a,b)=>a+b,0);
   if(!total)return null;
   const avg=total/c.length;
@@ -257,9 +274,15 @@ function sInfo(s){
   return{t:"Concentrado",c:"#dc2626",bg:"#fee2e2"};
 }
 function bCol(n,mx){
-  if(!n||!mx)return"#e2e8f0";
-  const r=n/mx;return r<=.33?"#22c55e":r<=.66?"#f59e0b":"#ef4444";
+  if(!n) return "#ef4444"; // rojo = sin visitas
+  if(!mx||mx===0) return "#16a34a";
+  const r=n/mx;
+  // verde claro a verde oscuro según frecuencia
+  if(r<=0.33) return "#86efac"; // verde claro
+  if(r<=0.66) return "#22c55e"; // verde medio
+  return "#15803d";             // verde oscuro = más visitada
 }
+function bColText(n){return n===0?"#dc2626":"#15803d";}
 function Q(id,h){document.getElementById(id).innerHTML=h;}
 
 // ══════════════════════════════════════
@@ -469,7 +492,7 @@ async function delDia(key){
 }
 
 function renderUlt(isA,rid){
-  const list=getDias().filter(d=>isA?true:d.rid===rid).sort((a,b)=>b.fecha>a.fecha?1:-1).slice(0,8);
+  const list=getFilteredDias().filter(d=>isA?true:d.rid===rid).sort((a,b)=>b.fecha>a.fecha?1:-1).slice(0,8);
   if(!list.length) return`<div style="text-align:center;color:#cbd5e1;padding:24px 0;font-size:14px;">${LAST_SYNC?"Sin registros aún":"⏳ Cargando datos..."}</div>`;
   return list.map(d=>{
     const reg=getReg(d.rid),ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):null;
@@ -506,15 +529,23 @@ function renderUlt(isA,rid){
 function renderDist(){
   const isA=SES.role==="admin";
   const show=isA?REGS:REGS.filter(r=>r.id===SES.rid);
-  return`<div class="page">${show.map(r=>{
+  // Scroll al regional si viene desde Resumen
+  setTimeout(()=>{
+    if(DIST_TARGET!==null){
+      const el=document.getElementById("rc-"+DIST_TARGET);
+      if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+      DIST_TARGET=null;
+    }
+  },150);
+  return`<div class="page">${renderPeriodFilter()}${show.map(r=>{
     const bc=COLORS[r.id]||"#e85d04";
     if(r.id===0){
-      const tot=getDias().filter(d=>d.rid===0).length;
+      const tot=getFilteredDias().filter(d=>d.rid===0).length;
       const cs=GERS.map(g=>({...g,v:visitCount(g.id,0)})).sort((a,b)=>b.v-a.v);
       const mx=Math.max(...cs.map(c=>c.v),1);
-      return`<div class="card" style="margin-bottom:14px;">
+      return`<div id="rc-0" class="card" style="margin-bottom:14px;scroll-margin-top:130px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-          <div><div style="font-size:15px;font-weight:800;">DOZ</div><div style="font-size:11px;color:var(--sub);">${tot} días</div></div>
+          <div><div style="font-size:15px;font-weight:800;">DOZ</div><div style="font-size:11px;color:var(--sub);">${tot} días · ${periodLabel()}</div></div>
           <span class="badge" style="background:#fff7ed;color:var(--naranja);border:1.5px solid #fed7aa;">Cuartel completo</span>
         </div>
         <div class="div"></div>
@@ -534,9 +565,9 @@ function renderDist(){
     const cs=gersByR(r.id).map(g=>({...g,v:visitCount(g.id,r.id)})).sort((a,b)=>b.v-a.v);
     const mx=Math.max(...cs.map(c=>c.v),1),mn=Math.min(...cs.map(c=>c.v));
     const tot=cs.reduce((a,b)=>a+b.v,0);
-    return`<div class="card" style="margin-bottom:14px;">
+    return`<div id="rc-${r.id}" class="card" style="margin-bottom:14px;scroll-margin-top:130px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
-        <div><div style="font-size:15px;font-weight:800;">${r.n}</div><div style="font-size:11px;color:var(--sub);">${gersByR(r.id).length} gerencias · ${tot} visitas</div></div>
+        <div><div style="font-size:15px;font-weight:800;">${r.n}</div><div style="font-size:11px;color:var(--sub);">${gersByR(r.id).length} gerencias · ${tot} visitas · ${periodLabel()}</div></div>
         <div style="display:flex;align-items:center;gap:8px;">
           ${sc!==null?`<div style="font-size:22px;font-weight:800;color:${si.c};">${sc}%</div>`:""}
           <span class="badge" style="background:${si.bg};color:${si.c};">${si.t}</span>
@@ -554,11 +585,11 @@ function renderDist(){
                 <span style="font-size:13px;font-weight:700;">${g.n}</span>
                 <span style="font-size:10px;color:var(--sub);margin-left:4px;">${g.cod}</span>
                 ${isTop&&tot>0?`<span class="badge" style="background:#fee2e2;color:#dc2626;margin-left:4px;font-size:9px;">↑ más</span>`:""}
-                ${isLow&&g.v===0&&tot>0?`<span class="badge" style="background:#dcfce7;color:#16a34a;margin-left:4px;font-size:9px;">sin visitas</span>`:""}
+                ${isLow&&g.v===0&&tot>0?`<span class="badge" style="background:#fee2e2;color:#dc2626;margin-left:4px;font-size:9px;">sin visitas</span>`:""}
                 ${isLow&&g.v>0&&!isTop?`<span class="badge" style="background:#fef3c7;color:#d97706;margin-left:4px;font-size:9px;">↓ menos</span>`:""}
               </div>
             </div>
-            <span style="font-size:13px;font-weight:800;color:${g.v>0?bc2:"#e2e8f0"};flex-shrink:0;">${g.v}</span>
+            <span style="font-size:13px;font-weight:800;color:${bColText(g.v)};flex-shrink:0;">${g.v}</span>
           </div>
           <div class="bar-bg"><div class="bar" style="width:${pct}%;background:${bc2};"></div></div>
           ${g.g?`<div style="font-size:10px;color:var(--sub);margin-top:2px;padding-left:20px;">${g.g}</div>`:""}
@@ -579,13 +610,21 @@ function renderDist(){
 // ══════════════════════════════════════
 //  CALENDARIO
 // ══════════════════════════════════════
-let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null;
+let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null,CAL_FILTER=null,DIST_TARGET=null,PERIOD='all';
 function renderCal(){
   const isA=SES.role==="admin",rid=isA?null:SES.rid;
   const fd1=new Date(CY,CM,1),ld=new Date(CY,CM+1,0);
   const sdow=(fd1.getDay()+6)%7,total=ld.getDate(),todayS=fd(new Date());
   const mn=fd1.toLocaleDateString("es-MX",{month:"long",year:"numeric"});
-  const dias=getDias().filter(d=>{const dt=pd(d.fecha);return dt.getFullYear()===CY&&dt.getMonth()===CM&&(isA||d.rid===rid);});
+  // Filtro activo: si DOZ seleccionó un regional, filtrar por ese
+  const filtroRid = isA ? CAL_FILTER : rid;
+  const dias=getDias().filter(d=>{
+    const dt=pd(d.fecha);
+    const inMonth=dt.getFullYear()===CY&&dt.getMonth()===CM;
+    if(!inMonth) return false;
+    if(!isA) return d.rid===rid;
+    return filtroRid!==null ? d.rid===filtroRid : true;
+  });
   const byD={};dias.forEach(d=>{if(!byD[d.fecha])byD[d.fecha]=[];byD[d.fecha].push(d);});
   const regsShow=isA?REGS:REGS.filter(r=>r.id===rid);
 
@@ -612,13 +651,29 @@ function renderCal(){
     </div>`;
   }
 
-  const ley=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
-    ${regsShow.map(r=>{const bc=COLORS[r.id]||"#e85d04";const n=dias.filter(d=>d.rid===r.id).length;
-      return`<div style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:3px 9px;background:${bc}18;border:1px solid ${bc}40;">
-        <div style="width:6px;height:6px;border-radius:50%;background:${bc};"></div>
-        <span style="font-size:10px;font-weight:700;color:${bc};">${r.n}</span>
-        <span style="font-size:9px;color:var(--sub);">${n}</span>
-      </div>`;}).join("")}
+  // Contar días por regional (del mes completo sin filtro)
+  const todosLosDias=getDias().filter(d=>{const dt=pd(d.fecha);return dt.getFullYear()===CY&&dt.getMonth()===CM&&(isA||d.rid===rid);});
+  const ley=`<div style="margin-bottom:12px;">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      ${isA?`<button onclick="CAL_FILTER=null;CDS=null;R()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid ${CAL_FILTER===null?"#1e293b":"#e2e8f0"};background:${CAL_FILTER===null?"#1e293b":"transparent"};cursor:pointer;transition:all .15s;">
+        <div style="width:6px;height:6px;border-radius:50%;background:${CAL_FILTER===null?"#fff":"#1e293b"};"></div>
+        <span style="font-size:10px;font-weight:700;color:${CAL_FILTER===null?"#fff":"#1e293b"};">Todos</span>
+        <span style="font-size:9px;color:${CAL_FILTER===null?"#ffffffaa":"var(--sub)"};">${todosLosDias.length}</span>
+      </button>`:""}
+      ${regsShow.map(r=>{
+        const bc=COLORS[r.id]||"#e85d04";
+        const n=todosLosDias.filter(d=>d.rid===r.id).length;
+        const isActive=isA?(CAL_FILTER===r.id):(r.id===rid);
+        return`<button onclick="${isA?`CAL_FILTER=${r.id};CDS=null;R()`:""}" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid ${isActive?bc:bc+"40"};background:${isActive?bc:"transparent"};cursor:${isA?"pointer":"default"};transition:all .15s;">
+          <div style="width:6px;height:6px;border-radius:50%;background:${isActive?"#fff":bc};"></div>
+          <span style="font-size:10px;font-weight:700;color:${isActive?"#fff":bc};">${r.n}</span>
+          <span style="font-size:9px;color:${isActive?"#ffffffaa":"var(--sub)"};">${n}</span>
+        </button>`;}).join("")}
+    </div>
+    ${isA&&CAL_FILTER!==null?`<div style="font-size:11px;color:var(--sub);margin-top:8px;padding:6px 10px;background:#f8fafc;border-radius:8px;">
+      Mostrando solo: <b style="color:${COLORS[CAL_FILTER]||"#e85d04"};">${(REGS.find(r=>r.id===CAL_FILTER)||{}).n||""}</b>
+      — <button onclick="CAL_FILTER=null;CDS=null;R()" style="background:transparent;border:none;color:var(--naranja);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline;">Ver todos</button>
+    </div>`:""}
   </div>`;
 
   const dows=["L","M","X","J","V","S","D"];
@@ -652,10 +707,11 @@ function renderCal(){
 //  RESUMEN
 // ══════════════════════════════════════
 function renderRes(){
-  const dias=getDias(),tot=dias.length;
+  const dias=getFilteredDias(),tot=dias.length;
   const ac=GERS.map(g=>{const v=dias.filter(d=>d.ap?.gid===g.id||d.ci?.gid===g.id).length;return{...g,v};}).sort((a,b)=>b.v-a.v);
   const sv=ac.filter(g=>g.v===0),cv=ac.filter(g=>g.v>0);
   return`<div class="page">
+    ${renderPeriodFilter()}
     <div class="stats">
       <div class="stat"><div class="stat-n" style="color:var(--naranja);">${tot}</div><div class="stat-l">Total días</div></div>
       <div class="stat"><div class="stat-n" style="color:#16a34a;">${cv.length}/${GERS.length}</div><div class="stat-l">Cubiertas</div></div>
@@ -664,12 +720,17 @@ function renderRes(){
     <div class="card" style="margin-bottom:14px;">
       <div style="font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px;">Índice de Equidad</div>
       ${REGS.filter(r=>r.id!==0).map(r=>{const sc=equityScore(r.id),si=sInfo(sc),t=dias.filter(d=>d.rid===r.id).length;
-        return`<div style="margin-bottom:13px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-            <div><span style="font-size:13px;font-weight:700;">${r.n}</span><span style="font-size:11px;color:var(--sub);margin-left:6px;">${t} días</span></div>
+        return`<div onclick="DIST_TARGET=${r.id};VIEW='DIST';R()" style="margin-bottom:13px;cursor:pointer;padding:10px;border-radius:10px;transition:background .15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;align-items:center;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:${COLORS[r.id]||'#e85d04'};flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:700;">${r.n}</span>
+              <span style="font-size:11px;color:var(--sub);">${t} días</span>
+            </div>
             <div style="display:flex;align-items:center;gap:7px;">
               <span style="font-size:13px;font-weight:800;color:${si.c};">${sc!==null?sc+"%":"—"}</span>
               <span class="badge" style="background:${si.bg};color:${si.c};">${si.t}</span>
+              <span style="font-size:16px;color:var(--sub);">›</span>
             </div>
           </div>
           <div class="bar-bg" style="height:6px;"><div class="bar" style="width:${sc||0}%;background:${si.c};"></div></div>
@@ -753,6 +814,16 @@ function showT(msg,bg="#16a34a"){
   t.textContent=msg;setTimeout(()=>{t.style.display="none";},2500);
 }
 
+
+function renderPeriodFilter(){
+  return`<div style="display:flex;gap:6px;margin-bottom:14px;background:#f1f5f9;border-radius:10px;padding:4px;">
+    ${["all","month","week"].map(p=>{
+      const labels={all:"Histórico",month:"Este mes",week:"Esta semana"};
+      const act=PERIOD===p;
+      return`<button onclick="PERIOD='${p}';R()" style="flex:1;padding:8px 6px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;background:${act?"#fff":"transparent"};color:${act?"var(--naranja)":"var(--sub)"};box-shadow:${act?"0 1px 3px rgba(0,0,0,.1)":"none"};">${labels[p]}</button>`;
+    }).join("")}
+  </div>`;
+}
 
 // ══════════════════════════════════════
 //  MAPA (solo DOZ)
