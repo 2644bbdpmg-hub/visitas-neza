@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<!-- saved from url=(0230)file:///Users/renedamianmercado/Library/Application%20Support/Claude/local-agent-mode-sessions/d87c1e20-798d-437c-be2c-f73e7da9540b/0e78620e-ab75-4cf9-bc1f-5a0527bdb8ab/local_cb18c091-424b-4621-b4aa-8ec18704a561/outputs/index.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Visitas – Cuartel Neza</title>
+<!-- PWA -->
+<link rel="manifest" href="file:///Users/renedamianmercado/Library/Application%20Support/Claude/local-agent-mode-sessions/d87c1e20-798d-437c-be2c-f73e7da9540b/0e78620e-ab75-4cf9-bc1f-5a0527bdb8ab/local_cb18c091-424b-4621-b4aa-8ec18704a561/outputs/manifest.json">
+      <meta name="theme-color" content="#e85d04">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Visitas Neza">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--naranja:#e85d04;--azul:#2563eb;--gris:#f1f5f9;--borde:#e2e8f0;--texto:#1e293b;--sub:#94a3b8;--blanco:#fff;}
+body{background:#f0f2f5;color:var(--texto);font-family:'Century Gothic','CenturyGothic','Trebuchet MS',Arial,sans-serif;min-height:100vh;font-size:15px;}
+button,input,select,textarea{font-family:inherit;font-size:15px;}
+input,select,textarea{background:#f8fafc;border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);padding:13px 14px;outline:none;width:100%;transition:border .15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--naranja);}
+select{cursor:pointer;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;}
+textarea{resize:vertical;}
+.page{max-width:480px;margin:0 auto;padding:16px;}
+.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.lbl{font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:7px;margin-top:14px;}
+.btn{border:none;border-radius:10px;cursor:pointer;font-weight:700;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font-size:15px;}
+.btn-o{background:var(--naranja);color:#fff;}
+.btn-b{background:var(--azul);color:#fff;}
+.btn-g{background:var(--gris);color:#475569;border:1.5px solid var(--borde);}
+.btn-r{background:#fee2e2;color:#dc2626;border:1.5px solid #fca5a5;}
+.btn-sm{padding:9px 14px;font-size:12px;width:auto;}
+.tipo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.tipo-btn{background:#f8fafc;border:2px solid var(--borde);border-radius:10px;padding:14px;cursor:pointer;text-align:center;font-weight:700;font-size:14px;transition:all .15s;}
+.tipo-btn.ap{border-color:var(--naranja);background:#fff7ed;color:var(--naranja);}
+.tipo-btn.ci{border-color:var(--azul);background:#eff6ff;color:var(--azul);}
+.tabs{display:flex;background:#fff;border-bottom:1.5px solid var(--borde);overflow-x:auto;}
+.tab{padding:13px 14px;background:transparent;border:none;border-bottom:2.5px solid transparent;font-size:12px;font-weight:700;cursor:pointer;color:var(--sub);white-space:nowrap;margin-bottom:-1.5px;}
+.tab.on{border-bottom-color:var(--naranja);color:var(--naranja);}
+.header{background:#fff;border-bottom:1.5px solid var(--borde);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.logo{width:36px;height:36px;background:var(--naranja);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff7ed,#f0f2f5,#eff6ff);padding:20px;}
+.login-card{background:#fff;border-radius:20px;padding:32px 24px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.1);}
+.pin-dots{display:flex;gap:10px;justify-content:center;margin:18px 0;}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--borde);transition:all .15s;}
+.dot.on{background:var(--naranja);border-color:var(--naranja);}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pk{background:#f8fafc;border:1.5px solid var(--borde);border-radius:12px;font-size:22px;font-weight:700;color:var(--texto);padding:16px;cursor:pointer;text-align:center;transition:all .15s;}
+.pk:active{background:var(--naranja);color:#fff;border-color:var(--naranja);}
+.pk.z{grid-column:2;}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
+.rrow{background:#fff;border-radius:10px;padding:13px 14px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.05);border-left:3px solid var(--naranja);}
+.bar-bg{background:var(--gris);border-radius:6px;height:8px;overflow:hidden;}
+.bar{height:100%;border-radius:6px;transition:width .4s;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);align-items:flex-end;justify-content:center;z-index:200;}
+.modal-bg.show{display:flex;}
+.modal-box{background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-head{font-size:10px;font-weight:700;color:var(--sub);text-align:center;padding:5px 0;}
+.cal-cell{min-height:64px;background:#fff;border-radius:7px;padding:4px;cursor:pointer;border:1.5px solid var(--borde);position:relative;}
+.cal-cell.sel,.cal-cell.today{border-color:var(--naranja);}
+.cal-cell.sel{background:#fff7ed;}
+.cal-cell.wknd{background:#fafafa;}
+.cal-cell.empty{background:transparent;border:none;cursor:default;}
+.cal-pip{font-size:8px;font-weight:700;color:#fff;border-radius:3px;padding:1px 3px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cal-n{font-size:11px;font-weight:700;}
+.cal-n.hoy{color:var(--naranja);}
+.cal-n.wk{color:var(--sub);}
+.cal-badge{position:absolute;top:3px;right:3px;width:13px;height:13px;background:var(--naranja);border-radius:50%;font-size:7px;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.div{height:1px;background:var(--gris);margin:14px 0;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.stat{background:#fff;border-radius:10px;padding:14px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.stat-n{font-size:24px;font-weight:800;line-height:1;}
+.stat-l{font-size:9px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-top:4px;}
+::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:2px;}
+</style>
+<link rel="apple-touch-icon" href="data:image/png;base64,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"><link rel="apple-touch-icon" href="data:image/png;base64,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"></head>
+<body>
+<div id="root">
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="logo">📍</div>
+      <div>
+        <div style="font-size:14px;font-weight:800;">Supervisión de Visitas</div>
+        <div id="sync_indicator" style="font-size:10px;color:#16a34a;font-weight:600;">● En línea</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:12px;font-weight:700;">Nezahualcóyotl 4</span>
+      <button class="btn btn-g btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </div>
+  <div class="tabs"><button class="tab " onclick="switchTab(&#39;REG&#39;)">📋 Registro</button><button class="tab " onclick="switchTab(&#39;DIST&#39;)">📊 Distribución</button><button class="tab " onclick="switchTab(&#39;CAL&#39;)">📅 Calendario</button><button class="tab on" onclick="switchTab(&#39;HOR&#39;)">⏱ Horarios</button></div>
+  <div class="page">
+    <div style="display:flex;gap:6px;margin-bottom:14px;background:#f1f5f9;border-radius:10px;padding:4px;">
+    <button onclick="PERIOD=&#39;all&#39;;R()" style="flex:1;padding:8px 6px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;background:#fff;color:var(--naranja);box-shadow:0 1px 3px rgba(0,0,0,.1);">Histórico</button><button onclick="PERIOD=&#39;month&#39;;R()" style="flex:1;padding:8px 6px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;background:transparent;color:var(--sub);box-shadow:none;">Este mes</button><button onclick="PERIOD=&#39;week&#39;;R()" style="flex:1;padding:8px 6px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;background:transparent;color:var(--sub);box-shadow:none;">Esta semana</button>
+  </div>
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
+      <div class="stat"><div class="stat-n" style="color:var(--naranja);">5</div><div class="stat-l">Registros</div></div>
+      <div class="stat"><div class="stat-n" style="color:#dc2626;">2</div><div class="stat-l">Tardanzas</div></div>
+      <div class="stat"><div class="stat-n" style="color:#d97706;">1</div><div class="stat-l">Sin cierre</div></div>
+    </div>
+
+    <!-- Resumen por regional (solo DOZ) -->
+    
+
+    <!-- Lista de registros -->
+    <div style="font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">
+      Detalle de Registros 
+    </div>
+
+    <div style="background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid #e85d04;">
+
+            <!-- Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;font-weight:700;color:#e85d04;">Nezahualcóyotl 4</span>
+                <span style="font-size:11px;color:var(--sub);text-transform:capitalize;">vie 3 de jul</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                
+                
+                <span style="background:#fef3c7;color:#d97706;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">🔓 Sin cierre</span>
+                
+              </div>
+            </div>
+
+            <!-- Apertura / Cierre -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#f0fdf4;border-radius:10px;padding:10px;border:1.5px solid #86efac;">
+                <div style="font-size:9px;font-weight:700;color:#16a34a;letter-spacing:.8px;margin-bottom:5px;">🌅 APERTURA</div>
+                <div style="font-size:18px;font-weight:800;color:#16a34a;">08:39 a.m.</div>
+                <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">Gcc La Magdalena</div>
+                <div style="font-size:10px;color:var(--sub);">9640</div>
+                <div style="font-size:9px;color:#cbd5e1;margin-top:4px;">Sin GPS</div>
+                <div style="font-size:9px;color:#16a34a;font-weight:700;margin-top:4px;">✓ Antes de las 9:00 a.m.</div>
+              </div>
+              <div style="background:#fffbeb;border-radius:10px;padding:10px;border:1.5px solid #fcd34d;">
+                <div style="font-size:9px;font-weight:700;color:#d97706;letter-spacing:.8px;margin-bottom:5px;">🌆 CIERRE</div>
+                <div style="font-size:14px;font-weight:800;color:#d97706;">Pendiente</div>
+                    <div style="font-size:9px;color:#d97706;font-weight:700;margin-top:6px;">🔓 No registró salida</div>
+              </div>
+            </div>
+
+            
+          </div><div style="background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid #e85d04;">
+
+            <!-- Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;font-weight:700;color:#e85d04;">Nezahualcóyotl 4</span>
+                <span style="font-size:11px;color:var(--sub);text-transform:capitalize;">jue 2 de jul</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="background:#fff7ed;color:var(--naranja);border:1px solid #fed7aa;border-radius:20px;padding:2px 9px;font-size:11px;font-weight:700;">⏱ 10h 33min</span>
+                
+                
+                <span style="background:#dcfce7;color:#16a34a;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">✓</span>
+              </div>
+            </div>
+
+            <!-- Apertura / Cierre -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#f0fdf4;border-radius:10px;padding:10px;border:1.5px solid #86efac;">
+                <div style="font-size:9px;font-weight:700;color:#16a34a;letter-spacing:.8px;margin-bottom:5px;">🌅 APERTURA</div>
+                <div style="font-size:18px;font-weight:800;color:#16a34a;">08:48 a.m.</div>
+                <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">Gcc Neza La Esperanza</div>
+                <div style="font-size:10px;color:var(--sub);">9637</div>
+                <div style="font-size:9px;color:#cbd5e1;margin-top:4px;">Sin GPS</div>
+                <div style="font-size:9px;color:#16a34a;font-weight:700;margin-top:4px;">✓ Antes de las 9:00 a.m.</div>
+              </div>
+              <div style="background:#f0fdf4;border-radius:10px;padding:10px;border:1.5px solid #86efac;">
+                <div style="font-size:9px;font-weight:700;color:#16a34a;letter-spacing:.8px;margin-bottom:5px;">🌆 CIERRE</div>
+                <div style="font-size:18px;font-weight:800;color:#16a34a;">07:21 p.m.</div>
+                    <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">Gcc Neza La Esperanza</div>
+                    <div style="font-size:10px;color:var(--sub);">9637</div>
+                    <div style="font-size:9px;color:#cbd5e1;margin-top:4px;">Sin GPS</div>
+              </div>
+            </div>
+
+            <div style="font-size:11px;color:#d97706;margin-top:10px;padding:7px 10px;background:#fffbeb;border-radius:8px;">📝 Revisión cuántas de pase, RT y compromisos alcance, GIC's bajos</div>
+          </div><div style="background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid #e85d04;">
+
+            <!-- Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;font-weight:700;color:#e85d04;">Nezahualcóyotl 4</span>
+                <span style="font-size:11px;color:var(--sub);text-transform:capitalize;">mié 1 de jul</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                
+                <span style="background:#fee2e2;color:#dc2626;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">⚠ Tarde</span>
+                
+                
+              </div>
+            </div>
+
+            <!-- Apertura / Cierre -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#fff1f2;border-radius:10px;padding:10px;border:1.5px solid #fca5a5;">
+                <div style="font-size:9px;font-weight:700;color:#dc2626;letter-spacing:.8px;margin-bottom:5px;">🌅 APERTURA</div>
+                <div style="font-size:18px;font-weight:800;color:#dc2626;">07:13 p.m.</div>
+                <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">Gcc Tepozanes</div>
+                <div style="font-size:10px;color:var(--sub);">9262</div>
+                <div style="font-size:9px;color:#cbd5e1;margin-top:4px;">Sin GPS</div>
+                <div style="font-size:9px;color:#dc2626;font-weight:700;margin-top:4px;">⚠ Después de las 9:00 a.m.</div>
+              </div>
+              <div style="background:#f0fdf4;border-radius:10px;padding:10px;border:1.5px solid #86efac;">
+                <div style="font-size:9px;font-weight:700;color:#16a34a;letter-spacing:.8px;margin-bottom:5px;">🌆 CIERRE</div>
+                <div style="font-size:18px;font-weight:800;color:#16a34a;">08:54 a.m.</div>
+                    <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">Gcc Neza Benito Juárez</div>
+                    <div style="font-size:10px;color:var(--sub);">8237</div>
+                    <div style="font-size:9px;color:#cbd5e1;margin-top:4px;">Sin GPS</div>
+              </div>
+            </div>
+
+            <div style="font-size:11px;color:#d97706;margin-top:10px;padding:7px 10px;background:#fffbeb;border-radius:8px;">📝 Revision de compromisos, acompañamiento, gestores bajos resultados</div>
+          </div><div style="background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid #e85d04;">
+
+            <!-- Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;font-weight:700;color:#e85d04;">Nezahualcóyotl 4</span>
+                <span style="font-size:11px;color:var(--sub);text-transform:capitalize;">mar 30 de jun</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="background:#fff7ed;color:var(--naranja);border:1px solid #fed7aa;border-radius:20px;padding:2px 9px;font-size:11px;font-weight:700;">⏱ 9h 56min</span>
+                
+                
+                <span style="background:#dcfce7;color:#16a34a;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">✓</span>
+              </div>
+            </div>
+
+            <!-- Apertura / Cierre -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#f0fdf4;border-radius:10px;padding:10px;border:1.5px solid #86efac;">
+                <div style="font-size:9px;font-weight:700;color:#16a34a;letter-spacing:.8px;margin-bottom:5px;">🌅 APERTURA</div>
+                <div style="font-size:18px;font-weight:800;color:#16a34a;">08:35 a.m.</div>
+                <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">Gcc San Pablo</div>
+                <div style="font-size:10px;color:var(--sub);">9964</div>
+                <div style="font-size:9px;color:#cbd5e1;margin-top:4px;">Sin GPS</div>
+                <div style="font-size:9px;color:#16a34a;font-weight:700;margin-top:4px;">✓ Antes de las 9:00 a.m.</div>
+              </div>
+              <div style="background:#f0fdf4;border-radius:10px;padding:10px;border:1.5px solid #86efac;">
+                <div style="font-size:9px;font-weight:700;color:#16a34a;letter-spacing:.8px;margin-bottom:5px;">🌆 CIERRE</div>
+                <div style="font-size:18px;font-weight:800;color:#16a34a;">06:31 p.m.</div>
+                    <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">Gcc San Pablo</div>
+                    <div style="font-size:10px;color:var(--sub);">9964</div>
+                    <div style="font-size:9px;color:#cbd5e1;margin-top:4px;">Sin GPS</div>
+              </div>
+            </div>
+
+            <div style="font-size:11px;color:#d97706;margin-top:10px;padding:7px 10px;background:#fffbeb;border-radius:8px;">📝 Reunión con sucursal</div>
+          </div><div style="background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid #e85d04;">
+
+            <!-- Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;font-weight:700;color:#e85d04;">Nezahualcóyotl 4</span>
+                <span style="font-size:11px;color:var(--sub);text-transform:capitalize;">lun 29 de jun</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="background:#fff7ed;color:var(--naranja);border:1px solid #fed7aa;border-radius:20px;padding:2px 9px;font-size:11px;font-weight:700;">⏱ 9h 2min</span>
+                <span style="background:#fee2e2;color:#dc2626;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">⚠ Tarde</span>
+                
+                
+              </div>
+            </div>
+
+            <!-- Apertura / Cierre -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#fff1f2;border-radius:10px;padding:10px;border:1.5px solid #fca5a5;">
+                <div style="font-size:9px;font-weight:700;color:#dc2626;letter-spacing:.8px;margin-bottom:5px;">🌅 APERTURA</div>
+                <div style="font-size:18px;font-weight:800;color:#dc2626;">09:30 a.m.</div>
+                <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">Gcc Neza La Esperanza</div>
+                <div style="font-size:10px;color:var(--sub);">9637</div>
+                <div style="font-size:9px;color:#cbd5e1;margin-top:4px;">Sin GPS</div>
+                <div style="font-size:9px;color:#dc2626;font-weight:700;margin-top:4px;">⚠ Después de las 9:00 a.m.</div>
+              </div>
+              <div style="background:#f0fdf4;border-radius:10px;padding:10px;border:1.5px solid #86efac;">
+                <div style="font-size:9px;font-weight:700;color:#16a34a;letter-spacing:.8px;margin-bottom:5px;">🌆 CIERRE</div>
+                <div style="font-size:18px;font-weight:800;color:#16a34a;">06:32 p.m.</div>
+                    <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">Gcc San Pablo</div>
+                    <div style="font-size:10px;color:var(--sub);">9964</div>
+                    <div style="font-size:9px;color:#cbd5e1;margin-top:4px;">Sin GPS</div>
+              </div>
+            </div>
+
+            <div style="font-size:11px;color:#d97706;margin-top:10px;padding:7px 10px;background:#fffbeb;border-radius:8px;">📝 Teams plan de comunicación</div>
+          </div>
+  </div>
+  <div style="text-align:center;padding:16px;font-size:10px;color:#cbd5e1;letter-spacing:.8px;">CUARTEL NEZAHUALCÓYOTL · 5 REGIONALES · 34 GERENCIAS</div></div>
+<div id="modal" class="modal-bg"></div>
+<div id="toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);border-radius:24px;padding:12px 22px;color:#fff;font-size:13px;font-weight:700;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);"></div>
+<script>
+// ══════════════════════════════════════
+//  FIREBASE REST API — sin SDK externo
+// ══════════════════════════════════════
+const FB_URL = "https://registro-de-visitas-86eea-default-rtdb.firebaseio.com";
+
+async function fbGet(path){
+  const r = await fetch(`${FB_URL}/${path}.json`);
+  if(!r.ok) throw new Error("Error al leer");
+  return r.json();
+}
+async function fbPost(path, data){
+  const r = await fetch(`${FB_URL}/${path}.json`,{method:"POST",body:JSON.stringify(data)});
+  if(!r.ok) throw new Error("Error al escribir");
+  return r.json(); // {name: "-key"}
+}
+async function fbPatch(path, data){
+  const r = await fetch(`${FB_URL}/${path}.json`,{method:"PATCH",body:JSON.stringify(data)});
+  if(!r.ok) throw new Error("Error al actualizar");
+  return r.json();
+}
+async function fbDelete(path){
+  const r = await fetch(`${FB_URL}/${path}.json`,{method:"DELETE"});
+  if(!r.ok) throw new Error("Error al eliminar");
+}
+
+// ══════════════════════════════════════
+//  DATOS
+// ══════════════════════════════════════
+const REGS=[
+  {id:0,n:"DOZ"},
+  {id:1,n:"Nezahualcóyotl 1"},
+  {id:2,n:"Nezahualcóyotl 2"},
+  {id:3,n:"Nezahualcóyotl 3"},
+  {id:4,n:"Nezahualcóyotl 4"},
+  {id:5,n:"RCV Neza"},
+];
+const GERS=[
+  {id:101,cod:"8034",n:"Gcc Juan Escutia",       g:"Victor Hugo Martínez Acosta",       r:1},
+  {id:102,cod:"8243",n:"Gcc Nezahualcóyotl",     g:"Jovanny Vázquez Moreno",            r:1},
+  {id:103,cod:"8244",n:"Gcc Pajarera",           g:"Karen Ramírez Pérez",               r:1},
+  {id:104,cod:"8504",n:"Gcc El Sol",             g:"Axel Yael Vázquez Valenzuela",      r:1},
+  {id:105,cod:"9069",n:"Gcc Neza El Bordo",      g:"Julian De Jesus Flores Aguilar",    r:1},
+  {id:106,cod:"9258",n:"Gcc Palacio",            g:"Adán Martínez Cruz",                r:1},
+  {id:107,cod:"9700",n:"Gcc Agua Azul",          g:"Manolo Sánchez Torres",             r:1},
+  {id:201,cod:"8475",n:"Gcc Las Palomas",        g:"Eugenio Galicia Yáñez",             r:2},
+  {id:202,cod:"9070",n:"Gcc Zapotla",            g:"Oscar Leonel Alfaro Hernández",     r:2},
+  {id:203,cod:"9578",n:"Gcc Copalera Edo Mex",   g:"Arturo Guzmán Campos",              r:2},
+  {id:204,cod:"9585",n:"Gcc Xaltipac Edo Mex",   g:"Rodrigo Daniel Díaz Moreno",        r:2},
+  {id:205,cod:"9696",n:"Gcc Francisco Villa",    g:"Liliana Elizabeth Flores Florencio",r:2},
+  {id:206,cod:"9936",n:"Gcc Acuitlapilco",       g:"Roberto Pacheco Bernal",            r:2},
+  {id:207,cod:"9965",n:"Gcc Xochiaca",           g:"Jesús Alberto Gómez Martínez",      r:2},
+  {id:301,cod:"8221",n:"Gcc Chimalhuacán",       g:"Félix Cuéllar García",              r:3},
+  {id:302,cod:"8223",n:"Gcc El Peñón",           g:"María Del Rosario Cornejo Flores",  r:3},
+  {id:303,cod:"8225",n:"Gcc Xochitenco",         g:"Alicia Pérez Rubio",                r:3},
+  {id:304,cod:"9177",n:"Gcc Plateros",           g:"Ignacio Rodolfo Montoya Castro",    r:3},
+  {id:305,cod:"9532",n:"Gcc Texcoco",            g:"Luis Humberto Ortiz Cruz",          r:3},
+  {id:306,cod:"9639",n:"Gcc Ejido Colectivo",    g:"Cristian Santiago García",          r:3},
+  {id:401,cod:"8237",n:"Gcc Neza Benito Juárez", g:"César Alejandro Bárcenas López",    r:4},
+  {id:402,cod:"8350",n:"Gcc Aeropuerto",         g:"José De Jesús Gutiérrez Sánchez",   r:4},
+  {id:403,cod:"9262",n:"Gcc Tepozanes",          g:"Rey David Pérez García",            r:4},
+  {id:404,cod:"9637",n:"Gcc Neza La Esperanza",  g:"Oscar Galicia Lozano",              r:4},
+  {id:405,cod:"9640",n:"Gcc La Magdalena",       g:"Carlos Daniel González Vences",     r:4},
+  {id:406,cod:"9964",n:"Gcc San Pablo",          g:"Anayeli López Camacho",             r:4},
+  {id:407,cod:"9966",n:"Gcc Cuarta Avenida",     g:"César García Rivera",               r:4},
+  {id:501,cod:"4097",n:"LCV Jacarandas",         g:"",r:5},
+  {id:502,cod:"4146",n:"LCV Agrícola Pantitlán", g:"",r:5},
+  {id:503,cod:"4096",n:"LCV Palacio",            g:"",r:5},
+  {id:504,cod:"4077",n:"LCV La Magdalena",       g:"",r:5},
+  {id:505,cod:"4093",n:"LCV Neza Benito Juárez", g:"",r:5},
+  {id:506,cod:"4106",n:"LCV Texcoco",            g:"",r:5},
+  {id:507,cod:"4080",n:"LCV Plateros",           g:"",r:5},
+];
+const COLORS=["#1e293b","#2563eb","#16a34a","#9333ea","#e85d04","#0891b2"];
+
+// ══════════════════════════════════════
+//  STORE LOCAL
+// ══════════════════════════════════════
+const SKP="nezav8p";
+const DPINS={admin:"3693",1:"1111",2:"2222",3:"3333",4:"4444",5:"5555"};
+let PINS=JSON.parse(localStorage.getItem(SKP)||"null")||JSON.parse(JSON.stringify(DPINS));
+let SES=JSON.parse(sessionStorage.getItem("nezav8s")||"null");
+let VIEW="REG", TIPO="ap";
+let DIAS={}; // cache local de Firebase
+let SYNCING=false, LAST_SYNC=null;
+const HOY=fd(new Date());
+let POLL_TIMER=null;
+
+function svP(){localStorage.setItem(SKP,JSON.stringify(PINS));}
+function svS(s){sessionStorage.setItem("nezav8s",JSON.stringify(s));SES=s;}
+function logout(){sessionStorage.removeItem("nezav8s");SES=null;stopPoll();R();}
+
+// ══════════════════════════════════════
+//  SYNC
+// ══════════════════════════════════════
+async function syncNow(forceRender=false){
+  SYNCING=true;
+  try {
+    const data = await fbGet("dias");
+    DIAS = data || {};
+    LAST_SYNC = new Date();
+    SYNCING=false;
+    // Solo re-renderizar si NO está en el formulario de registro
+    // o si se forzó (ej. después de guardar)
+    if(SES && (VIEW !== "REG" || forceRender)){
+      R();
+    } else if(SES){
+      // Solo actualizar el indicador de conexión sin tocar el formulario
+      updateSyncIndicator();
+    }
+  } catch(e){
+    SYNCING=false;
+    if(SES) updateSyncIndicator();
+  }
+}
+
+function updateSyncIndicator(){
+  const el = document.getElementById("sync_indicator");
+  if(!el) return;
+  const syncCol = LAST_SYNC?"#16a34a":SYNCING?"#f59e0b":"#dc2626";
+  const syncTxt = LAST_SYNC?"● En línea":SYNCING?"● Conectando...":"● Sin conexión";
+  el.style.color = syncCol;
+  el.textContent = syncTxt;
+}
+
+function startPoll(){
+  stopPoll();
+  syncNow();
+  POLL_TIMER = setInterval(syncNow, 15000); // refresca cada 15 seg
+}
+function stopPoll(){
+  if(POLL_TIMER){ clearInterval(POLL_TIMER); POLL_TIMER=null; }
+}
+
+function getDias(){ return Object.entries(DIAS).map(([k,v])=>({...v,_k:k})); }
+function getFilteredDias(){
+  const all=getDias();
+  if(PERIOD==="all") return all;
+  const hoy=new Date();
+  if(PERIOD==="month"){
+    const y=hoy.getFullYear(),m=hoy.getMonth();
+    return all.filter(d=>{const dt=pd(d.fecha);return dt.getFullYear()===y&&dt.getMonth()===m;});
+  }
+  if(PERIOD==="week"){
+    const day=hoy.getDay(),mon=new Date(hoy);
+    mon.setDate(hoy.getDate()-(day===0?6:day-1));mon.setHours(0,0,0,0);
+    const sun=new Date(mon);sun.setDate(mon.getDate()+6);sun.setHours(23,59,59,999);
+    return all.filter(d=>{const dt=pd(d.fecha);return dt>=mon&&dt<=sun;});
+  }
+  return all;
+}
+function periodLabel(){return PERIOD==="week"?"Esta semana":PERIOD==="month"?"Este mes":"Histórico";}
+function getDiaHoy(rid){ return getDias().find(d=>d.rid===rid&&d.fecha===HOY)||null; }
+
+// ══════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════
+function fd(d){return d.toISOString().split("T")[0];}
+function pd(s){const[y,m,dd]=s.split("-").map(Number);return new Date(y,m-1,dd);}
+function shD(s){return pd(s).toLocaleDateString("es-MX",{day:"2-digit",month:"short"});}
+function hora(){return new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit",hour12:true});}
+function getReg(id){return REGS.find(r=>r.id===id)||{};}
+function getGer(id){return GERS.find(g=>g.id===id)||{};}
+function gersByR(rid){return rid===0?GERS:GERS.filter(g=>g.r===rid);}
+function dur(h1,h2){
+  if(!h1||!h2)return null;
+  const p=h=>{const[t,m]=h.replace(" a.m.","").replace(" p.m.","").split(":").map(Number);return(h.includes("p.m.")&&t!==12?t+12:t)*60+m;};
+  const d=p(h2)-p(h1);if(d<=0)return null;
+  const hr=Math.floor(d/60),mn=d%60;return hr>0?`${hr}h${mn>0?" "+mn+"min":""}`:`${mn}min`;
+}
+function parseMin(h){
+  if(!h)return null;
+  const[t,m]=h.replace(" a.m.","").replace(" p.m.","").split(":").map(Number);
+  return(h.includes("p.m.")&&t!==12?t+12:t)*60+m;
+}
+function minToHora(min){
+  if(min===null)return"—";
+  const h=Math.floor(min/60),m=min%60;
+  const ampm=h>=12?"p.m.":"a.m.";
+  const hh=h>12?h-12:h===0?12:h;
+  return`${hh}:${String(m).padStart(2,"0")} ${ampm}`;
+}
+const LIMITE_AM=9*60; // 9:00 a.m. límite
+function visitCount(gid,rid){
+  return getFilteredDias().filter(d=>d.rid===rid&&(d.ap?.gid===gid||d.ci?.gid===gid)).length;
+}
+function equityScore(rid){
+  const gs=gersByR(rid);
+  const c=gs.map(g=>visitCount(g.id,rid)); // visitCount ya usa getFilteredDias
+  const total=c.reduce((a,b)=>a+b,0);
+  if(!total)return null;
+  const avg=total/c.length;
+  const std=Math.sqrt(c.reduce((a,b)=>a+Math.pow(b-avg,2),0)/c.length);
+  return Math.max(0,Math.round(100-(std/avg*100)));
+}
+function sInfo(s){
+  if(s===null)return{t:"Sin datos",c:"#94a3b8",bg:"#f1f5f9"};
+  if(s>=75)return{t:"Equitativo",c:"#16a34a",bg:"#dcfce7"};
+  if(s>=45)return{t:"Parcial",c:"#d97706",bg:"#fef3c7"};
+  return{t:"Concentrado",c:"#dc2626",bg:"#fee2e2"};
+}
+function bCol(n,mx){
+  if(!n) return "#ef4444"; // rojo = sin visitas
+  if(!mx||mx===0) return "#16a34a";
+  const r=n/mx;
+  // verde claro a verde oscuro según frecuencia
+  if(r<=0.33) return "#86efac"; // verde claro
+  if(r<=0.66) return "#22c55e"; // verde medio
+  return "#15803d";             // verde oscuro = más visitada
+}
+function bColText(n){return n===0?"#dc2626":"#15803d";}
+function Q(id,h){document.getElementById(id).innerHTML=h;}
+
+// ══════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════
+let LS={role:null,pin:"",err:false};
+function renderLogin(){
+  const{role,pin,err}=LS;
+  if(!role){
+    Q("root",`<div class="login-wrap"><div class="login-card">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:52px;height:52px;background:var(--naranja);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px;">📍</div>
+        <div style="font-size:19px;font-weight:800;">Supervisión de Visitas</div>
+        <div style="font-size:11px;color:var(--sub);margin-top:3px;letter-spacing:1px;text-transform:uppercase;">Cuartel Nezahualcóyotl</div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">¿Quién accede?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="setRole('admin')" style="background:#1e293b;border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;">🔑 DOZ</button>
+        ${REGS.filter(r=>r.id!==0).map(r=>`<button onclick="setRole(${r.id})" style="background:#f8fafc;border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:14px;font-weight:600;padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;">👤 ${r.n}</button>`).join("")}
+      </div>
+      <div style="text-align:center;margin-top:14px;">
+        <button onclick="openRec()" style="background:transparent;border:none;color:#cbd5e1;font-size:12px;cursor:pointer;text-decoration:underline;">¿Olvidaste tu PIN?</button>
+      </div>
+    </div></div>`);
+    return;
+  }
+  const nm=role==="admin"?"DOZ":getReg(parseInt(role)).n;
+  Q("root",`<div class="login-wrap"><div class="login-card">
+    <button onclick="LS={role:null,pin:'',err:false};renderLogin()" style="background:transparent;border:none;color:var(--sub);font-size:13px;cursor:pointer;margin-bottom:16px;">← Volver</button>
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="font-size:16px;font-weight:800;">${nm}</div>
+      <div style="font-size:12px;color:var(--sub);margin-top:3px;">Ingresa tu PIN de 4 dígitos</div>
+    </div>
+    <div class="pin-dots">${[0,1,2,3].map(i=>`<div class="dot ${i<pin.length?"on":""}"></div>`).join("")}</div>
+    ${err?`<div style="text-align:center;color:#dc2626;font-size:13px;font-weight:700;margin-bottom:6px;">PIN incorrecto</div>`:""}
+    <div class="pin-grid">
+      ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="pk" onclick="addPin('${n}')">${n}</button>`).join("")}
+      <button class="pk z" onclick="addPin('0')">0</button>
+      <button class="pk" onclick="delPin()">⌫</button>
+    </div>
+  </div></div>`);
+}
+function setRole(r){LS={role:r,pin:"",err:false};renderLogin();}
+function addPin(d){
+  if(LS.pin.length>=4)return;
+  LS.pin+=d;LS.err=false;
+  if(LS.pin.length===4)setTimeout(chkPin,120);else renderLogin();
+}
+function delPin(){LS.pin=LS.pin.slice(0,-1);LS.err=false;renderLogin();}
+function chkPin(){
+  const{role,pin}=LS;
+  const ok=role==="admin"?PINS.admin:(PINS[role]||DPINS[role]);
+  if(pin===ok){
+    svS({role:role==="admin"?"admin":"reg",rid:role==="admin"?null:parseInt(role)});
+    LS={role:null,pin:"",err:false};VIEW="REG";
+    R();         // mostrar la app primero
+    startPoll(); // luego sincronizar en segundo plano
+  } else {LS.pin="";LS.err=true;renderLogin();}
+}
+function openRec(){
+  showM(`<div style="text-align:center;">
+    <div style="font-size:28px;margin-bottom:10px;">🔑</div>
+    <div style="font-size:16px;font-weight:800;margin-bottom:6px;">Recuperar acceso</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:16px;">Código de recuperación para restablecer los PINs.</div>
+    <input type="password" id="rc" placeholder="Código" style="text-align:center;letter-spacing:4px;font-size:16px;margin-bottom:8px;">
+    <div id="re" style="color:#dc2626;font-size:12px;font-weight:700;min-height:18px;margin-bottom:8px;"></div>
+    <button class="btn btn-o" onclick="chkRec()">Restablecer</button>
+    <button class="btn btn-g" style="margin-top:8px;" onclick="closeM()">Cancelar</button>
+  </div>`);
+}
+function chkRec(){
+  if((document.getElementById("rc")?.value||"").trim().toUpperCase()==="NEZA2025"){
+    PINS=JSON.parse(JSON.stringify(DPINS));svP();closeM();showT("✓ PINs restablecidos","#16a34a");
+  } else {const e=document.getElementById("re");if(e)e.textContent="Código incorrecto";}
+}
+
+// ══════════════════════════════════════
+//  REGISTRO
+// ══════════════════════════════════════
+function renderReg(){
+  const isA=SES.role==="admin", rid=isA?null:SES.rid;
+  const syncTxt=LAST_SYNC?`Actualizado ${LAST_SYNC.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})}`:SYNCING?"Sincronizando...":"Sin conexión";
+  const syncCol=LAST_SYNC?"#16a34a":SYNCING?"#d97706":"#dc2626";
+
+  let hoyHtml="";
+  if(!isA){
+    const d=getDiaHoy(rid);
+    if(d){
+      const ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):null,t=dur(d.ap?.hora,d.ci?.hora);
+      hoyHtml=`<div class="card" style="margin-bottom:14px;border-left:4px solid var(--naranja);">
+        <div style="font-size:11px;font-weight:700;color:var(--naranja);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;">Tu día de hoy</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#fff7ed;border-radius:8px;padding:10px;">
+            <div style="font-size:9px;font-weight:700;color:var(--naranja);letter-spacing:.8px;margin-bottom:3px;">🌅 APERTURA</div>
+            <div style="font-size:13px;font-weight:700;">${ga.n||"—"}</div>
+            <div style="font-size:10px;color:var(--sub);">${d.ap?.hora||""}</div>
+          </div>
+          <div style="background:${gc?"#eff6ff":"#f8fafc"};border-radius:8px;padding:10px;">
+            <div style="font-size:9px;font-weight:700;color:var(--azul);letter-spacing:.8px;margin-bottom:3px;">🌆 CIERRE</div>
+            <div style="font-size:13px;font-weight:700;">${gc?gc.n:"Pendiente"}</div>
+            <div style="font-size:10px;color:var(--sub);">${d.ci?.hora||""}</div>
+          </div>
+        </div>
+        ${t?`<div style="text-align:center;margin-top:10px;"><span class="badge" style="background:#fff7ed;color:var(--naranja);border:1.5px solid #fed7aa;">⏱ ${t}</span></div>`:""}
+        <button onclick="delDia('${d._k}')" style="background:transparent;border:none;color:#cbd5e1;font-size:11px;cursor:pointer;margin-top:8px;display:block;width:100%;text-align:center;">✕ Eliminar registro de hoy</button>
+      </div>`;
+    }
+  }
+
+  return`<div class="page">
+    ${hoyHtml}
+    <div class="card">
+      <div class="tipo-wrap">
+        <button class="tipo-btn ${TIPO==="ap"?"ap":""}" onclick="TIPO='ap';R()">🌅 Apertura</button>
+        <button class="tipo-btn ${TIPO==="ci"?"ci":""}" onclick="TIPO='ci';R()">🌆 Cierre</button>
+      </div>
+      ${isA?`<span class="lbl" style="margin-top:0;">Gerente Regional</span>
+        <select id="sR" onchange="updG()" style="margin-bottom:14px;">
+          <option value="">— Selecciona —</option>
+          ${REGS.map(r=>`<option value="${r.id}">${r.n}</option>`).join("")}
+        </select>`:""}
+      <span class="lbl" ${isA?"":"style='margin-top:0;'"}>Gerencia</span>
+      <select id="sG" style="margin-bottom:14px;">
+        ${isA?`<option value="">— Elige regional primero —</option>`
+             :`<option value="">— Selecciona gerencia —</option>`+gersByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}
+      </select>
+      <span class="lbl">Fecha</span>
+      <input type="date" id="sF" value="${HOY}" style="margin-bottom:14px;">
+      <span class="lbl">Nota <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1;">(opcional)</span></span>
+      <textarea id="sN" rows="2" placeholder="Observaciones..." style="margin-bottom:16px;"></textarea>
+      <button class="btn" style="background:${TIPO==="ap"?"var(--naranja)":"var(--azul)"};color:#fff;" onclick="guardar()">
+        ${TIPO==="ap"?"🌅 Registrar Apertura":"🌆 Registrar Cierre"}
+      </button>
+    </div>
+    <div style="margin-top:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;">Últimos registros</div>
+        <button onclick="syncNow(true)" style="background:var(--gris);border:1.5px solid var(--borde);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;">↻ Actualizar</button>
+      </div>
+      ${renderUlt(isA,rid)}
+    </div>
+  </div>`;
+}
+
+function updG(){
+  const rid=parseInt(document.getElementById("sR")?.value);
+  const sel=document.getElementById("sG");
+  if(isNaN(rid)){sel.innerHTML=`<option value="">— Elige regional primero —</option>`;return;}
+  if(rid===0){
+    let h=`<option value="">— Selecciona gerencia —</option>`;
+    REGS.filter(r=>r.id!==0).forEach(r=>{
+      h+=`<optgroup label="${r.n}">${GERS.filter(g=>g.r===r.id).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}</optgroup>`;
+    });
+    sel.innerHTML=h;
+  } else {
+    sel.innerHTML=`<option value="">— Selecciona gerencia —</option>`+gersByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("");
+  }
+}
+
+async function guardar(){
+  const isA=SES.role==="admin";
+  const rid=isA?parseInt(document.getElementById("sR")?.value):SES.rid;
+  const gid=parseInt(document.getElementById("sG")?.value);
+  const fecha=document.getElementById("sF")?.value;
+  const nota=document.getElementById("sN")?.value.trim()||"";
+  if((isNaN(rid)||(!rid&&rid!==0))||!gid||!fecha){showT("Completa los campos","#dc2626");return;}
+
+  const btn=document.querySelector("#root button[onclick='guardar()']");
+  if(btn){btn.disabled=true;btn.textContent="Guardando...";}
+
+  const h=hora();
+  // Capturar GPS en silencio (no bloquea el guardado)
+  let lat=null,lng=null;
+  try {
+    const pos = await new Promise((res,rej)=>
+      navigator.geolocation?.getCurrentPosition(res,rej,{timeout:4000,maximumAge:0,enableHighAccuracy:true})
+    );
+    lat=parseFloat(pos.coords.latitude.toFixed(6));
+    lng=parseFloat(pos.coords.longitude.toFixed(6));
+  } catch(e){ /* sin GPS, continúa igual */ }
+
+  try {
+    const ex=getDias().find(d=>d.rid===rid&&d.fecha===fecha);
+    const puntoGPS=lat?{lat,lng}:null;
+    if(TIPO==="ap"){
+      if(ex) await fbPatch(`dias/${ex._k}`,{ap:{gid,hora:h,...(puntoGPS&&{lat:puntoGPS.lat,lng:puntoGPS.lng})}});
+      else await fbPost("dias",{rid,fecha,nota,ap:{gid,hora:h,...(puntoGPS&&{lat:puntoGPS.lat,lng:puntoGPS.lng})},ci:null});
+      showT("🌅 Apertura registrada","#e85d04");
+    } else {
+      if(ex) await fbPatch(`dias/${ex._k}`,{ci:{gid,hora:h,...(puntoGPS&&{lat:puntoGPS.lat,lng:puntoGPS.lng})}});
+      else await fbPost("dias",{rid,fecha,nota,ap:null,ci:{gid,hora:h,...(puntoGPS&&{lat:puntoGPS.lat,lng:puntoGPS.lng})}});
+      showT("🌆 Cierre registrado","#2563eb");
+    }
+    await syncNow(true);
+  } catch(e){
+    showT("⚠ Error al guardar. Verifica conexión","#dc2626");
+    if(btn){btn.disabled=false;btn.textContent=TIPO==="ap"?"🌅 Registrar Apertura":"🌆 Registrar Cierre";}
+  }
+}
+
+async function delDia(key){
+  try{
+    await fbDelete(`dias/${key}`);
+    await syncNow(true);
+    showT("Registro eliminado","#94a3b8");
+  }catch(e){showT("⚠ Error al eliminar","#dc2626");}
+}
+
+function renderUlt(isA,rid){
+  const list=getFilteredDias().filter(d=>isA?true:d.rid===rid).sort((a,b)=>b.fecha>a.fecha?1:-1).slice(0,8);
+  if(!list.length) return`<div style="text-align:center;color:#cbd5e1;padding:24px 0;font-size:14px;">${LAST_SYNC?"Sin registros aún":"⏳ Cargando datos..."}</div>`;
+  return list.map(d=>{
+    const reg=getReg(d.rid),ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):null;
+    const t=dur(d.ap?.hora,d.ci?.hora),bc=COLORS[d.rid]||"#e85d04";
+    return`<div class="rrow" style="border-left-color:${bc};">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:11px;font-weight:700;color:${bc};">${reg.n}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;color:var(--sub);">${shD(d.fecha)}</span>
+          ${t?`<span class="badge" style="background:#fff7ed;color:var(--naranja);">${t}</span>`:""}
+          <button onclick="delDia('${d._k}')" style="background:transparent;border:none;color:#e2e8f0;font-size:14px;cursor:pointer;padding:2px;">✕</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:#fff7ed;border-radius:8px;padding:8px;">
+          <div style="font-size:9px;font-weight:700;color:var(--naranja);">🌅 APERTURA</div>
+          <div style="font-size:12px;font-weight:700;margin-top:2px;">${ga.n||"—"}</div>
+          <div style="font-size:10px;color:var(--sub);">${d.ap?.hora||""}</div>
+        </div>
+        <div style="background:${gc?"#eff6ff":"#f8fafc"};border-radius:8px;padding:8px;">
+          <div style="font-size:9px;font-weight:700;color:var(--azul);">🌆 CIERRE</div>
+          <div style="font-size:12px;font-weight:700;margin-top:2px;">${gc?gc.n:"Pendiente"}</div>
+          <div style="font-size:10px;color:var(--sub);">${d.ci?.hora||""}</div>
+        </div>
+      </div>
+      ${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:8px;">📝 ${d.nota}</div>`:""}
+    </div>`;
+  }).join("");
+}
+
+// ══════════════════════════════════════
+//  DISTRIBUCIÓN
+// ══════════════════════════════════════
+function renderDist(){
+  const isA=SES.role==="admin";
+  const show=isA?REGS:REGS.filter(r=>r.id===SES.rid);
+  // Scroll al regional si viene desde Resumen
+  setTimeout(()=>{
+    if(DIST_TARGET!==null){
+      const el=document.getElementById("rc-"+DIST_TARGET);
+      if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+      DIST_TARGET=null;
+    }
+  },150);
+  return`<div class="page">${renderPeriodFilter()}${show.map(r=>{
+    const bc=COLORS[r.id]||"#e85d04";
+    if(r.id===0){
+      const tot=getFilteredDias().filter(d=>d.rid===0).length;
+      const cs=GERS.map(g=>({...g,v:visitCount(g.id,0)})).sort((a,b)=>b.v-a.v);
+      const mx=Math.max(...cs.map(c=>c.v),1);
+      return`<div id="rc-0" class="card" style="margin-bottom:14px;scroll-margin-top:130px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div><div style="font-size:15px;font-weight:800;">DOZ</div><div style="font-size:11px;color:var(--sub);">${tot} días · ${periodLabel()}</div></div>
+          <span class="badge" style="background:#fff7ed;color:var(--naranja);border:1.5px solid #fed7aa;">Cuartel completo</span>
+        </div>
+        <div class="div"></div>
+        ${REGS.filter(x=>x.id!==0).map(rg=>`<div style="margin-bottom:14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--gris);">${rg.n}</div>
+          ${cs.filter(g=>g.r===rg.id).map(g=>{const pct=Math.round(g.v/mx*100),bc2=bCol(g.v,mx);return`<div style="margin-bottom:7px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+              <span style="font-size:12px;font-weight:700;">${g.n} <span style="font-size:10px;color:var(--sub);">${g.cod}</span></span>
+              <span style="font-size:13px;font-weight:800;color:${g.v>0?bc2:"#e2e8f0"};">${g.v}</span>
+            </div>
+            <div class="bar-bg"><div class="bar" style="width:${pct}%;background:${bc2};"></div></div>
+          </div>`;}).join("")}
+        </div>`).join("")}
+      </div>`;
+    }
+    const sc=equityScore(r.id),si=sInfo(sc);
+    const cs=gersByR(r.id).map(g=>({...g,v:visitCount(g.id,r.id)})).sort((a,b)=>b.v-a.v);
+    const mx=Math.max(...cs.map(c=>c.v),1),mn=Math.min(...cs.map(c=>c.v));
+    const tot=cs.reduce((a,b)=>a+b.v,0);
+    return`<div id="rc-${r.id}" class="card" style="margin-bottom:14px;scroll-margin-top:130px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+        <div><div style="font-size:15px;font-weight:800;">${r.n}</div><div style="font-size:11px;color:var(--sub);">${gersByR(r.id).length} gerencias · ${tot} visitas · ${periodLabel()}</div></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${sc!==null?`<div style="font-size:22px;font-weight:800;color:${si.c};">${sc}%</div>`:""}
+          <span class="badge" style="background:${si.bg};color:${si.c};">${si.t}</span>
+        </div>
+      </div>
+      <div class="div"></div>
+      ${cs.map((g,i)=>{
+        const pct=Math.round(g.v/mx*100),bc2=bCol(g.v,mx);
+        const isTop=g.v===mx&&mx>0,isLow=g.v===mn;
+        return`<div style="margin-bottom:11px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;gap:6px;">
+            <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;">
+              <span style="font-size:10px;color:#cbd5e1;min-width:14px;">${i+1}</span>
+              <div style="min-width:0;">
+                <span style="font-size:13px;font-weight:700;">${g.n}</span>
+                <span style="font-size:10px;color:var(--sub);margin-left:4px;">${g.cod}</span>
+                ${isTop&&tot>0?`<span class="badge" style="background:#fee2e2;color:#dc2626;margin-left:4px;font-size:9px;">↑ más</span>`:""}
+                ${isLow&&g.v===0&&tot>0?`<span class="badge" style="background:#fee2e2;color:#dc2626;margin-left:4px;font-size:9px;">sin visitas</span>`:""}
+                ${isLow&&g.v>0&&!isTop?`<span class="badge" style="background:#fef3c7;color:#d97706;margin-left:4px;font-size:9px;">↓ menos</span>`:""}
+              </div>
+            </div>
+            <span style="font-size:13px;font-weight:800;color:${bColText(g.v)};flex-shrink:0;">${g.v}</span>
+          </div>
+          <div class="bar-bg"><div class="bar" style="width:${pct}%;background:${bc2};"></div></div>
+          ${g.g?`<div style="font-size:10px;color:var(--sub);margin-top:2px;padding-left:20px;">${g.g}</div>`:""}
+        </div>`;
+      }).join("")}
+      ${tot===0?`<div style="text-align:center;color:#cbd5e1;font-size:13px;padding:10px 0;">Sin visitas aún</div>`:""}
+      ${(()=>{
+        if(!tot)return"";
+        const mx2=cs[0],mn2=cs[cs.length-1];
+        if(mn2.v===0)return`<div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:11px 13px;margin-top:12px;font-size:12px;color:#92400e;">⚠️ <b>${mn2.n}</b> aún no ha sido visitada.</div>`;
+        if(sc!==null&&sc<45)return`<div style="background:#fff1f2;border:1.5px solid #fca5a5;border-radius:10px;padding:11px 13px;margin-top:12px;font-size:12px;color:#9f1239;">🔴 Alta concentración: <b>${mx2.n}</b> (${mx2.v}) vs <b>${mn2.n}</b> (${mn2.v}).</div>`;
+        return"";
+      })()}
+    </div>`;
+  }).join("")}</div>`;
+}
+
+// ══════════════════════════════════════
+//  CALENDARIO
+// ══════════════════════════════════════
+let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null,CAL_FILTER=null,DIST_TARGET=null,PERIOD='all',MAP_FILTER=null,HORA_FILTER=null;
+function renderCal(){
+  const isA=SES.role==="admin",rid=isA?null:SES.rid;
+  const fd1=new Date(CY,CM,1),ld=new Date(CY,CM+1,0);
+  const sdow=(fd1.getDay()+6)%7,total=ld.getDate(),todayS=fd(new Date());
+  const mn=fd1.toLocaleDateString("es-MX",{month:"long",year:"numeric"});
+  // Filtro activo: si DOZ seleccionó un regional, filtrar por ese
+  const filtroRid = isA ? CAL_FILTER : rid;
+  const dias=getDias().filter(d=>{
+    const dt=pd(d.fecha);
+    const inMonth=dt.getFullYear()===CY&&dt.getMonth()===CM;
+    if(!inMonth) return false;
+    if(!isA) return d.rid===rid;
+    return filtroRid!==null ? d.rid===filtroRid : true;
+  });
+  const byD={};dias.forEach(d=>{if(!byD[d.fecha])byD[d.fecha]=[];byD[d.fecha].push(d);});
+  const regsShow=isA?REGS:REGS.filter(r=>r.id===rid);
+
+  let detail="";
+  if(CDS){
+    const items=byD[CDS]||[];
+    const dl=pd(CDS).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"});
+    detail=`<div class="card" style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div><div style="font-size:14px;font-weight:800;text-transform:capitalize;">${dl}</div><div style="font-size:11px;color:var(--sub);">${items.length} registro${items.length!==1?"s":""}</div></div>
+        <button onclick="CDS=null;R()" style="background:transparent;border:none;color:var(--sub);font-size:22px;cursor:pointer;">×</button>
+      </div>
+      ${items.length===0?`<div style="text-align:center;color:#cbd5e1;padding:14px;font-size:14px;">Sin registros</div>`
+        :items.map(d=>{
+          const reg=getReg(d.rid),bc=COLORS[d.rid]||"#e85d04";
+          const ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):null,t=dur(d.ap?.hora,d.ci?.hora);
+          return`<div style="border-left:3px solid ${bc};padding:10px 12px;margin-bottom:8px;border-radius:0 8px 8px 0;background:#f8fafc;">
+            <div style="font-size:11px;font-weight:700;margin-bottom:8px;color:${bc};">${reg.n}${t?` · ⏱ ${t}`:""}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div><div style="font-size:9px;font-weight:700;color:var(--naranja);">🌅 APERTURA</div><div style="font-size:12px;font-weight:700;">${ga.n||"—"}</div><div style="font-size:10px;color:var(--sub);">${d.ap?.hora||""}</div></div>
+              <div><div style="font-size:9px;font-weight:700;color:var(--azul);">🌆 CIERRE</div><div style="font-size:12px;font-weight:700;">${gc?gc.n:"Pendiente"}</div><div style="font-size:10px;color:var(--sub);">${d.ci?.hora||""}</div></div>
+            </div>${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:6px;">📝 ${d.nota}</div>`:""}
+          </div>`;}).join("")}
+    </div>`;
+  }
+
+  // Contar días por regional (del mes completo sin filtro)
+  const todosLosDias=getDias().filter(d=>{const dt=pd(d.fecha);return dt.getFullYear()===CY&&dt.getMonth()===CM&&(isA||d.rid===rid);});
+  const ley=`<div style="margin-bottom:12px;">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      ${isA?`<button onclick="CAL_FILTER=null;CDS=null;R()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid ${CAL_FILTER===null?"#1e293b":"#e2e8f0"};background:${CAL_FILTER===null?"#1e293b":"transparent"};cursor:pointer;transition:all .15s;">
+        <div style="width:6px;height:6px;border-radius:50%;background:${CAL_FILTER===null?"#fff":"#1e293b"};"></div>
+        <span style="font-size:10px;font-weight:700;color:${CAL_FILTER===null?"#fff":"#1e293b"};">Todos</span>
+        <span style="font-size:9px;color:${CAL_FILTER===null?"#ffffffaa":"var(--sub)"};">${todosLosDias.length}</span>
+      </button>`:""}
+      ${regsShow.map(r=>{
+        const bc=COLORS[r.id]||"#e85d04";
+        const n=todosLosDias.filter(d=>d.rid===r.id).length;
+        const isActive=isA?(CAL_FILTER===r.id):(r.id===rid);
+        return`<button onclick="${isA?`CAL_FILTER=${r.id};CDS=null;R()`:""}" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid ${isActive?bc:bc+"40"};background:${isActive?bc:"transparent"};cursor:${isA?"pointer":"default"};transition:all .15s;">
+          <div style="width:6px;height:6px;border-radius:50%;background:${isActive?"#fff":bc};"></div>
+          <span style="font-size:10px;font-weight:700;color:${isActive?"#fff":bc};">${r.n}</span>
+          <span style="font-size:9px;color:${isActive?"#ffffffaa":"var(--sub)"};">${n}</span>
+        </button>`;}).join("")}
+    </div>
+    ${isA&&CAL_FILTER!==null?`<div style="font-size:11px;color:var(--sub);margin-top:8px;padding:6px 10px;background:#f8fafc;border-radius:8px;">
+      Mostrando solo: <b style="color:${COLORS[CAL_FILTER]||"#e85d04"};">${(REGS.find(r=>r.id===CAL_FILTER)||{}).n||""}</b>
+      — <button onclick="CAL_FILTER=null;CDS=null;R()" style="background:transparent;border:none;color:var(--naranja);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline;">Ver todos</button>
+    </div>`:""}
+  </div>`;
+
+  const dows=["L","M","X","J","V","S","D"];
+  let grid=`<div class="cal-grid" style="margin-bottom:4px;">${dows.map(d=>`<div class="cal-head">${d}</div>`).join("")}</div><div class="cal-grid">`;
+  for(let i=0;i<sdow;i++) grid+=`<div class="cal-cell empty"></div>`;
+  for(let day=1;day<=total;day++){
+    const ds=CY+"-"+String(CM+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+    const its=byD[ds]||[];
+    const isTod=ds===todayS,isSel=ds===CDS,isWk=((sdow+day-1)%7)>=5;
+    grid+=`<div onclick="CDS='${ds}';R()" class="cal-cell${isTod||isSel?" today":""}${isSel?" sel":""}${isWk?" wknd":""}">
+      <div class="cal-n${isTod?" hoy":isWk?" wk":""}">${day}</div>
+      ${its.slice(0,2).map(d=>{const bc=COLORS[d.rid]||"#e85d04";const ga=getGer(d.ap?.gid);
+        return`<div class="cal-pip" style="background:${bc};">${ga.n?(ga.n.replace("Gcc ","").replace("LCV ","")):"?"}</div>`;}).join("")}
+      ${its.length>2?`<div style="font-size:8px;color:var(--sub);font-weight:700;text-align:center;">+${its.length-2}</div>`:""}
+      ${its.length>0?`<div class="cal-badge">${its.length}</div>`:""}
+    </div>`;
+  }
+  grid+=`</div>`;
+  return`<div class="page">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <button onclick="CM--;if(CM<0){CM=11;CY--;}CDS=null;R()" style="background:var(--gris);border:none;border-radius:10px;padding:10px 16px;cursor:pointer;font-size:18px;color:#475569;">‹</button>
+      <div style="text-align:center;"><div style="font-size:16px;font-weight:800;text-transform:capitalize;">${mn}</div><div style="font-size:11px;color:var(--sub);">${dias.length} registro${dias.length!==1?"s":""}</div></div>
+      <button onclick="CM++;if(CM>11){CM=0;CY++;}CDS=null;R()" style="background:var(--gris);border:none;border-radius:10px;padding:10px 16px;cursor:pointer;font-size:18px;color:#475569;">›</button>
+    </div>
+    ${ley}${detail}
+    <div class="card" style="padding:12px;">${grid}</div>
+  </div>`;
+}
+
+// ══════════════════════════════════════
+//  RESUMEN
+// ══════════════════════════════════════
+function renderRes(){
+  const dias=getFilteredDias(),tot=dias.length;
+  const ac=GERS.map(g=>{const v=dias.filter(d=>d.ap?.gid===g.id||d.ci?.gid===g.id).length;return{...g,v};}).sort((a,b)=>b.v-a.v);
+  const sv=ac.filter(g=>g.v===0),cv=ac.filter(g=>g.v>0);
+  return`<div class="page">
+    ${renderPeriodFilter()}
+    <div class="stats">
+      <div class="stat"><div class="stat-n" style="color:var(--naranja);">${tot}</div><div class="stat-l">Total días</div></div>
+      <div class="stat"><div class="stat-n" style="color:#16a34a;">${cv.length}/${GERS.length}</div><div class="stat-l">Cubiertas</div></div>
+      <div class="stat"><div class="stat-n" style="color:${sv.length>0?"#dc2626":"#16a34a"};">${sv.length}</div><div class="stat-l">Sin visitar</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px;">Índice de Equidad</div>
+      ${REGS.filter(r=>r.id!==0).map(r=>{const sc=equityScore(r.id),si=sInfo(sc),t=dias.filter(d=>d.rid===r.id).length;
+        return`<div onclick="DIST_TARGET=${r.id};VIEW='DIST';R()" style="margin-bottom:13px;cursor:pointer;padding:10px;border-radius:10px;transition:background .15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;align-items:center;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:${COLORS[r.id]||'#e85d04'};flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:700;">${r.n}</span>
+              <span style="font-size:11px;color:var(--sub);">${t} días</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span style="font-size:13px;font-weight:800;color:${si.c};">${sc!==null?sc+"%":"—"}</span>
+              <span class="badge" style="background:${si.bg};color:${si.c};">${si.t}</span>
+              <span style="font-size:16px;color:var(--sub);">›</span>
+            </div>
+          </div>
+          <div class="bar-bg" style="height:6px;"><div class="bar" style="width:${sc||0}%;background:${si.c};"></div></div>
+        </div>`;}).join("")}
+      <div style="font-size:10px;color:#cbd5e1;margin-top:8px;">100% = distribución perfecta · menos de 45% = alta concentración</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div class="card">
+        <div style="font-size:10px;font-weight:700;color:#dc2626;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;">🔴 Más visitadas</div>
+        ${cv.slice(0,5).map(g=>`<div style="display:flex;justify-content:space-between;margin-bottom:9px;">
+          <div><div style="font-size:12px;font-weight:700;">${g.n}</div><div style="font-size:10px;color:var(--sub);">${getReg(g.r).n}</div></div>
+          <span style="font-size:15px;font-weight:800;color:#dc2626;">${g.v}</span>
+        </div>`).join("")||`<div style="color:#cbd5e1;font-size:12px;">Sin datos</div>`}
+      </div>
+      <div class="card">
+        <div style="font-size:10px;font-weight:700;color:#16a34a;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;">🟢 Menos visitadas</div>
+        ${(sv.length>0?sv:ac.slice().reverse()).slice(0,5).map(g=>`<div style="display:flex;justify-content:space-between;margin-bottom:9px;">
+          <div><div style="font-size:12px;font-weight:700;">${g.n}</div><div style="font-size:10px;color:var(--sub);">${getReg(g.r).n}</div></div>
+          <span style="font-size:15px;font-weight:800;color:${g.v===0?"#94a3b8":"#16a34a"};">${g.v}</span>
+        </div>`).join("")||`<div style="color:#cbd5e1;font-size:12px;">Sin datos</div>`}
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px;">Opciones</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn btn-g" onclick="exportCSV()">📊 Exportar CSV</button>
+        <button class="btn btn-g" onclick="openPins()">🔒 Cambiar PINs</button>
+        <button class="btn btn-r" onclick="confReset()">🗑 Borrar todos los registros</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════
+//  UTILIDADES
+// ══════════════════════════════════════
+function showM(html){const m=document.getElementById("modal");m.classList.add("show");m.innerHTML=`<div class="modal-box">${html}</div>`;}
+function closeM(){document.getElementById("modal").classList.remove("show");}
+function openPins(){
+  const roles=[{k:"admin",l:"DOZ"},...REGS.filter(r=>r.id!==0).map(r=>({k:String(r.id),l:r.n}))];
+  showM(`<div style="font-size:16px;font-weight:800;margin-bottom:4px;">🔒 Cambiar PINs</div>
+    <div style="font-size:13px;color:var(--sub);margin-bottom:18px;">4 dígitos por usuario</div>
+    ${roles.map(r=>`<div style="margin-bottom:13px;"><span class="lbl">${r.l}</span>
+      <input type="password" id="p_${r.k}" maxlength="4" placeholder="••••" value="${PINS[r.k]||""}" style="text-align:center;letter-spacing:6px;font-size:18px;"></div>`).join("")}
+    <button class="btn btn-o" style="margin-top:8px;" onclick="savePins2()">✓ Guardar</button>
+    <button class="btn btn-g" style="margin-top:8px;" onclick="closeM()">Cancelar</button>`);
+}
+function savePins2(){
+  ["admin","1","2","3","4","5"].forEach(k=>{const v=document.getElementById("p_"+k)?.value;if(v&&/^\d{4}$/.test(v))PINS[k]=v;});
+  svP();closeM();showT("✓ PINs actualizados","#16a34a");
+}
+function confReset(){
+  showM(`<div style="text-align:center;">
+    <div style="font-size:36px;margin-bottom:10px;">⚠️</div>
+    <div style="font-size:16px;font-weight:800;margin-bottom:6px;">¿Borrar todo?</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:20px;">Se eliminarán todos los registros. No se puede deshacer.</div>
+    <button class="btn btn-o" onclick="doReset()">Sí, borrar todo</button>
+    <button class="btn btn-g" style="margin-top:8px;" onclick="closeM()">Cancelar</button>
+  </div>`);
+}
+async function doReset(){
+  try{await fbDelete("dias");await syncNow();closeM();showT("Datos eliminados","#dc2626");}
+  catch(e){showT("⚠ Error al borrar","#dc2626");}
+}
+function exportCSV(){
+  const dias=getDias();
+  if(!dias.length){showT("Sin registros","#dc2626");return;}
+  let csv="Fecha,Regional,Ger.Apertura,Cod,Hora Apertura,Ger.Cierre,Cod,Hora Cierre,Tiempo,Nota\n";
+  dias.sort((a,b)=>a.fecha>b.fecha?1:-1).forEach(d=>{
+    const reg=getReg(d.rid),ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):{};
+    const t=dur(d.ap?.hora,d.ci?.hora)||"";
+    csv+=`"${d.fecha}","${reg.n}","${ga.n||""}","${ga.cod||""}","${d.ap?.hora||""}","${gc.n||""}","${gc.cod||""}","${d.ci?.hora||""}","${t}","${d.nota||""}"\n`;
+  });
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+  a.download="visitas_"+fd(new Date())+".csv";a.click();showT("✓ CSV descargado","#16a34a");
+}
+function showT(msg,bg="#16a34a"){
+  const t=document.getElementById("toast");
+  t.style.cssText=`display:block;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:${bg};border-radius:24px;padding:12px 22px;color:#fff;font-size:13px;font-weight:700;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);`;
+  t.textContent=msg;setTimeout(()=>{t.style.display="none";},2500);
+}
+
+
+function renderPeriodFilter(){
+  return`<div style="display:flex;gap:6px;margin-bottom:14px;background:#f1f5f9;border-radius:10px;padding:4px;">
+    ${["all","month","week"].map(p=>{
+      const labels={all:"Histórico",month:"Este mes",week:"Esta semana"};
+      const act=PERIOD===p;
+      return`<button onclick="PERIOD='${p}';R()" style="flex:1;padding:8px 6px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;background:${act?"#fff":"transparent"};color:${act?"var(--naranja)":"var(--sub)"};box-shadow:${act?"0 1px 3px rgba(0,0,0,.1)":"none"};">${labels[p]}</button>`;
+    }).join("")}
+  </div>`;
+}
+
+// ══════════════════════════════════════
+//  MAPA (solo DOZ)
+// ══════════════════════════════════════
+function renderMapa(){
+  const dias=getDias();
+  const pts=[];
+  dias.forEach(d=>{
+    if(d.ap?.lat) pts.push({...d,tipo:"apertura",lat:d.ap.lat,lng:d.ap.lng,hora:d.ap.hora,gid:d.ap.gid});
+    if(d.ci?.lat) pts.push({...d,tipo:"cierre",lat:d.ci.lat,lng:d.ci.lng,hora:d.ci.hora,gid:d.ci.gid});
+  });
+  const total=dias.length, conGPS=pts.length, sinGPS=total-Math.floor(conGPS/2);
+
+  setTimeout(()=>{
+    const ptsVisible=MAP_FILTER!==null?pts.filter(p=>p.rid===MAP_FILTER):pts;
+    if(!ptsVisible.length) return;
+    const mapEl=document.getElementById("mapa-div");
+    if(!mapEl||mapEl._map) return;
+    const avgLat=ptsVisible.reduce((a,v)=>a+v.lat,0)/ptsVisible.length;
+    const avgLng=ptsVisible.reduce((a,v)=>a+v.lng,0)/ptsVisible.length;
+
+    // Cargar Leaflet dinámicamente
+    const link=document.createElement("link");
+    link.rel="stylesheet";link.href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    document.head.appendChild(link);
+    const script=document.createElement("script");
+    script.src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.onload=()=>{
+      const map=L.map("mapa-div").setView([avgLat,avgLng],13);
+      mapEl._map=map;
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap",maxZoom:19}).addTo(map);
+      ptsVisible.forEach(p=>{
+        const col=COLORS[p.rid]||"#e85d04";
+        const icon=L.divIcon({className:"",
+          html:`<div style="width:${p.tipo==="apertura"?14:12}px;height:${p.tipo==="apertura"?14:12}px;background:${col};border:2.5px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3);"></div>`,
+          iconSize:[14,14],iconAnchor:[7,7]
+        });
+        const reg=getReg(p.rid),ger=getGer(p.gid);
+        const gmaps=`https://www.google.com/maps?q=${p.lat},${p.lng}`;
+        L.marker([p.lat,p.lng],{icon}).addTo(map)
+          .bindPopup(`<div style="font-family:'Trebuchet MS',sans-serif;min-width:160px;">
+            <div style="font-size:11px;font-weight:700;color:${col};margin-bottom:4px;">${reg.n} · ${p.tipo==="apertura"?"🌅 Apertura":"🌆 Cierre"}</div>
+            <div style="font-size:13px;font-weight:700;color:#1e293b;">${ger.n}</div>
+            <div style="font-size:11px;color:#64748b;margin-top:2px;">${shD(p.fecha)} · ${p.hora||""}</div>
+            <a href="${gmaps}" target="_blank" style="font-size:11px;color:#e85d04;font-weight:700;text-decoration:none;display:block;margin-top:6px;">📌 Ver en Google Maps ↗</a>
+          </div>`);
+      });
+      if(ptsVisible.length>1) map.fitBounds(L.latLngBounds(ptsVisible.map(p=>[p.lat,p.lng])),{padding:[30,30]});
+    };
+    document.head.appendChild(script);
+  },200);
+
+  // Guardar referencia para re-render del mapa
+  window._mapaData = {pts, MAP_FILTER};
+  return`<div class="page" style="max-width:100%;padding:0;">
+    <div style="padding:16px 16px 0;">
+      <div class="stats" style="margin-bottom:14px;">
+        <div class="stat"><div class="stat-n" style="color:var(--naranja);">${total}</div><div class="stat-l">Días reg.</div></div>
+        <div class="stat"><div class="stat-n" style="color:#16a34a;">${conGPS}</div><div class="stat-l">Puntos GPS</div></div>
+        <div class="stat"><div class="stat-n" style="color:var(--sub);">${sinGPS}</div><div class="stat-l">Sin GPS</div></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+        <button onclick="MAP_FILTER=null;renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid ${MAP_FILTER===null?'#1e293b':'#e2e8f0'};background:${MAP_FILTER===null?'#1e293b':'transparent'};cursor:pointer;transition:all .15s;">
+          <div style="width:6px;height:6px;border-radius:50%;background:${MAP_FILTER===null?'#fff':'#1e293b'};"></div>
+          <span style="font-size:10px;font-weight:700;color:${MAP_FILTER===null?'#fff':'#1e293b'};">Todos</span>
+          <span style="font-size:9px;color:${MAP_FILTER===null?'#ffffff88':'var(--sub)'};">${pts.length}</span>
+        </button>
+        ${REGS.map(r=>{const bc=COLORS[r.id]||"#e85d04";const n=pts.filter(p=>p.rid===r.id).length;const act=MAP_FILTER===r.id;
+          return`<button onclick="MAP_FILTER=${r.id};renderMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:4px 11px;border:2px solid ${act?bc:bc+'40'};background:${act?bc:'transparent'};cursor:pointer;transition:all .15s;">
+            <div style="width:6px;height:6px;border-radius:50%;background:${act?'#fff':bc};"></div>
+            <span style="font-size:10px;font-weight:700;color:${act?'#fff':bc};">${r.n}</span>
+            <span style="font-size:9px;color:${act?'#ffffff88':'var(--sub)'};">${n}</span>
+          </button>`;}).join("")}
+      </div>
+      ${MAP_FILTER!==null?`<div style="font-size:11px;color:var(--sub);margin-bottom:10px;padding:6px 10px;background:#f8fafc;border-radius:8px;">
+        Mostrando: <b style="color:${COLORS[MAP_FILTER]||'#e85d04'};">${(REGS.find(r=>r.id===MAP_FILTER)||{}).n||""}</b>
+        — <button onclick="MAP_FILTER=null;renderMapaView()" style="background:transparent;border:none;color:var(--naranja);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline;">Ver todos</button>
+      </div>`:""}
+    </div>
+    ${pts.length===0
+      ?`<div style="text-align:center;padding:48px 24px;">
+          <div style="font-size:40px;margin-bottom:14px;">🗺️</div>
+          <div style="font-size:15px;font-weight:800;color:#1e293b;margin-bottom:6px;">Sin ubicaciones GPS aún</div>
+          <div style="font-size:13px;color:#94a3b8;">Las ubicaciones se capturan automáticamente al registrar. El navegador pedirá permiso de ubicación la primera vez.</div>
+        </div>`
+      :`<div id="mapa-div" style="height:calc(100vh - 220px);width:100%;min-height:350px;"></div>
+       <div style="padding:14px 16px;">
+         <div style="font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Últimas ubicaciones</div>
+         ${(MAP_FILTER!==null?pts.filter(p=>p.rid===MAP_FILTER):pts).slice().reverse().slice(0,10).map(p=>{
+           const reg=getReg(p.rid),ger=getGer(p.gid),bc=COLORS[p.rid]||"#e85d04";
+           return`<div class="rrow" style="border-left-color:${bc};margin-bottom:7px;">
+             <div style="flex:1;">
+               <div style="font-size:10px;font-weight:700;color:${bc};">${reg.n} · ${p.tipo==="apertura"?"🌅":"🌆"} ${p.tipo==="apertura"?"Apertura":"Cierre"}</div>
+               <div style="font-size:13px;font-weight:700;">${ger.n} <span style="font-size:10px;color:var(--sub);">${ger.cod}</span></div>
+             </div>
+             <div style="text-align:right;flex-shrink:0;">
+               <div style="font-size:11px;color:var(--sub);">${shD(p.fecha)} · ${p.hora||""}</div>
+               <a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" style="font-size:10px;color:var(--naranja);font-weight:700;text-decoration:none;">Ver en Maps ↗</a>
+             </div>
+           </div>`;
+         }).join("")}
+       </div>`
+    }
+  </div>`;
+}
+
+
+// ══════════════════════════════════════
+//  HORARIOS Y TIEMPOS
+// ══════════════════════════════════════
+function renderHorarios(){
+  const isA=SES.role==="admin";
+  const sesRid=isA?null:SES.rid;
+  const dias=getFilteredDias()
+    .filter(d=>isA?(HORA_FILTER!==null?d.rid===HORA_FILTER:true):d.rid===sesRid)
+    .sort((a,b)=>b.fecha>a.fecha?1:-1);
+
+  // ── Estadísticas ──
+  // regsStats: solo días visibles para el usuario actual
+  const diasBase=getFilteredDias().filter(d=>isA?true:d.rid===sesRid);
+  const regsStats=REGS.filter(r=>r.id!==0).map(r=>{
+    const rdias=diasBase.filter(d=>d.rid===r.id&&d.ap?.hora);
+    const mins=rdias.map(d=>parseMin(d.ap.hora)).filter(m=>m!==null);
+    const avgMin=mins.length?Math.round(mins.reduce((a,b)=>a+b,0)/mins.length):null;
+    const tardanzas=mins.filter(m=>m>LIMITE_AM).length;
+    const sinCierre=diasBase.filter(d=>d.rid===r.id&&d.ap&&!d.ci).length;
+    const durs=getFilteredDias().filter(d=>d.rid===r.id&&d.ap?.hora&&d.ci?.hora)
+      .map(d=>parseMin(d.ci.hora)-parseMin(d.ap.hora)).filter(d=>d>0);
+    const avgDur=durs.length?Math.round(durs.reduce((a,b)=>a+b,0)/durs.length):null;
+    return{...r,avgMin,tardanzas,sinCierre,avgDur,total:rdias.length};
+  });
+
+  // Contar desde el mismo array "dias" que se muestra — consistencia garantizada
+  const totalTardanzas=dias.filter(d=>{const m=parseMin(d.ap?.hora);return m!==null&&m>LIMITE_AM;}).length;
+  const totalSinCierre=dias.filter(d=>d.ap&&!d.ci).length;
+
+  return`<div class="page">
+    ${renderPeriodFilter()}
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
+      <div class="stat"><div class="stat-n" style="color:var(--naranja);">${dias.length}</div><div class="stat-l">Registros</div></div>
+      <div class="stat"><div class="stat-n" style="color:#dc2626;">${totalTardanzas}</div><div class="stat-l">Tardanzas</div></div>
+      <div class="stat"><div class="stat-n" style="color:#d97706;">${totalSinCierre}</div><div class="stat-l">Sin cierre</div></div>
+    </div>
+
+    <!-- Resumen por regional (solo DOZ) -->
+    ${isA?`<div class="card" style="margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px;">Promedio por Regional</div>
+      ${regsStats.map(r=>{
+        const bc=COLORS[r.id]||"#e85d04";
+        const tarde=r.tardanzas>0;
+        const sinC=r.sinCierre>0;
+        return`<div onclick="HORA_FILTER=HORA_FILTER===${r.id}?null:${r.id};R()" style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;cursor:pointer;background:${HORA_FILTER===r.id?bc+"15":"transparent"};border:1.5px solid ${HORA_FILTER===r.id?bc:"transparent"};margin-bottom:6px;transition:all .15s;">
+          <div style="width:10px;height:10px;border-radius:50%;background:${bc};flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:700;color:var(--texto);">${r.n}</div>
+            <div style="display:flex;gap:10px;margin-top:3px;flex-wrap:wrap;">
+              <span style="font-size:11px;color:var(--sub);">📊 ${r.total} días</span>
+              ${r.avgMin!==null?`<span style="font-size:11px;font-weight:700;color:${r.avgMin>LIMITE_AM?"#dc2626":"#16a34a"};">🌅 Prom. ${minToHora(r.avgMin)}</span>`:""}
+              ${r.avgDur!==null?`<span style="font-size:11px;color:var(--sub);">⏱ Prom. ${Math.floor(r.avgDur/60)}h${r.avgDur%60>0?" "+(r.avgDur%60)+"min":""}</span>`:""}
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            ${tarde?`<span style="background:#fee2e2;color:#dc2626;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700;">⚠ ${r.tardanzas} tarde${r.tardanzas!==1?"s":""}</span>`:""}
+            ${sinC?`<span style="background:#fef3c7;color:#d97706;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700;">🔓 ${r.sinCierre} sin cierre</span>`:""}
+            ${!tarde&&!sinC&&r.total>0?`<span style="background:#dcfce7;color:#16a34a;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700;">✓ Al día</span>`:""}
+          </div>
+        </div>`;
+      }).join("")}
+      ${HORA_FILTER!==null?`<div style="text-align:center;margin-top:6px;">
+        <button onclick="HORA_FILTER=null;R()" style="background:transparent;border:none;color:var(--naranja);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline;">× Ver todos</button>
+      </div>`:""}
+    </div>`:""}
+
+    <!-- Lista de registros -->
+    <div style="font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">
+      Detalle de Registros ${HORA_FILTER!==null?"· "+(REGS.find(r=>r.id===HORA_FILTER)||{}).n:""}
+    </div>
+
+    ${dias.length===0
+      ?`<div style="text-align:center;padding:32px;color:#cbd5e1;font-size:14px;">Sin registros en este período</div>`
+      :dias.map(d=>{
+          const reg=getReg(d.rid),bc=COLORS[d.rid]||"#e85d04";
+          const gerAp=getGer(d.ap?.gid),gerCi=d.ci?getGer(d.ci.gid):null;
+          const apMin=parseMin(d.ap?.hora);
+          const tarde=apMin!==null&&apMin>LIMITE_AM;
+          const sinCierre=d.ap&&!d.ci;
+          const t=dur(d.ap?.hora,d.ci?.hora);
+          const dl=pd(d.fecha).toLocaleDateString("es-MX",{weekday:"short",day:"numeric",month:"short"});
+          return`<div style="background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid ${bc};">
+
+            <!-- Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;font-weight:700;color:${bc};">${reg.n}</span>
+                <span style="font-size:11px;color:var(--sub);text-transform:capitalize;">${dl}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                ${t?`<span style="background:#fff7ed;color:var(--naranja);border:1px solid #fed7aa;border-radius:20px;padding:2px 9px;font-size:11px;font-weight:700;">⏱ ${t}</span>`:""}
+                ${tarde?`<span style="background:#fee2e2;color:#dc2626;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">⚠ Tarde</span>`:""}
+                ${sinCierre?`<span style="background:#fef3c7;color:#d97706;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">🔓 Sin cierre</span>`:""}
+                ${!tarde&&!sinCierre&&d.ap?`<span style="background:#dcfce7;color:#16a34a;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">✓</span>`:""}
+              </div>
+            </div>
+
+            <!-- Apertura / Cierre -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:${tarde?"#fff1f2":apMin!==null?"#f0fdf4":"#fff7ed"};border-radius:10px;padding:10px;border:1.5px solid ${tarde?"#fca5a5":apMin!==null?"#86efac":"#fed7aa"};">
+                <div style="font-size:9px;font-weight:700;color:${tarde?"#dc2626":apMin!==null?"#16a34a":"var(--naranja)"};letter-spacing:.8px;margin-bottom:5px;">🌅 APERTURA</div>
+                ${d.ap?.lat
+                  ?`<a href="https://www.google.com/maps?q=${d.ap.lat},${d.ap.lng}" target="_blank" style="text-decoration:none;">
+                      <div style="font-size:18px;font-weight:800;color:${tarde?"#dc2626":apMin!==null?"#16a34a":"var(--naranja)"};">${d.ap?.hora||"—"} <span style="font-size:11px;">📌</span></div>
+                    </a>`
+                  :`<div style="font-size:18px;font-weight:800;color:${tarde?"#dc2626":apMin!==null?"#16a34a":"var(--naranja)"};">${d.ap?.hora||"—"}</div>`
+                }
+                <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">${gerAp.n||"—"}</div>
+                <div style="font-size:10px;color:var(--sub);">${gerAp.cod||""}</div>
+                ${d.ap?.lat?`<div style="font-size:9px;color:${tarde?"#dc2626":"#16a34a"};font-weight:700;margin-top:4px;"><a href="https://www.google.com/maps?q=${d.ap.lat},${d.ap.lng}" target="_blank" style="color:inherit;text-decoration:none;">📌 Ver ubicación en Maps</a></div>`:"<div style='font-size:9px;color:#cbd5e1;margin-top:4px;'>Sin GPS</div>"}
+                ${tarde?`<div style="font-size:9px;color:#dc2626;font-weight:700;margin-top:4px;">⚠ Después de las 9:00 a.m.</div>`:apMin!==null?`<div style="font-size:9px;color:#16a34a;font-weight:700;margin-top:4px;">✓ Antes de las 9:00 a.m.</div>`:""}
+              </div>
+              <div style="background:${sinCierre?"#fffbeb":d.ci?"#f0fdf4":"#f8fafc"};border-radius:10px;padding:10px;border:1.5px solid ${sinCierre?"#fcd34d":d.ci?"#86efac":"#e2e8f0"};">
+                <div style="font-size:9px;font-weight:700;color:${sinCierre?"#d97706":d.ci?"#16a34a":"var(--sub)"};letter-spacing:.8px;margin-bottom:5px;">🌆 CIERRE</div>
+                ${d.ci
+                  ?`${d.ci?.lat
+                      ?`<a href="https://www.google.com/maps?q=${d.ci.lat},${d.ci.lng}" target="_blank" style="text-decoration:none;">
+                          <div style="font-size:18px;font-weight:800;color:#16a34a;">${d.ci.hora||"—"} <span style="font-size:11px;">📌</span></div>
+                        </a>`
+                      :`<div style="font-size:18px;font-weight:800;color:#16a34a;">${d.ci.hora||"—"}</div>`
+                    }
+                    <div style="font-size:11px;color:var(--texto);font-weight:600;margin-top:3px;">${gerCi?gerCi.n:"—"}</div>
+                    <div style="font-size:10px;color:var(--sub);">${gerCi?gerCi.cod:""}</div>
+                    ${d.ci?.lat?`<div style="font-size:9px;color:#16a34a;font-weight:700;margin-top:4px;"><a href="https://www.google.com/maps?q=${d.ci.lat},${d.ci.lng}" target="_blank" style="color:inherit;text-decoration:none;">📌 Ver ubicación en Maps</a></div>`:"<div style='font-size:9px;color:#cbd5e1;margin-top:4px;'>Sin GPS</div>"}`
+                  :`<div style="font-size:14px;font-weight:800;color:#d97706;">Pendiente</div>
+                    <div style="font-size:9px;color:#d97706;font-weight:700;margin-top:6px;">🔓 No registró salida</div>`
+                }
+              </div>
+            </div>
+
+            ${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:10px;padding:7px 10px;background:#fffbeb;border-radius:8px;">📝 ${d.nota}</div>`:""}
+          </div>`;
+        }).join("")
+    }
+  </div>`;
+}
+
+// ══════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════
+function renderMapaView(){
+  // Destruir mapa existente para forzar re-render con filtro
+  const mapEl=document.getElementById("mapa-div");
+  if(mapEl&&mapEl._map){mapEl._map.remove();mapEl._map=null;}
+  VIEW="MAP"; R();
+}
+function switchTab(v){
+  VIEW=v;
+  if(v!=="MAP") MAP_FILTER=null;
+  if(v!=="HOR") HORA_FILTER=null;
+  if(v==="REG") syncNow(true);
+  else R();
+}
+function R(){
+  if(!SES){renderLogin();return;}
+  const isA=SES.role==="admin",nm=isA?"DOZ":getReg(SES.rid).n;
+  const syncCol=LAST_SYNC?"#16a34a":SYNCING?"#f59e0b":"#dc2626";
+  const syncTxt=LAST_SYNC?`● En línea`:SYNCING?"● Conectando...":"● Sin conexión";
+  const tabs=isA
+    ?[["REG","📋 Registro"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["MAP","🗺️ Mapa"],["HOR","⏱ Horarios"],["RES","🏆 Resumen"]]
+    :[["REG","📋 Registro"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["HOR","⏱ Horarios"]];
+  const vc=VIEW==="REG"?renderReg():VIEW==="DIST"?renderDist():VIEW==="CAL"?renderCal():VIEW==="MAP"?renderMapa():VIEW==="HOR"?renderHorarios():renderRes();
+  Q("root",`
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="logo">📍</div>
+      <div>
+        <div style="font-size:14px;font-weight:800;">Supervisión de Visitas</div>
+        <div id="sync_indicator" style="font-size:10px;color:${syncCol};font-weight:600;">${syncTxt}</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:12px;font-weight:700;">${nm}</span>
+      <button class="btn btn-g btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </div>
+  <div class="tabs">${tabs.map(([v,l])=>`<button class="tab ${VIEW===v?"on":""}" onclick="switchTab('${v}')">${l}</button>`).join("")}</div>
+  ${vc}
+  <div style="text-align:center;padding:16px;font-size:10px;color:#cbd5e1;letter-spacing:.8px;">CUARTEL NEZAHUALCÓYOTL · 5 REGIONALES · 34 GERENCIAS</div>`);
+}
+
+// ══════════════════════════════════════
+//  ARRANQUE
+// ══════════════════════════════════════
+if(SES){ R(); startPoll(); } else { R(); }
+</script>
+<script>
+// Registrar Service Worker para PWA
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("sw.js")
+      .then(()=>console.log("SW registrado"))
+      .catch(e=>console.log("SW error:",e));
+  });
+}
+// Generar ícono dinámico para iOS
+(function(){
+  try {
+    const c=document.createElement("canvas");
+    c.width=c.height=180;
+    const ctx=c.getContext("2d");
+    // Fondo naranja redondeado
+    ctx.beginPath();
+    const r=40,w=180,h=180;
+    ctx.moveTo(r,0);ctx.lineTo(w-r,0);ctx.quadraticCurveTo(w,0,w,r);
+    ctx.lineTo(w,h-r);ctx.quadraticCurveTo(w,h,w-r,h);
+    ctx.lineTo(r,h);ctx.quadraticCurveTo(0,h,0,h-r);
+    ctx.lineTo(0,r);ctx.quadraticCurveTo(0,0,r,0);
+    ctx.closePath();
+    ctx.fillStyle="#e85d04";ctx.fill();
+    // Pin blanco
+    ctx.fillStyle="#fff";
+    ctx.beginPath();ctx.arc(90,72,38,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(90,72,22,0,Math.PI*2);
+    ctx.fillStyle="#e85d04";ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(90,155);ctx.lineTo(60,108);ctx.lineTo(120,108);
+    ctx.closePath();ctx.fillStyle="#fff";ctx.fill();
+    // Aplicar como apple-touch-icon
+    const lnk=document.createElement("link");
+    lnk.rel="apple-touch-icon";lnk.href=c.toDataURL("image/png");
+    document.head.appendChild(lnk);
+  } catch(e){}
+})();
+</script>
+
+
+
+</body></html>
