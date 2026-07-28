@@ -300,9 +300,22 @@ function rReg(){
     ${hoy}
     <div class="card">
       <div class="tipo-wrap">
-        <button class="tipo-btn ${TIPO==="ap"?"ap":""}" onclick="TIPO='ap';R()">🌅 Apertura</button>
-        <button class="tipo-btn ${TIPO==="ci"?"ci":""}" onclick="TIPO='ci';R()">🌆 Cierre</button>
+        <button class="tipo-btn ${TIPO==="ap"?"ap":""}" onclick="TIPO='ap';R()" ${(()=>{if(!isA){const d=gDiaHoy(rid);return d?.ap?"disabled style='opacity:.5;cursor:not-allowed'":""} return ""})()}>🌅 Apertura</button>
+        <button class="tipo-btn ${TIPO==="ci"?"ci":""}" onclick="${(()=>{
+          if(!isA){const d=gDiaHoy(rid);if(!d?.ap)return "showT('⚠ Primero registra la Apertura','#dc2626')";if(d?.ci)return "showT('⚠ Ya registraste el cierre de hoy','#d97706')"}
+          return "TIPO='ci';R()"
+        })()}"
+        style="${(()=>{if(!isA){const d=gDiaHoy(rid);if(!d?.ap||d?.ci)return "opacity:.5;cursor:not-allowed"} return ""})()}">🌆 Cierre</button>
       </div>
+      ${(()=>{
+        if(!isA){
+          const d=gDiaHoy(rid);
+          if(!d?.ap) return `<div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠️ Debes registrar <b>Apertura</b> primero antes de poder registrar el Cierre.</div>`;
+          if(d?.ap&&!d?.ci) return `<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#1e40af;">✓ Apertura registrada a las <b>${d.ap.hora}</b>. Cuando termines el día registra el Cierre.</div>`;
+          if(d?.ap&&d?.ci) return `<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#15803d;">✅ Ya completaste tu registro de hoy. Apertura: <b>${d.ap.hora}</b> · Cierre: <b>${d.ci.hora}</b></div>`;
+        }
+        return "";
+      })()}
       ${isA?`<span class="lbl" style="margin-top:0">Regional</span>
         <select id="sR" onchange="updG()" style="margin-bottom:13px">
           <option value="">— Selecciona —</option>
@@ -313,7 +326,10 @@ function rReg(){
         ${isA?`<option value="">— Elige regional primero —</option>`:`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}
       </select>
       <span class="lbl">Fecha</span>
-      <input type="date" id="sF" value="${HOY}" style="margin-bottom:13px">
+      <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#15803d;">
+        📅 ${pd(HOY).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+        <span style="font-size:10px;font-weight:400;color:#16a34a;display:block;margin-top:2px">Fecha automática — solo se puede registrar hoy</span>
+      </div>
       <span class="lbl">Nota <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1">(opcional)</span></span>
       <textarea id="sN" rows="2" placeholder="Observaciones..." style="margin-bottom:16px"></textarea>
       <button class="btn" style="background:${TIPO==="ap"?"var(--o)":"var(--b)"};color:#fff" onclick="guardar()">
@@ -340,8 +356,31 @@ function updG(){
 }
 async function guardar(){
   const isA=SES.role==="admin",rid=isA?parseInt(document.getElementById("sR")?.value):SES.rid;
-  const gid=parseInt(document.getElementById("sG")?.value),fecha=document.getElementById("sF")?.value,nota=document.getElementById("sN")?.value.trim()||"";
-  if((isNaN(rid)||(!rid&&rid!==0))||!gid||!fecha){showT("Completa los campos","#dc2626");return}
+  const gid=parseInt(document.getElementById("sG")?.value),nota=document.getElementById("sN")?.value.trim()||"";
+  const fecha=HOY; // Siempre fecha de hoy — no se puede cambiar
+  if((isNaN(rid)||(!rid&&rid!==0))||!gid){showT("Completa los campos","#dc2626");return}
+
+  // Validar que solo se registre hoy
+  const hoyReal=fd(new Date());
+  if(fecha!==hoyReal){showT("⚠ Solo puedes registrar en la fecha de hoy","#dc2626");return}
+
+  // Validar: no puede registrar Cierre sin Apertura previa
+  if(TIPO==="ci"){
+    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===HOY);
+    if(!dHoy||!dHoy.ap){
+      showT("⚠ Debes registrar Apertura antes del Cierre","#dc2626");
+      // Cambiar automáticamente a apertura
+      TIPO="ap";R();return;
+    }
+    // Validar que no tenga ya cierre registrado
+    if(dHoy.ci){showT("⚠ Ya registraste el cierre de hoy","#d97706");return}
+  }
+
+  // Validar que apertura no esté ya registrada
+  if(TIPO==="ap"){
+    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===HOY);
+    if(dHoy?.ap){showT("⚠ Ya registraste la apertura de hoy","#d97706");return}
+  }
   const btn=document.querySelector("button[onclick='guardar()']");
   if(btn){btn.disabled=true;btn.textContent="Guardando..."}
   const h=hora();
