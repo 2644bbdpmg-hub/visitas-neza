@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Visitas - Cuartel Neza</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e85d04">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Visitas Neza">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--o:#e85d04;--b:#2563eb;--g:#f1f5f9;--br:#e2e8f0;--t:#1e293b;--s:#94a3b8;--w:#fff}
+body{background:#f0f2f5;color:var(--t);font-family:'Century Gothic','CenturyGothic','Trebuchet MS',Arial,sans-serif;min-height:100vh;font-size:15px}
+button,input,select,textarea{font-family:inherit;font-size:15px}
+input,select,textarea{background:#f8fafc;border:1.5px solid var(--br);border-radius:10px;color:var(--t);padding:11px 13px;outline:none;width:100%;transition:border .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--o)}
+select{cursor:pointer;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:38px}
+textarea{resize:vertical}
+.pg{max-width:480px;margin:0 auto;padding:16px}
+.pg-w{max-width:960px;margin:0 auto;padding:16px}
+.card{background:var(--w);border-radius:12px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.lbl{font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:6px;margin-top:13px}
+.btn{border:none;border-radius:10px;cursor:pointer;font-weight:700;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:7px;width:100%;font-size:14px;transition:all .15s}
+.btn-o{background:var(--o);color:#fff}
+.btn-b{background:var(--b);color:#fff}
+.btn-g{background:var(--g);color:#475569;border:1.5px solid var(--br)}
+.btn-r{background:#fee2e2;color:#dc2626;border:1.5px solid #fca5a5}
+.btn-sm{padding:8px 14px;font-size:11px;width:auto}
+.tipo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.tipo-btn{background:#f8fafc;border:2px solid var(--br);border-radius:10px;padding:13px;cursor:pointer;text-align:center;font-weight:700;font-size:14px;transition:all .15s}
+.tipo-btn.ap{border-color:var(--o);background:#fff7ed;color:var(--o)}
+.tipo-btn.ci{border-color:var(--b);background:#eff6ff;color:var(--b)}
+.tabs{display:flex;background:var(--w);border-bottom:1.5px solid var(--br);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:12px 14px;background:transparent;border:none;border-bottom:2.5px solid transparent;font-size:11px;font-weight:700;cursor:pointer;color:var(--s);white-space:nowrap;margin-bottom:-1.5px}
+.tab.on{border-bottom-color:var(--o);color:var(--o)}
+.hdr{background:var(--w);border-bottom:1.5px solid var(--br);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.logo{width:36px;height:36px;background:var(--o);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0}
+.lw{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff7ed,#f0f2f5,#eff6ff);padding:20px}
+.lc{background:var(--w);border-radius:20px;padding:30px 22px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.pin-dots{display:flex;gap:10px;justify-content:center;margin:16px 0}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--br);transition:all .15s}
+.dot.on{background:var(--o);border-color:var(--o)}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pk{background:#f8fafc;border:1.5px solid var(--br);border-radius:12px;font-size:22px;font-weight:700;color:var(--t);padding:15px;cursor:pointer;text-align:center;transition:all .15s}
+.pk:active{background:var(--o);color:#fff;border-color:var(--o)}
+.pk.z{grid-column:2}
+.bdg{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.rrow{background:var(--w);border-radius:10px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.05);border-left:3px solid var(--o)}
+.bar-bg{background:var(--g);border-radius:6px;height:8px;overflow:hidden}
+.bar{height:100%;border-radius:6px;transition:width .4s}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);align-items:flex-end;justify-content:center;z-index:200}
+.modal-bg.show{display:flex}
+.modal-box{background:var(--w);border-radius:20px 20px 0 0;padding:22px 18px 30px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-head{font-size:10px;font-weight:700;color:var(--s);text-align:center;padding:5px 0}
+.cal-cell{min-height:62px;background:var(--w);border-radius:7px;padding:4px;cursor:pointer;border:1.5px solid var(--br);position:relative}
+.cal-cell.sel,.cal-cell.today{border-color:var(--o)}
+.cal-cell.sel{background:#fff7ed}
+.cal-cell.wknd{background:#fafafa}
+.cal-cell.empty{background:transparent;border:none;cursor:default}
+.cal-pip{font-size:8px;font-weight:700;color:#fff;border-radius:3px;padding:1px 3px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-n{font-size:11px;font-weight:700}
+.cal-n.hoy{color:var(--o)}
+.cal-n.wk{color:var(--s)}
+.cal-badge{position:absolute;top:3px;right:3px;width:13px;height:13px;background:var(--o);border-radius:50%;font-size:7px;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.div{height:1px;background:var(--g);margin:13px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--w);border-radius:10px;padding:13px 8px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.stat-n{font-size:24px;font-weight:800;line-height:1}
+.stat-l{font-size:9px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-top:4px}
+.pf-wrap{display:flex;gap:6px;margin-bottom:14px;background:#f1f5f9;border-radius:10px;padding:4px}
+.pf-btn{flex:1;padding:8px 4px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:2px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="modal" class="modal-bg"></div>
+<div id="toast" style="display:none;position:fixed;bottom:22px;left:50%;transform:translateX(-50%);border-radius:24px;padding:11px 20px;color:#fff;font-size:13px;font-weight:700;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)"></div>
+<script>
+const FB="https://registro-de-visitas-86eea-default-rtdb.firebaseio.com";
+async function fbG(p){const r=await fetch(FB+"/"+p+".json");return r.json()}
+async function fbP(p,d){const r=await fetch(FB+"/"+p+".json",{method:"POST",body:JSON.stringify(d)});return r.json()}
+async function fbU(p,d){const r=await fetch(FB+"/"+p+".json",{method:"PATCH",body:JSON.stringify(d)});return r.json()}
+async function fbD(p){await fetch(FB+"/"+p+".json",{method:"DELETE"})}
+
+const REGS=[{id:0,n:"DOZ"},{id:1,n:"Nezahualcóyotl 1"},{id:2,n:"Nezahualcóyotl 2"},{id:3,n:"Nezahualcóyotl 3"},{id:4,n:"Nezahualcóyotl 4"},{id:5,n:"RCV Neza"}];
+const GERS=[
+  {id:101,cod:"8034",n:"Gcc Juan Escutia",g:"Victor Hugo Martínez Acosta",r:1},
+  {id:102,cod:"8243",n:"Gcc Nezahualcóyotl",g:"Jovanny Vázquez Moreno",r:1},
+  {id:103,cod:"8244",n:"Gcc Pajarera",g:"Karen Ramírez Pérez",r:1},
+  {id:104,cod:"8504",n:"Gcc El Sol",g:"Axel Yael Vázquez Valenzuela",r:1},
+  {id:105,cod:"9069",n:"Gcc Neza El Bordo",g:"Julian De Jesus Flores Aguilar",r:1},
+  {id:106,cod:"9258",n:"Gcc Palacio",g:"Adán Martínez Cruz",r:1},
+  {id:107,cod:"9700",n:"Gcc Agua Azul",g:"Manolo Sánchez Torres",r:1},
+  {id:201,cod:"8475",n:"Gcc Las Palomas",g:"Eugenio Galicia Yáñez",r:2},
+  {id:202,cod:"9070",n:"Gcc Zapotla",g:"Oscar Leonel Alfaro Hernández",r:2},
+  {id:203,cod:"9578",n:"Gcc Copalera Edo Mex",g:"Arturo Guzmán Campos",r:2},
+  {id:204,cod:"9585",n:"Gcc Xaltipac Edo Mex",g:"Rodrigo Daniel Díaz Moreno",r:2},
+  {id:205,cod:"9696",n:"Gcc Francisco Villa",g:"Liliana Elizabeth Flores Florencio",r:2},
+  {id:206,cod:"9936",n:"Gcc Acuitlapilco",g:"Roberto Pacheco Bernal",r:2},
+  {id:207,cod:"9965",n:"Gcc Xochiaca",g:"Jesús Alberto Gómez Martínez",r:2},
+  {id:301,cod:"8221",n:"Gcc Chimalhuacán",g:"Félix Cuéllar García",r:3},
+  {id:302,cod:"8223",n:"Gcc El Peñón",g:"María Del Rosario Cornejo Flores",r:3},
+  {id:303,cod:"8225",n:"Gcc Xochitenco",g:"Alicia Pérez Rubio",r:3},
+  {id:304,cod:"9177",n:"Gcc Plateros",g:"Ignacio Rodolfo Montoya Castro",r:3},
+  {id:305,cod:"9532",n:"Gcc Texcoco",g:"Luis Humberto Ortiz Cruz",r:3},
+  {id:306,cod:"9639",n:"Gcc Ejido Colectivo",g:"Cristian Santiago García",r:3},
+  {id:401,cod:"8237",n:"Gcc Neza Benito Juárez",g:"César Alejandro Bárcenas López",r:4},
+  {id:402,cod:"8350",n:"Gcc Aeropuerto",g:"José De Jesús Gutiérrez Sánchez",r:4},
+  {id:403,cod:"9262",n:"Gcc Tepozanes",g:"Rey David Pérez García",r:4},
+  {id:404,cod:"9637",n:"Gcc Neza La Esperanza",g:"Oscar Galicia Lozano",r:4},
+  {id:405,cod:"9640",n:"Gcc La Magdalena",g:"Carlos Daniel González Vences",r:4},
+  {id:406,cod:"9964",n:"Gcc San Pablo",g:"Anayeli López Camacho",r:4},
+  {id:407,cod:"9966",n:"Gcc Cuarta Avenida",g:"César García Rivera",r:4},
+  {id:501,cod:"4097",n:"LCV Jacarandas",g:"",r:5},
+  {id:502,cod:"4146",n:"LCV Agrícola Pantitlán",g:"",r:5},
+  {id:503,cod:"4096",n:"LCV Palacio",g:"",r:5},
+  {id:504,cod:"4077",n:"LCV La Magdalena",g:"",r:5},
+  {id:505,cod:"4093",n:"LCV Neza Benito Juárez",g:"",r:5},
+  {id:506,cod:"4106",n:"LCV Texcoco",g:"",r:5},
+  {id:507,cod:"4080",n:"LCV Plateros",g:"",r:5}
+];
+const CLR=["#1e293b","#2563eb","#16a34a","#9333ea","#e85d04","#0891b2"];
+const SKP="nezap8";
+const DP={admin:"3693",1:"1111",2:"2222",3:"3333",4:"4444",5:"5555"};
+let PINS=JSON.parse(localStorage.getItem(SKP)||"null")||JSON.parse(JSON.stringify(DP));
+let SES=JSON.parse(sessionStorage.getItem("nezas8")||"null");
+let VIEW="REG",TIPO="ap",DIAS={},SYNC=false,LAST=null,PT=null;
+let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null;
+let SEL_WEEK=null; // {year, week, start, end} semana seleccionada
+let SHOW_TARD=false; // filtro solo tardanzas
+let SEL_DAY=null; // fecha específica seleccionada
+let CAL_F=null,MAP_F=null,HOR_F=null,DIST_T=null,PER="all";
+function getHoy(){return fd(new Date())} // siempre fecha actual fresca
+const LIM=9*60;
+
+function svP(){localStorage.setItem(SKP,JSON.stringify(PINS))}
+function svS(s){sessionStorage.setItem("nezas8",JSON.stringify(s));SES=s}
+function logout(){sessionStorage.removeItem("nezas8");SES=null;stopP();R()}
+function fd(d){return d.toISOString().split("T")[0]}
+function pd(s){const[y,m,dd]=s.split("-").map(Number);return new Date(y,m-1,dd)}
+function shD(s){return pd(s).toLocaleDateString("es-MX",{day:"2-digit",month:"short"})}
+function hora(){return new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit",hour12:true})}
+function getReg(id){return REGS.find(r=>r.id===id)||{}}
+function getGer(id){return GERS.find(g=>g.id===id)||{}}
+function grByR(rid){return rid===0?GERS:GERS.filter(g=>g.r===rid)}
+function gDias(){return Object.entries(DIAS).map(([k,v])=>({...v,_k:k}))}
+function gFDias(){
+  const all=gDias();
+  // Filtro por día específico
+  if(SEL_DAY) return all.filter(d=>d.fecha===SEL_DAY);
+  // Filtro por semana operativa seleccionada
+  if(SEL_WEEK){
+    return all.filter(d=>d.fecha>=SEL_WEEK.start&&d.fecha<=SEL_WEEK.end);
+  }
+  if(PER==="all")return all;
+  const h=new Date();
+  if(PER==="month"){const y=h.getFullYear(),m=h.getMonth();return all.filter(d=>{const dt=pd(d.fecha);return dt.getFullYear()===y&&dt.getMonth()===m})}
+  if(PER==="week"){const dy=h.getDay(),mo=new Date(h);mo.setDate(h.getDate()-(dy===0?6:dy-1));mo.setHours(0,0,0,0);const su=new Date(mo);su.setDate(mo.getDate()+6);su.setHours(23,59,59,999);return all.filter(d=>{const dt=pd(d.fecha);return dt>=mo&&dt<=su})}
+  return all;
+}
+function gDiaHoy(rid){return gDias().find(d=>d.rid===rid&&d.fecha===getHoy())||null}
+function pMin(h){if(!h)return null;const[t,m]=h.replace(" a.m.","").replace(" p.m.","").split(":").map(Number);return(h.includes("p.m.")&&t!==12?t+12:t)*60+m}
+// ── Semanas ISO ──
+function getISOWeek(d){
+  const dt=new Date(d.getTime());dt.setHours(0,0,0,0);
+  dt.setDate(dt.getDate()+4-(dt.getDay()||7));
+  const y=new Date(dt.getFullYear(),0,1);
+  return{week:Math.ceil(((dt-y)/86400000+1)/7),year:dt.getFullYear()};
+}
+function getWeekRange(year,week){
+  const jan4=new Date(year,0,4);
+  const startOfW1=new Date(jan4);startOfW1.setDate(jan4.getDate()-(jan4.getDay()||7)+1);
+  const start=new Date(startOfW1);start.setDate(startOfW1.getDate()+(week-1)*7);
+  const end=new Date(start);end.setDate(start.getDate()+6);
+  return{start:fd(start),end:fd(end)};
+}
+function weeksInYear(year){
+  const dec28=new Date(year,11,28);return getISOWeek(dec28).week;
+}
+function dur(h1,h2){
+  if(!h1||!h2)return null;
+  const d=pMin(h2)-pMin(h1);if(d<=0)return null;
+  const hr=Math.floor(d/60),mn=d%60;return hr>0?`${hr}h${mn>0?" "+mn+"min":""}`:`${mn}min`
+}
+function vcnt(gid,rid){return gFDias().filter(d=>d.rid===rid&&(d.ap?.gid===gid||d.ci?.gid===gid)).length}
+function eqScore(rid){
+  const gs=grByR(rid),c=gs.map(g=>vcnt(g.id,rid)),tot=c.reduce((a,b)=>a+b,0);
+  if(!tot)return null;
+  const avg=tot/c.length,std=Math.sqrt(c.reduce((a,b)=>a+Math.pow(b-avg,2),0)/c.length);
+  return Math.max(0,Math.round(100-(std/avg*100)));
+}
+function sInfo(s){
+  if(s===null)return{t:"Sin datos",c:"#94a3b8",bg:"#f1f5f9"};
+  if(s>=75)return{t:"Equitativo",c:"#16a34a",bg:"#dcfce7"};
+  if(s>=45)return{t:"Parcial",c:"#d97706",bg:"#fef3c7"};
+  return{t:"Concentrado",c:"#dc2626",bg:"#fee2e2"};
+}
+function bCol(n,mx){
+  if(!n)return"#ef4444";
+  if(!mx)return"#16a34a";
+  const r=n/mx;return r<=.33?"#86efac":r<=.66?"#22c55e":"#15803d";
+}
+function Q(id,h){document.getElementById(id).innerHTML=h}
+function showT(msg,bg="#16a34a"){
+  const t=document.getElementById("toast");
+  t.style.cssText=`display:block;position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:${bg};border-radius:24px;padding:11px 20px;color:#fff;font-size:13px;font-weight:700;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)`;
+  t.textContent=msg;setTimeout(()=>{t.style.display="none"},2500);
+}
+function showM(html){const m=document.getElementById("modal");m.classList.add("show");m.innerHTML=`<div class="modal-box">${html}</div>`}
+function closeM(){document.getElementById("modal").classList.remove("show")}
+function pfWidget(){
+  const labs={all:"Histórico",month:"Este mes",week:"Esta semana"};
+  const hasCustom=SEL_WEEK||SEL_DAY;
+  // Calcular semana actual para el selector
+  const curWeek=getISOWeek(new Date());
+  const maxWeeks=weeksInYear(curWeek.year);
+  const selWk=SEL_WEEK?SEL_WEEK.week:curWeek.week;
+  const selYr=SEL_WEEK?SEL_WEEK.year:curWeek.year;
+  return`<div style="margin-bottom:14px">
+    <div class="pf-wrap" style="margin-bottom:8px">
+      ${["all","month","week"].map(p=>`<button class="pf-btn" onclick="SEL_WEEK=null;SEL_DAY=null;SHOW_TARD=false;PER='${p}';R()" style="background:${!hasCustom&&PER===p?"#fff":"transparent"};color:${!hasCustom&&PER===p?"var(--o)":"var(--s)"};box-shadow:${!hasCustom&&PER===p?"0 1px 3px rgba(0,0,0,.1)":"none"}">${labs[p]}</button>`).join("")}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid var(--br);border-radius:10px;padding:7px 12px;flex:1">
+        <span style="font-size:11px;font-weight:700;color:var(--s)">SEM</span>
+        <select onchange="setSemana(this.value,'${selYr}')" style="background:transparent;border:none;font-size:13px;font-weight:700;color:var(--t);padding:0;width:auto;cursor:pointer">
+          ${Array.from({length:maxWeeks},(_,i)=>{const w=i+1;const r=getWeekRange(selYr,w);return`<option value="${w}" ${selWk===w&&SEL_WEEK?"selected":""}>${w} · ${shD(r.start)}-${shD(r.end)}</option>`}).join("")}
+        </select>
+        <select onchange="setSemana('${selWk}',this.value)" style="background:transparent;border:none;font-size:13px;font-weight:700;color:var(--t);padding:0;width:auto;cursor:pointer">
+          ${[curWeek.year-1,curWeek.year,curWeek.year+1].map(y=>`<option value="${y}" ${selYr===y&&SEL_WEEK?"selected":""}>${y}</option>`).join("")}
+        </select>
+        <button onclick="setSemana('${selWk}','${selYr}')" style="background:var(--o);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer">Ver</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid var(--br);border-radius:10px;padding:7px 12px">
+        <span style="font-size:11px;font-weight:700;color:var(--s)">DÍA</span>
+        <input type="date" onchange="setDia(this.value)" value="${SEL_DAY||''}" style="background:transparent;border:none;font-size:13px;font-weight:700;color:var(--t);padding:0;width:auto;cursor:pointer">
+      </div>
+    </div>
+    ${hasCustom?`<div style="margin-top:8px;padding:6px 10px;background:#fff7ed;border-radius:8px;font-size:11px;color:#92400e;display:flex;align-items:center;justify-content:space-between">
+      <span>📅 ${perLbl()}</span>
+      <button onclick="SEL_WEEK=null;SEL_DAY=null;SHOW_TARD=false;PER='all';R()" style="background:transparent;border:none;color:var(--o);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline">× Quitar filtro</button>
+    </div>`:""}
+  </div>`;
+}
+function setSemana(week,year){
+  const w=parseInt(week),y=parseInt(year);
+  const range=getWeekRange(y,w);
+  SEL_WEEK={week:w,year:y,...range};
+  SEL_DAY=null;PER="all";SHOW_TARD=false;R();
+}
+function setDia(fecha){
+  if(!fecha){SEL_DAY=null;R();return}
+  SEL_DAY=fecha;SEL_WEEK=null;PER="all";SHOW_TARD=false;R();
+}
+function perLbl(){
+  if(SEL_DAY) return shD(SEL_DAY);
+  if(SEL_WEEK) return `Semana ${SEL_WEEK.week} (${shD(SEL_WEEK.start)} - ${shD(SEL_WEEK.end)})`;
+  return PER==="week"?"Esta semana":PER==="month"?"Este mes":"Histórico";
+}
+
+// ── SYNC ──
+async function syncNow(force=false){
+  SYNC=true;
+  try{const d=await fbG("dias");DIAS=d||{};LAST=new Date();SYNC=false;if(SES&&(VIEW!=="REG"||force))R();else if(SES)updSync()}
+  catch(e){SYNC=false;if(SES)updSync()}
+}
+function startP(){stopP();syncNow(true);PT=setInterval(()=>syncNow(),15000)}
+function stopP(){if(PT){clearInterval(PT);PT=null}}
+function updSync(){const el=document.getElementById("si");if(!el)return;const c=LAST?"#16a34a":SYNC?"#f59e0b":"#dc2626";const t=LAST?"● En línea":SYNC?"● Conectando...":"● Sin conexión";el.style.color=c;el.textContent=t}
+function swTab(v){VIEW=v;if(v!=="MAP")MAP_F=null;if(v!=="HOR")HOR_F=null;if(v==="REG")syncNow(true);else R()}
+
+// ── LOGIN ──
+let LS={role:null,pin:"",err:false};
+function rLogin(){
+  const{role,pin,err}=LS;
+  if(!role){
+    Q("root",`<div class="lw"><div class="lc">
+      <div style="text-align:center;margin-bottom:22px">
+        <div style="width:52px;height:52px;background:var(--o);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px">📍</div>
+        <div style="font-size:18px;font-weight:800">Supervisión de Visitas</div>
+        <div style="font-size:11px;color:var(--s);margin-top:3px;letter-spacing:1px;text-transform:uppercase">Cuartel Nezahualcóyotl</div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px">¿Quién accede?</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="setR('admin')" style="background:#1e293b;border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;padding:13px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px">🔑 DOZ</button>
+        ${REGS.filter(r=>r.id!==0).map(r=>`<button onclick="setR(${r.id})" style="background:#f8fafc;border:1.5px solid var(--br);border-radius:10px;color:var(--t);font-size:13px;font-weight:600;padding:13px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px">👤 ${r.n}</button>`).join("")}
+      </div>
+      <div style="text-align:center;margin-top:14px">
+        <button onclick="openRec()" style="background:transparent;border:none;color:#cbd5e1;font-size:12px;cursor:pointer;text-decoration:underline">¿Olvidaste tu PIN?</button>
+      </div>
+    </div></div>`);return;
+  }
+  const nm=role==="admin"?"DOZ":getReg(parseInt(role)).n;
+  Q("root",`<div class="lw"><div class="lc">
+    <button onclick="LS={role:null,pin:'',err:false};rLogin()" style="background:transparent;border:none;color:var(--s);font-size:13px;cursor:pointer;margin-bottom:16px">← Volver</button>
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:16px;font-weight:800">${nm}</div>
+      <div style="font-size:12px;color:var(--s);margin-top:3px">PIN de 4 dígitos</div>
+    </div>
+    <div class="pin-dots">${[0,1,2,3].map(i=>`<div class="dot ${i<pin.length?"on":""}"></div>`).join("")}</div>
+    ${err?`<div style="text-align:center;color:#dc2626;font-size:13px;font-weight:700;margin-bottom:6px">PIN incorrecto</div>`:""}
+    <div class="pin-grid">
+      ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="pk" onclick="addP('${n}')">${n}</button>`).join("")}
+      <button class="pk z" onclick="addP('0')">0</button>
+      <button class="pk" onclick="delP()">⌫</button>
+    </div>
+  </div></div>`);
+}
+function setR(r){LS={role:r,pin:"",err:false};rLogin()}
+function addP(d){if(LS.pin.length>=4)return;LS.pin+=d;LS.err=false;if(LS.pin.length===4)setTimeout(chkP,120);else rLogin()}
+function delP(){LS.pin=LS.pin.slice(0,-1);LS.err=false;rLogin()}
+function chkP(){
+  const{role,pin}=LS,ok=role==="admin"?PINS.admin:(PINS[role]||DP[role]);
+  if(pin===ok){svS({role:role==="admin"?"admin":"reg",rid:role==="admin"?null:parseInt(role)});LS={role:null,pin:"",err:false};VIEW="REG";R();startP()}
+  else{LS.pin="";LS.err=true;rLogin()}
+}
+function openRec(){
+  showM(`<div style="text-align:center">
+    <div style="font-size:26px;margin-bottom:10px">🔑</div>
+    <div style="font-size:15px;font-weight:800;margin-bottom:6px">Recuperar acceso</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:16px">Código de recuperación para restablecer los PINs.</div>
+    <input type="password" id="rc" placeholder="Código" style="text-align:center;letter-spacing:4px;font-size:16px;margin-bottom:8px">
+    <div id="re" style="color:#dc2626;font-size:12px;font-weight:700;min-height:16px;margin-bottom:8px"></div>
+    <button class="btn btn-o" onclick="chkRec()">Restablecer</button>
+    <button class="btn btn-g" style="margin-top:8px" onclick="closeM()">Cancelar</button>
+  </div>`);
+}
+function chkRec(){
+  if((document.getElementById("rc")?.value||"").trim().toUpperCase()==="NEZA2025"){
+    PINS=JSON.parse(JSON.stringify(DP));svP();closeM();showT("✓ PINs restablecidos");
+  } else{const e=document.getElementById("re");if(e)e.textContent="Código incorrecto"}
+}
+
+// ── REGISTRO ──
+function rReg(){
+  const isA=SES.role==="admin",rid=isA?null:SES.rid;
+  const sync=LAST?"● En línea":SYNC?"● Conectando...":"● Sin conexión";
+  const sc=LAST?"#16a34a":SYNC?"#f59e0b":"#dc2626";
+  let hoy="";
+  if(!isA){
+    const dPendiente=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
+    const d=dPendiente||gDiaHoy(rid);
+    if(d){
+      const ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):null,t=dur(d.ap?.hora,d.ci?.hora);
+      const esPendiente=dPendiente&&d.fecha!==getHoy();
+      hoy=`<div class="card" style="margin-bottom:14px;border-left:4px solid ${esPendiente?"#d97706":"var(--o)"}">
+        ${esPendiente?`<div style="font-size:10px;font-weight:700;color:#d97706;letter-spacing:.8px;margin-bottom:6px">⚠️ Cierre pendiente del ${shD(d.fecha)}</div>`:""}
+        <div style="font-size:11px;font-weight:700;color:${esPendiente?"#d97706":"var(--o)"};letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px">Tu día ${esPendiente?"pendiente":"de hoy"}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:#fff7ed;border-radius:8px;padding:10px">
+            <div style="font-size:9px;font-weight:700;color:var(--o);letter-spacing:.8px;margin-bottom:3px">🌅 APERTURA</div>
+            <div style="font-size:13px;font-weight:700">${ga.n||"—"}</div>
+            <div style="font-size:10px;color:var(--s)">${d.ap?.hora||""}</div>
+          </div>
+          <div style="background:${gc?"#eff6ff":"#f8fafc"};border-radius:8px;padding:10px">
+            <div style="font-size:9px;font-weight:700;color:var(--b);letter-spacing:.8px;margin-bottom:3px">🌆 CIERRE</div>
+            <div style="font-size:13px;font-weight:700">${gc?gc.n:"Pendiente"}</div>
+            <div style="font-size:10px;color:var(--s)">${d.ci?.hora||""}</div>
+          </div>
+        </div>
+        ${t?`<div style="text-align:center;margin-top:10px"><span class="bdg" style="background:#fff7ed;color:var(--o);border:1.5px solid #fed7aa">⏱ ${t}</span></div>`:""}
+        <button onclick="delDia('${d._k}')" style="background:transparent;border:none;color:#cbd5e1;font-size:11px;cursor:pointer;margin-top:8px;display:block;width:100%;text-align:center">✕ Eliminar registro de hoy</button>
+      </div>`;
+    }
+  }
+  return`<div class="pg">
+    ${hoy}
+    <div class="card">
+      <div class="tipo-wrap">
+        <button class="tipo-btn ${TIPO==="ap"?"ap":""}" onclick="TIPO='ap';R()" ${(()=>{if(!isA){const d=gDiaHoy(rid);return d?.ap?"disabled style='opacity:.5;cursor:not-allowed'":""} return ""})()}>🌅 Apertura</button>
+        <button class="tipo-btn ${TIPO==="ci"?"ci":""}" onclick="${(()=>{
+          if(!isA){
+            const pend=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci)[0];
+            if(!pend)return "showT('⚠ Primero registra la Apertura','#dc2626')";
+          }
+          return "TIPO='ci';R()"
+        })()}"
+        style="${(()=>{if(!isA){const pend=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci)[0];if(!pend)return "opacity:.5;cursor:not-allowed"} return ""})()}">🌆 Cierre</button>
+      </div>
+      ${(()=>{
+        if(!isA){
+          // Buscar apertura pendiente de cierre (hoy o días anteriores)
+          const dPend=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
+          const dHoyLocal=gDiaHoy(rid);
+          const d=dPend||dHoyLocal;
+          if(!d?.ap) return `<div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠️ Debes registrar <b>Apertura</b> primero antes de poder registrar el Cierre.</div>`;
+          if(dPend&&dPend.fecha!==getHoy()) return `<div style="background:#fef3c7;border:1.5px solid #fcd34d;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠️ Tienes apertura del <b>${shD(dPend.fecha)}</b> sin cierre. Registra el Cierre para completarlo.</div>`;
+          if(d?.ap&&!d?.ci) return `<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#1e40af;">✓ Apertura registrada a las <b>${d.ap.hora}</b>. Cuando termines el día registra el Cierre.</div>`;
+          if(d?.ap&&d?.ci) return `<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#15803d;">✅ Ya completaste tu registro de hoy. Apertura: <b>${d.ap.hora}</b> · Cierre: <b>${d.ci.hora}</b></div>`;
+        }
+        return "";
+      })()}
+      ${isA?`<span class="lbl" style="margin-top:0">Regional</span>
+        <select id="sR" onchange="updG()" style="margin-bottom:13px">
+          <option value="">— Selecciona —</option>
+          ${REGS.map(r=>`<option value="${r.id}">${r.n}</option>`).join("")}
+        </select>`:""}
+      <span class="lbl" ${isA?"":"style='margin-top:0'"}>Gerencia</span>
+      <select id="sG" style="margin-bottom:13px">
+        ${isA?`<option value="">— Elige regional primero —</option>`:`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}
+      </select>
+      <span class="lbl">Fecha</span>
+      <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#15803d;">
+        📅 ${pd(getHoy()).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+        <span style="font-size:10px;font-weight:400;color:#16a34a;display:block;margin-top:2px">Fecha automática — solo se puede registrar hoy</span>
+      </div>
+      <span class="lbl">Nota <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1">(opcional)</span></span>
+      <textarea id="sN" rows="2" placeholder="Observaciones..." style="margin-bottom:16px"></textarea>
+      <button class="btn" style="background:${TIPO==="ap"?"var(--o)":"var(--b)"};color:#fff" onclick="guardar()">
+        ${TIPO==="ap"?"🌅 Registrar Apertura":"🌆 Registrar Cierre"}
+      </button>
+    </div>
+    <div style="margin-top:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase">Últimos registros</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="si" style="font-size:11px;font-weight:600;color:${sc}">${sync}</span>
+          <button onclick="syncNow(true)" style="background:var(--g);border:1.5px solid var(--br);border-radius:7px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--s);cursor:pointer">↻</button>
+        </div>
+      </div>
+      ${rUlt(isA,rid)}
+    </div>
+  </div>`;
+}
+function updG(){
+  const rid=parseInt(document.getElementById("sR")?.value),sel=document.getElementById("sG");
+  if(isNaN(rid)){sel.innerHTML=`<option value="">— Elige regional primero —</option>`;return}
+  if(rid===0){let h=`<option value="">— Selecciona gerencia —</option>`;REGS.filter(r=>r.id!==0).forEach(r=>{h+=`<optgroup label="${r.n}">${GERS.filter(g=>g.r===r.id).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}</optgroup>`});sel.innerHTML=h}
+  else sel.innerHTML=`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("");
+}
+async function guardar(){
+  const isA=SES.role==="admin",rid=isA?parseInt(document.getElementById("sR")?.value):SES.rid;
+  const gid=parseInt(document.getElementById("sG")?.value),nota=document.getElementById("sN")?.value.trim()||"";
+  const fecha=HOY; // Siempre fecha de hoy — no se puede cambiar
+  if((isNaN(rid)||(!rid&&rid!==0))||!gid){showT("Completa los campos","#dc2626");return}
+
+  // Validar que solo se registre hoy
+  const hoyReal=fd(new Date());
+  if(fecha!==hoyReal){showT("⚠ Solo puedes registrar en la fecha de hoy","#dc2626");return}
+
+  // Validar: no puede registrar Cierre sin Apertura previa
+  if(TIPO==="ci"){
+    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
+    if(!dHoy||!dHoy.ap){
+      showT("⚠ Debes registrar Apertura antes del Cierre","#dc2626");
+      // Cambiar automáticamente a apertura
+      TIPO="ap";R();return;
+    }
+    // Validar que no tenga ya cierre registrado
+    if(dHoy.ci){showT("⚠ Ya registraste el cierre de hoy","#d97706");return}
+  }
+
+  // Validar que apertura no esté ya registrada
+  if(TIPO==="ap"){
+    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
+    if(dHoy?.ap){showT("⚠ Ya registraste la apertura de hoy","#d97706");return}
+  }
+  const btn=document.querySelector("button[onclick='guardar()']");
+  if(btn){btn.disabled=true;btn.textContent="Guardando..."}
+  const h=hora();
+  let lat=null,lng=null;
+  try{const pos=await new Promise((res,rej)=>navigator.geolocation?.getCurrentPosition(res,rej,{timeout:4000,maximumAge:0,enableHighAccuracy:true}));lat=parseFloat(pos.coords.latitude.toFixed(6));lng=parseFloat(pos.coords.longitude.toFixed(6))}catch(e){}
+  try{
+    const ex=gDias().find(d=>d.rid===rid&&d.fecha===fecha);
+    const gps=lat?{lat,lng}:null;
+    if(TIPO==="ap"){
+      const ap={gid,hora:h,...(gps&&{lat:gps.lat,lng:gps.lng})};
+      if(ex)await fbU(`dias/${ex._k}`,{ap});else await fbP("dias",{rid,fecha,nota,ap,ci:null});
+      showT("🌅 Apertura registrada","#e85d04");
+    } else {
+      const ci={gid,hora:h,...(gps&&{lat:gps.lat,lng:gps.lng})};
+      if(ex)await fbU(`dias/${ex._k}`,{ci});else await fbP("dias",{rid,fecha,nota,ap:null,ci});
+      showT("🌆 Cierre registrado","#2563eb");
+    }
+    await syncNow(true);
+  }catch(e){showT("⚠ Error al guardar","#dc2626");if(btn){btn.disabled=false;btn.textContent=TIPO==="ap"?"🌅 Registrar Apertura":"🌆 Registrar Cierre"}}
+}
+async function delDia(key){try{await fbD(`dias/${key}`);await syncNow(true);showT("Registro eliminado","#94a3b8")}catch(e){showT("⚠ Error","#dc2626")}}
+function rUlt(isA,rid){
+  const list=gFDias().filter(d=>isA?true:d.rid===rid).sort((a,b)=>b.fecha>a.fecha?1:-1).slice(0,8);
+  if(!list.length)return`<div style="text-align:center;color:#cbd5e1;padding:22px 0;font-size:14px">${LAST?"Sin registros aún":"⏳ Cargando..."}</div>`;
+  return list.map(d=>{
+    const reg=getReg(d.rid),ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):null,t=dur(d.ap?.hora,d.ci?.hora),bc=CLR[d.rid]||"#e85d04";
+    return`<div class="rrow" style="border-left-color:${bc}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:11px;font-weight:700;color:${bc}">${reg.n}</span>
+        <div style="display:flex;align-items:center;gap:7px">
+          <span style="font-size:11px;color:var(--s)">${shD(d.fecha)}</span>
+          ${t?`<span class="bdg" style="background:#fff7ed;color:var(--o)">${t}</span>`:""}
+          <button onclick="delDia('${d._k}')" style="background:transparent;border:none;color:#e2e8f0;font-size:14px;cursor:pointer;padding:2px">✕</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:#fff7ed;border-radius:8px;padding:8px">
+          <div style="font-size:9px;font-weight:700;color:var(--o)">🌅 APERTURA</div>
+          <div style="font-size:12px;font-weight:700;margin-top:2px">${ga.n||"—"}</div>
+          <div style="font-size:10px;color:var(--s)">${d.ap?.hora||""}</div>
+        </div>
+        <div style="background:${gc?"#eff6ff":"#f8fafc"};border-radius:8px;padding:8px">
+          <div style="font-size:9px;font-weight:700;color:var(--b)">🌆 CIERRE</div>
+          <div style="font-size:12px;font-weight:700;margin-top:2px">${gc?gc.n:"Pendiente"}</div>
+          <div style="font-size:10px;color:var(--s)">${d.ci?.hora||""}</div>
+        </div>
+      </div>
+      ${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:8px">📝 ${d.nota}</div>`:""}
+    </div>`;
+  }).join("");
+}
+
+// ── DISTRIBUCIÓN ──
+function rDist(){
+  const isA=SES.role==="admin",show=isA?REGS:REGS.filter(r=>r.id===SES.rid);
+  setTimeout(()=>{if(DIST_T!==null){const el=document.getElementById("rc-"+DIST_T);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});DIST_T=null}},150);
+  return`<div class="pg">${pfWidget()}${show.map(r=>{
+    if(r.id===0){
+      const tot=gFDias().filter(d=>d.rid===0).length,cs=GERS.map(g=>({...g,v:vcnt(g.id,0)})).sort((a,b)=>b.v-a.v),mx=Math.max(...cs.map(c=>c.v),1);
+      return`<div id="rc-0" class="card" style="margin-bottom:14px;scroll-margin-top:130px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div><div style="font-size:15px;font-weight:800">DOZ</div><div style="font-size:11px;color:var(--s)">${tot} días · ${perLbl()}</div></div>
+          <span class="bdg" style="background:#fff7ed;color:var(--o);border:1.5px solid #fed7aa">Cuartel completo</span>
+        </div>
+        <div class="div"></div>
+        ${REGS.filter(x=>x.id!==0).map(rg=>`<div style="margin-bottom:14px">
+          <div style="font-size:10px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid var(--g)">${rg.n}</div>
+          ${cs.filter(g=>g.r===rg.id).map(g=>{const pct=Math.round(g.v/mx*100),bc=bCol(g.v,mx);return`<div style="margin-bottom:7px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span style="font-size:12px;font-weight:700">${g.n} <span style="font-size:10px;color:var(--s)">${g.cod}</span></span>
+              <span style="font-size:13px;font-weight:800;color:${g.v>0?bc:"#ef4444"}">${g.v}</span>
+            </div>
+            <div class="bar-bg"><div class="bar" style="width:${pct}%;background:${bc}"></div></div>
+          </div>`}).join("")}
+        </div>`).join("")}
+      </div>`;
+    }
+    const sc=eqScore(r.id),si=sInfo(sc),cs=grByR(r.id).map(g=>({...g,v:vcnt(g.id,r.id)})).sort((a,b)=>b.v-a.v);
+    const mx=Math.max(...cs.map(c=>c.v),1),mn=Math.min(...cs.map(c=>c.v)),tot=cs.reduce((a,b)=>a+b.v,0);
+    return`<div id="rc-${r.id}" class="card" style="margin-bottom:14px;scroll-margin-top:130px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+        <div><div style="font-size:15px;font-weight:800">${r.n}</div><div style="font-size:11px;color:var(--s)">${grByR(r.id).length} gerencias · ${tot} visitas · ${perLbl()}</div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${sc!==null?`<div style="font-size:22px;font-weight:800;color:${si.c}">${sc}%</div>`:""}
+          <span class="bdg" style="background:${si.bg};color:${si.c}">${si.t}</span>
+        </div>
+      </div>
+      <div class="div"></div>
+      ${cs.map((g,i)=>{const pct=Math.round(g.v/mx*100),bc=bCol(g.v,mx),isTop=g.v===mx&&mx>0,isLow=g.v===mn;
+        return`<div style="margin-bottom:11px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;gap:6px">
+            <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
+              <span style="font-size:10px;color:#cbd5e1;min-width:14px">${i+1}</span>
+              <div style="min-width:0">
+                <span style="font-size:13px;font-weight:700">${g.n}</span>
+                <span style="font-size:10px;color:var(--s);margin-left:4px">${g.cod}</span>
+                ${isTop&&tot>0?`<span class="bdg" style="background:#fee2e2;color:#dc2626;margin-left:4px;font-size:9px">↑ más</span>`:""}
+                ${isLow&&g.v===0&&tot>0?`<span class="bdg" style="background:#fee2e2;color:#dc2626;margin-left:4px;font-size:9px">sin visitas</span>`:""}
+                ${isLow&&g.v>0&&!isTop?`<span class="bdg" style="background:#fef3c7;color:#d97706;margin-left:4px;font-size:9px">↓ menos</span>`:""}
+              </div>
+            </div>
+            <span style="font-size:13px;font-weight:800;color:${g.v>0?bc:"#ef4444"};flex-shrink:0">${g.v}</span>
+          </div>
+          <div class="bar-bg"><div class="bar" style="width:${pct}%;background:${bc}"></div></div>
+          ${g.g?`<div style="font-size:10px;color:var(--s);margin-top:2px;padding-left:20px">${g.g}</div>`:""}
+        </div>`;
+      }).join("")}
+      ${tot===0?`<div style="text-align:center;color:#cbd5e1;font-size:13px;padding:10px 0">Sin visitas aún</div>`:""}
+      ${(()=>{if(!tot)return"";const mx2=cs[0],mn2=cs[cs.length-1];
+        if(mn2.v===0)return`<div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:11px 13px;margin-top:12px;font-size:12px;color:#92400e">⚠️ <b>${mn2.n}</b> aún no ha sido visitada.</div>`;
+        if(sc!==null&&sc<45)return`<div style="background:#fff1f2;border:1.5px solid #fca5a5;border-radius:10px;padding:11px 13px;margin-top:12px;font-size:12px;color:#9f1239">🔴 Alta concentración: <b>${mx2.n}</b> (${mx2.v}) vs <b>${mn2.n}</b> (${mn2.v}).</div>`;
+        return"";
+      })()}
+    </div>`;
+  }).join("")}</div>`;
+}
+
+// ── CALENDARIO ──
+function rCal(){
+  const isA=SES.role==="admin",rid=isA?null:SES.rid;
+  const fd1=new Date(CY,CM,1),ld=new Date(CY,CM+1,0),sdow=(fd1.getDay()+6)%7,total=ld.getDate(),todayS=fd(new Date());
+  const mn=fd1.toLocaleDateString("es-MX",{month:"long",year:"numeric"});
+  const filtRid=isA?CAL_F:rid;
+  const dias=gDias().filter(d=>{const dt=pd(d.fecha);return dt.getFullYear()===CY&&dt.getMonth()===CM&&(filtRid!==null?d.rid===filtRid:!isA?d.rid===rid:true)});
+  const byD={};dias.forEach(d=>{if(!byD[d.fecha])byD[d.fecha]=[];byD[d.fecha].push(d)});
+  const todosD=gDias().filter(d=>{const dt=pd(d.fecha);return dt.getFullYear()===CY&&dt.getMonth()===CM&&(isA||d.rid===rid)});
+  const regsShow=isA?REGS:REGS.filter(r=>r.id===rid);
+  let det="";
+  if(CDS){
+    const items=byD[CDS]||[];
+    const dl=pd(CDS).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"});
+    det=`<div class="card" style="margin-bottom:13px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px">
+        <div><div style="font-size:14px;font-weight:800;text-transform:capitalize">${dl}</div><div style="font-size:11px;color:var(--s)">${items.length} registro${items.length!==1?"s":""}</div></div>
+        <button onclick="CDS=null;R()" style="background:transparent;border:none;color:var(--s);font-size:22px;cursor:pointer">×</button>
+      </div>
+      ${items.length===0?`<div style="text-align:center;color:#cbd5e1;padding:12px;font-size:14px">Sin registros</div>`
+        :items.map(d=>{const reg=getReg(d.rid),bc=CLR[d.rid]||"#e85d04",ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):null,t=dur(d.ap?.hora,d.ci?.hora);
+          return`<div style="border-left:3px solid ${bc};padding:10px 12px;margin-bottom:8px;border-radius:0 8px 8px 0;background:#f8fafc">
+            <div style="font-size:11px;font-weight:700;margin-bottom:7px;color:${bc}">${reg.n}${t?` · ⏱ ${t}`:""}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div><div style="font-size:9px;font-weight:700;color:var(--o)">🌅 APERTURA</div><div style="font-size:12px;font-weight:700">${ga.n||"—"}</div><div style="font-size:10px;color:var(--s)">${d.ap?.hora||""}</div></div>
+              <div><div style="font-size:9px;font-weight:700;color:var(--b)">🌆 CIERRE</div><div style="font-size:12px;font-weight:700">${gc?gc.n:"Pendiente"}</div><div style="font-size:10px;color:var(--s)">${d.ci?.hora||""}</div></div>
+            </div>${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:5px">📝 ${d.nota}</div>`:""}
+          </div>`}).join("")}
+    </div>`;
+  }
+  const ley=`<div style="margin-bottom:12px">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${isA?`<button onclick="CAL_F=null;CDS=null;R()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:3px 10px;border:2px solid ${CAL_F===null?"#1e293b":"#e2e8f0"};background:${CAL_F===null?"#1e293b":"transparent"};cursor:pointer">
+        <div style="width:6px;height:6px;border-radius:50%;background:${CAL_F===null?"#fff":"#1e293b"}"></div>
+        <span style="font-size:10px;font-weight:700;color:${CAL_F===null?"#fff":"#1e293b"}">Todos</span>
+        <span style="font-size:9px;color:${CAL_F===null?"#ffffff88":"var(--s)"}"> ${todosD.length}</span>
+      </button>`:""}
+      ${regsShow.map(r=>{const bc=CLR[r.id]||"#e85d04",n=todosD.filter(d=>d.rid===r.id).length,act=isA?(CAL_F===r.id):(r.id===rid);
+        return`<button onclick="${isA?`CAL_F=${r.id};CDS=null;R()`:""}" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:3px 10px;border:2px solid ${act?bc:bc+"40"};background:${act?bc:"transparent"};cursor:${isA?"pointer":"default"}">
+          <div style="width:6px;height:6px;border-radius:50%;background:${act?"#fff":bc}"></div>
+          <span style="font-size:10px;font-weight:700;color:${act?"#fff":bc}">${r.n}</span>
+          <span style="font-size:9px;color:${act?"#ffffff88":"var(--s)"}"> ${n}</span>
+        </button>`;}).join("")}
+    </div>
+    ${isA&&CAL_F!==null?`<div style="font-size:11px;color:var(--s);margin-top:7px;padding:5px 9px;background:#f8fafc;border-radius:8px">
+      Mostrando: <b style="color:${CLR[CAL_F]||"#e85d04"}">${(REGS.find(r=>r.id===CAL_F)||{}).n||""}</b>
+      — <button onclick="CAL_F=null;CDS=null;R()" style="background:transparent;border:none;color:var(--o);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline">Ver todos</button>
+    </div>`:""}
+  </div>`;
+  const dows=["L","M","X","J","V","S","D"];
+  let grid=`<div class="cal-grid" style="margin-bottom:4px">${dows.map(d=>`<div class="cal-head">${d}</div>`).join("")}</div><div class="cal-grid">`;
+  for(let i=0;i<sdow;i++)grid+=`<div class="cal-cell empty"></div>`;
+  for(let day=1;day<=total;day++){
+    const ds=CY+"-"+String(CM+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+    const its=byD[ds]||[];const isTod=ds===todayS,isSel=ds===CDS,isWk=((sdow+day-1)%7)>=5;
+    grid+=`<div onclick="CDS='${ds}';R()" class="cal-cell${isTod||isSel?" today":""}${isSel?" sel":""}${isWk?" wknd":""}">
+      <div class="cal-n${isTod?" hoy":isWk?" wk":""}">${day}</div>
+      ${its.slice(0,2).map(d=>{const bc=CLR[d.rid]||"#e85d04",ga=getGer(d.ap?.gid);return`<div class="cal-pip" style="background:${bc}">${ga.n?(ga.n.replace("Gcc ","").replace("LCV ","")):"?"}</div>`}).join("")}
+      ${its.length>2?`<div style="font-size:8px;color:var(--s);font-weight:700;text-align:center">+${its.length-2}</div>`:""}
+      ${its.length>0?`<div class="cal-badge">${its.length}</div>`:""}
+    </div>`;
+  }
+  grid+=`</div>`;
+  return`<div class="pg">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <button onclick="CM--;if(CM<0){CM=11;CY--;}CDS=null;R()" style="background:var(--g);border:none;border-radius:10px;padding:9px 15px;cursor:pointer;font-size:18px;color:#475569">‹</button>
+      <div style="text-align:center"><div style="font-size:16px;font-weight:800;text-transform:capitalize">${mn}</div><div style="font-size:11px;color:var(--s)">${dias.length} registro${dias.length!==1?"s":""}</div></div>
+      <button onclick="CM++;if(CM>11){CM=0;CY++;}CDS=null;R()" style="background:var(--g);border:none;border-radius:10px;padding:9px 15px;cursor:pointer;font-size:18px;color:#475569">›</button>
+    </div>
+    ${ley}${det}
+    <div class="card" style="padding:11px">${grid}</div>
+  </div>`;
+}
+
+// ── MAPA ──
+let _map=null;
+function rMapa(){
+  const pts=[];
+  gDias().forEach(d=>{
+    if(d.ap?.lat)pts.push({...d,tipo:"ap",lat:d.ap.lat,lng:d.ap.lng,hora:d.ap.hora,gid:d.ap.gid});
+    if(d.ci?.lat)pts.push({...d,tipo:"ci",lat:d.ci.lat,lng:d.ci.lng,hora:d.ci.hora,gid:d.ci.gid});
+  });
+  const vis=MAP_F!==null?pts.filter(p=>p.rid===MAP_F):pts;
+  setTimeout(()=>{
+    const el=document.getElementById("mapa-div");if(!el||!vis.length)return;
+    if(_map){_map.remove();_map=null}
+    const al=vis.reduce((a,v)=>a+v.lat,0)/vis.length,ag=vis.reduce((a,v)=>a+v.lng,0)/vis.length;
+    const lnk=document.createElement("link");lnk.rel="stylesheet";lnk.href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";document.head.appendChild(lnk);
+    const sc=document.createElement("script");sc.src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    sc.onload=()=>{
+      _map=L.map("mapa-div").setView([al,ag],13);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap",maxZoom:19}).addTo(_map);
+      vis.forEach(p=>{
+        const col=CLR[p.rid]||"#e85d04",reg=getReg(p.rid),ger=getGer(p.gid);
+        const icon=L.divIcon({className:"",html:`<div style="width:14px;height:14px;background:${col};border:2.5px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`,iconSize:[14,14],iconAnchor:[7,7]});
+        L.marker([p.lat,p.lng],{icon}).addTo(_map).bindPopup(`<div style="font-family:'Trebuchet MS',sans-serif;min-width:150px">
+          <div style="font-size:11px;font-weight:700;color:${col};margin-bottom:3px">${reg.n} · ${p.tipo==="ap"?"🌅":"🌆"}</div>
+          <div style="font-size:13px;font-weight:700;color:#1e293b">${ger.n}</div>
+          <div style="font-size:11px;color:#64748b">${shD(p.fecha)}${p.hora?" · "+p.hora:""}</div>
+          <a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" style="font-size:11px;color:#e85d04;font-weight:700;text-decoration:none;display:block;margin-top:5px">📌 Ver en Maps ↗</a>
+        </div>`);
+      });
+      if(vis.length>1)_map.fitBounds(L.latLngBounds(vis.map(p=>[p.lat,p.lng])),{padding:[30,30]});
+    };document.head.appendChild(sc);
+  },200);
+  return`<div class="pg" style="max-width:100%;padding:0">
+    <div style="padding:14px 14px 0">
+      <div class="stats" style="margin-bottom:12px">
+        <div class="stat"><div class="stat-n" style="color:var(--o)">${gDias().length}</div><div class="stat-l">Total días</div></div>
+        <div class="stat"><div class="stat-n" style="color:#16a34a">${pts.length}</div><div class="stat-l">Puntos GPS</div></div>
+        <div class="stat"><div class="stat-n" style="color:var(--s)">${gDias().length-Math.floor(pts.length/2)}</div><div class="stat-l">Sin GPS</div></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+        <button onclick="MAP_F=null;rMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:3px 10px;border:2px solid ${MAP_F===null?"#1e293b":"#e2e8f0"};background:${MAP_F===null?"#1e293b":"transparent"};cursor:pointer">
+          <div style="width:6px;height:6px;border-radius:50%;background:${MAP_F===null?"#fff":"#1e293b"}"></div>
+          <span style="font-size:10px;font-weight:700;color:${MAP_F===null?"#fff":"#1e293b"}">Todos</span>
+        </button>
+        ${REGS.map(r=>{const bc=CLR[r.id]||"#e85d04",n=pts.filter(p=>p.rid===r.id).length,act=MAP_F===r.id;
+          return`<button onclick="MAP_F=${r.id};rMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:3px 10px;border:2px solid ${act?bc:bc+"40"};background:${act?bc:"transparent"};cursor:pointer">
+            <div style="width:6px;height:6px;border-radius:50%;background:${act?"#fff":bc}"></div>
+            <span style="font-size:10px;font-weight:700;color:${act?"#fff":bc}">${r.n} <span style="font-size:9px;opacity:.7">${n}</span></span>
+          </button>`}).join("")}
+      </div>
+    </div>
+    ${pts.length===0
+      ?`<div style="text-align:center;padding:40px 20px"><div style="font-size:38px;margin-bottom:12px">🗺️</div><div style="font-size:15px;font-weight:800;color:#1e293b;margin-bottom:6px">Sin ubicaciones GPS aún</div><div style="font-size:13px;color:#94a3b8">Las ubicaciones se capturan automáticamente al registrar.</div></div>`
+      :`<div id="mapa-div" style="height:calc(100vh - 200px);width:100%;min-height:320px"></div>
+       <div style="padding:12px 14px">
+         ${vis.slice().reverse().slice(0,10).map(p=>{const reg=getReg(p.rid),ger=getGer(p.gid),bc=CLR[p.rid]||"#e85d04";
+           return`<div class="rrow" style="border-left-color:${bc};margin-bottom:7px">
+             <div style="flex:1"><div style="font-size:10px;font-weight:700;color:${bc}">${reg.n} · ${p.tipo==="ap"?"🌅":"🌆"}</div><div style="font-size:13px;font-weight:700">${ger.n}</div></div>
+             <div style="text-align:right;flex-shrink:0"><div style="font-size:11px;color:var(--s)">${shD(p.fecha)}${p.hora?" · "+p.hora:""}</div><a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" style="font-size:10px;color:var(--o);font-weight:700;text-decoration:none">Ver en Maps ↗</a></div>
+           </div>`}).join("")}
+       </div>`
+    }
+  </div>`;
+}
+function rMapaView(){const el=document.getElementById("mapa-div");if(el&&el._map){el._map.remove();el._map=null}VIEW="MAP";R()}
+
+// ── HORARIOS ──
+function rHor(){
+  const isA=SES.role==="admin",sesRid=isA?null:SES.rid;
+  const diasBase=gFDias().filter(d=>isA?true:d.rid===sesRid);
+  let dias=diasBase.filter(d=>isA?(HOR_F!==null?d.rid===HOR_F:true):d.rid===sesRid).sort((a,b)=>b.fecha>a.fecha?1:-1);
+  // Filtrar solo tardanzas si está activo
+  if(SHOW_TARD) dias=dias.filter(d=>{const m=pMin(d.ap?.hora);return m!==null&&m>LIM});
+  const totT=dias.filter(d=>{const m=pMin(d.ap?.hora);return m!==null&&m>LIM}).length;
+  const totSC=dias.filter(d=>d.ap&&!d.ci).length;
+  const regsStats=REGS.filter(r=>r.id!==0).map(r=>{
+    const rd=diasBase.filter(d=>d.rid===r.id&&d.ap?.hora);
+    const mins=rd.map(d=>pMin(d.ap.hora)).filter(m=>m!==null);
+    const avgMin=mins.length?Math.round(mins.reduce((a,b)=>a+b,0)/mins.length):null;
+    const tard=diasBase.filter(d=>d.rid===r.id&&pMin(d.ap?.hora)>LIM).length;
+    const sinC=diasBase.filter(d=>d.rid===r.id&&d.ap&&!d.ci).length;
+    const durs=diasBase.filter(d=>d.rid===r.id&&d.ap?.hora&&d.ci?.hora).map(d=>pMin(d.ci.hora)-pMin(d.ap.hora)).filter(d=>d>0);
+    const avgDur=durs.length?Math.round(durs.reduce((a,b)=>a+b,0)/durs.length):null;
+    return{...r,avgMin,tard,sinC,avgDur,total:rd.length};
+  });
+  function mToH(m){if(m===null)return"—";const h=Math.floor(m/60),mn=m%60,ap=h>=12?"p.m.":"a.m.",hh=h>12?h-12:h===0?12:h;return`${hh}:${String(mn).padStart(2,"0")} ${ap}`}
+  return`<div class="pg">
+    ${pfWidget()}
+    <div class="stats">
+      <div class="stat" onclick="SHOW_TARD=false;R()" style="cursor:pointer;border:2px solid ${!SHOW_TARD?"var(--o)":"transparent"};transition:all .15s">
+        <div class="stat-n" style="color:var(--o)">${dias.length}</div><div class="stat-l">Registros</div></div>
+      <div class="stat" onclick="SHOW_TARD=!SHOW_TARD;R()" style="cursor:pointer;border:2px solid ${SHOW_TARD?"#dc2626":"transparent"};background:${SHOW_TARD?"#fff1f2":"#fff"};transition:all .15s" title="Clic para ver solo tardanzas">
+        <div class="stat-n" style="color:#dc2626">${totT}</div>
+        <div class="stat-l" style="color:${SHOW_TARD?"#dc2626":"var(--s)"}">⚠ Tardanzas${SHOW_TARD?" ✓":""}</div>
+      </div>
+      <div class="stat"><div class="stat-n" style="color:#d97706">${totSC}</div><div class="stat-l">Sin cierre</div></div>
+    </div>
+    ${SHOW_TARD?`<div style="background:#fff1f2;border:1.5px solid #fca5a5;border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:12px;color:#9f1239;display:flex;align-items:center;justify-content:space-between">
+      <span>🔴 Mostrando solo registros con tardanza (después de 9:00 a.m.)</span>
+      <button onclick="SHOW_TARD=false;R()" style="background:transparent;border:none;color:#dc2626;font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline">× Quitar</button>
+    </div>`:""}
+    ${isA?`<div class="card" style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:13px">Promedio por Regional</div>
+      ${regsStats.map(r=>{const bc=CLR[r.id]||"#e85d04",tard=r.tard>0,sinC=r.sinC>0;
+        return`<div onclick="HOR_F=HOR_F===${r.id}?null:${r.id};R()" style="display:flex;align-items:center;gap:11px;padding:10px;border-radius:10px;cursor:pointer;background:${HOR_F===r.id?bc+"15":"transparent"};border:1.5px solid ${HOR_F===r.id?bc:"transparent"};margin-bottom:6px;transition:all .15s">
+          <div style="width:10px;height:10px;border-radius:50%;background:${bc};flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">${r.n}</div>
+            <div style="display:flex;gap:10px;margin-top:3px;flex-wrap:wrap">
+              <span style="font-size:11px;color:var(--s)">📊 ${r.total} días</span>
+              ${r.avgMin!==null?`<span style="font-size:11px;font-weight:700;color:${r.avgMin>LIM?"#dc2626":"#16a34a"}">🌅 ${mToH(r.avgMin)}</span>`:""}
+              ${r.avgDur!==null?`<span style="font-size:11px;color:var(--s)">⏱ ${Math.floor(r.avgDur/60)}h${r.avgDur%60>0?" "+r.avgDur%60+"min":""}</span>`:""}
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            ${tard?`<span style="background:#fee2e2;color:#dc2626;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">⚠ ${r.tard} tarde${r.tard!==1?"s":""}</span>`:""}
+            ${sinC?`<span style="background:#fef3c7;color:#d97706;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">🔓 ${r.sinC} sin cierre</span>`:""}
+            ${!tard&&!sinC&&r.total>0?`<span style="background:#dcfce7;color:#16a34a;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">✓ Al día</span>`:""}
+          </div>
+        </div>`}).join("")}
+      ${HOR_F!==null?`<div style="text-align:center;margin-top:6px"><button onclick="HOR_F=null;R()" style="background:transparent;border:none;color:var(--o);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline">× Ver todos</button></div>`:""}
+    </div>`:""}
+    <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px">Detalle de Registros ${HOR_F!==null?"· "+(REGS.find(r=>r.id===HOR_F)||{}).n:""}</div>
+    ${dias.length===0?`<div style="text-align:center;padding:30px;color:#cbd5e1;font-size:14px">Sin registros en este período</div>`
+      :dias.map(d=>{
+        const reg=getReg(d.rid),bc=CLR[d.rid]||"#e85d04",gerAp=getGer(d.ap?.gid),gerCi=d.ci?getGer(d.ci.gid):null;
+        const apMin=pMin(d.ap?.hora),tarde=apMin!==null&&apMin>LIM,sinC=d.ap&&!d.ci,t=dur(d.ap?.hora,d.ci?.hora);
+        const dl=pd(d.fecha).toLocaleDateString("es-MX",{weekday:"short",day:"numeric",month:"short"});
+        return`<div style="background:#fff;border-radius:12px;padding:14px 15px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid ${bc}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:12px;font-weight:700;color:${bc}">${reg.n}</span>
+              <span style="font-size:11px;color:var(--s);text-transform:capitalize">${dl}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px">
+              ${t?`<span class="bdg" style="background:#fff7ed;color:var(--o);border:1px solid #fed7aa">⏱ ${t}</span>`:""}
+              ${tarde?`<span class="bdg" style="background:#fee2e2;color:#dc2626">⚠ Tarde</span>`:""}
+              ${sinC?`<span class="bdg" style="background:#fef3c7;color:#d97706">🔓 Sin cierre</span>`:""}
+              ${!tarde&&!sinC&&d.ap?`<span class="bdg" style="background:#dcfce7;color:#16a34a">✓</span>`:""}
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:${tarde?"#fff1f2":apMin!==null?"#f0fdf4":"#fff7ed"};border-radius:10px;padding:10px;border:1.5px solid ${tarde?"#fca5a5":apMin!==null?"#86efac":"#fed7aa"}">
+              <div style="font-size:9px;font-weight:700;color:${tarde?"#dc2626":apMin!==null?"#16a34a":"var(--o)"};letter-spacing:.8px;margin-bottom:4px">🌅 APERTURA</div>
+              ${d.ap?.lat?`<a href="https://www.google.com/maps?q=${d.ap.lat},${d.ap.lng}" target="_blank" style="text-decoration:none"><div style="font-size:17px;font-weight:800;color:${tarde?"#dc2626":apMin!==null?"#16a34a":"var(--o)"}">${d.ap?.hora||"—"} 📌</div></a>`:`<div style="font-size:17px;font-weight:800;color:${tarde?"#dc2626":apMin!==null?"#16a34a":"var(--o)"}">${d.ap?.hora||"—"}</div>`}
+              <div style="font-size:11px;color:var(--t);font-weight:600;margin-top:3px">${gerAp.n||"—"}</div>
+              <div style="font-size:10px;color:var(--s)">${gerAp.cod||""}</div>
+              ${tarde?`<div style="font-size:9px;color:#dc2626;font-weight:700;margin-top:3px">⚠ Después de las 9:00 a.m.</div>`:apMin!==null?`<div style="font-size:9px;color:#16a34a;font-weight:700;margin-top:3px">✓ Antes de las 9:00 a.m.</div>`:""}
+              ${d.ap?.lat?`<div style="font-size:9px;color:${tarde?"#dc2626":"#16a34a"};font-weight:700;margin-top:3px"><a href="https://www.google.com/maps?q=${d.ap.lat},${d.ap.lng}" target="_blank" style="color:inherit;text-decoration:none">📌 Ver en Maps</a></div>`:`<div style="font-size:9px;color:#cbd5e1;margin-top:3px">Sin GPS</div>`}
+            </div>
+            <div style="background:${sinC?"#fffbeb":d.ci?"#f0fdf4":"#f8fafc"};border-radius:10px;padding:10px;border:1.5px solid ${sinC?"#fcd34d":d.ci?"#86efac":"#e2e8f0"}">
+              <div style="font-size:9px;font-weight:700;color:${sinC?"#d97706":d.ci?"#16a34a":"var(--s)"};letter-spacing:.8px;margin-bottom:4px">🌆 CIERRE</div>
+              ${d.ci?`${d.ci?.lat?`<a href="https://www.google.com/maps?q=${d.ci.lat},${d.ci.lng}" target="_blank" style="text-decoration:none"><div style="font-size:17px;font-weight:800;color:#16a34a">${d.ci.hora||"—"} 📌</div></a>`:`<div style="font-size:17px;font-weight:800;color:#16a34a">${d.ci.hora||"—"}</div>`}
+                <div style="font-size:11px;color:var(--t);font-weight:600;margin-top:3px">${gerCi?gerCi.n:"—"}</div>
+                <div style="font-size:10px;color:var(--s)">${gerCi?gerCi.cod:""}</div>
+                ${d.ci?.lat?`<div style="font-size:9px;color:#16a34a;font-weight:700;margin-top:3px"><a href="https://www.google.com/maps?q=${d.ci.lat},${d.ci.lng}" target="_blank" style="color:inherit;text-decoration:none">📌 Ver en Maps</a></div>`:`<div style="font-size:9px;color:#cbd5e1;margin-top:3px">Sin GPS</div>`}`
+                :`<div style="font-size:14px;font-weight:800;color:#d97706">Pendiente</div><div style="font-size:9px;color:#d97706;font-weight:700;margin-top:5px">🔓 No registró salida</div>`}
+            </div>
+          </div>
+          ${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:9px;padding:7px 9px;background:#fffbeb;border-radius:8px">📝 ${d.nota}</div>`:""}
+        </div>`;
+      }).join("")}
+  </div>`;
+}
+
+// ── RESUMEN ──
+function rRes(){
+  const dias=gFDias(),tot=dias.length;
+  const ac=GERS.map(g=>{const v=dias.filter(d=>d.ap?.gid===g.id||d.ci?.gid===g.id).length;return{...g,v}}).sort((a,b)=>b.v-a.v);
+  const sv=ac.filter(g=>g.v===0),cv=ac.filter(g=>g.v>0);
+  return`<div class="pg">
+    ${pfWidget()}
+    <div class="stats">
+      <div class="stat"><div class="stat-n" style="color:var(--o)">${tot}</div><div class="stat-l">Total días</div></div>
+      <div class="stat"><div class="stat-n" style="color:#16a34a">${cv.length}/${GERS.length}</div><div class="stat-l">Cubiertas</div></div>
+      <div class="stat"><div class="stat-n" style="color:${sv.length>0?"#dc2626":"#16a34a"}">${sv.length}</div><div class="stat-l">Sin visitar</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:13px">Índice de Equidad</div>
+      ${REGS.filter(r=>r.id!==0).map(r=>{const sc=eqScore(r.id),si=sInfo(sc),t=gFDias().filter(d=>d.rid===r.id).length;
+        return`<div onclick="DIST_T=${r.id};VIEW='DIST';R()" style="margin-bottom:13px;cursor:pointer;padding:9px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;align-items:center">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:10px;height:10px;border-radius:50%;background:${CLR[r.id]||"#e85d04"};flex-shrink:0"></div>
+              <span style="font-size:13px;font-weight:700">${r.n}</span>
+              <span style="font-size:11px;color:var(--s)">${t} días</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px">
+              <span style="font-size:13px;font-weight:800;color:${si.c}">${sc!==null?sc+"%":"—"}</span>
+              <span class="bdg" style="background:${si.bg};color:${si.c}">${si.t}</span>
+              <span style="font-size:16px;color:var(--s)">›</span>
+            </div>
+          </div>
+          <div class="bar-bg" style="height:6px"><div class="bar" style="width:${sc||0}%;background:${si.c}"></div></div>
+        </div>`}).join("")}
+      <div style="font-size:10px;color:#cbd5e1;margin-top:8px">100% = distribución perfecta · menos de 45% = alta concentración</div>
+      <div class="div"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div><span style="font-size:13px;font-weight:700">DOZ</span><span style="font-size:11px;color:var(--s);margin-left:8px">${gFDias().filter(d=>d.rid===0).length} días</span></div>
+        <span class="bdg" style="background:#fff7ed;color:var(--o);border:1.5px solid #fed7aa">Cuartel completo</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="card">
+        <div style="font-size:10px;font-weight:700;color:#dc2626;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px">🔴 Más visitadas</div>
+        ${cv.slice(0,5).map(g=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+          <div><div style="font-size:12px;font-weight:700">${g.n}</div><div style="font-size:10px;color:var(--s)">${getReg(g.r).n}</div></div>
+          <span style="font-size:15px;font-weight:800;color:#dc2626">${g.v}</span>
+        </div>`).join("")||`<div style="color:#cbd5e1;font-size:12px">Sin datos</div>`}
+      </div>
+      <div class="card">
+        <div style="font-size:10px;font-weight:700;color:#16a34a;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px">🟢 Menos visitadas</div>
+        ${(sv.length>0?sv:ac.slice().reverse()).slice(0,5).map(g=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+          <div><div style="font-size:12px;font-weight:700">${g.n}</div><div style="font-size:10px;color:var(--s)">${getReg(g.r).n}</div></div>
+          <span style="font-size:15px;font-weight:800;color:${g.v===0?"#94a3b8":"#16a34a"}">${g.v}</span>
+        </div>`).join("")||`<div style="color:#cbd5e1;font-size:12px">Sin datos</div>`}
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:13px">Opciones</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-g" onclick="exportCSV()">📊 Exportar CSV</button>
+        <button class="btn btn-g" onclick="openPins()">🔒 Cambiar PINs</button>
+        <button class="btn btn-r" onclick="confReset()">🗑 Borrar todos los registros</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── OPCIONES ──
+function openPins(){
+  const roles=[{k:"admin",l:"DOZ"},...REGS.filter(r=>r.id!==0).map(r=>({k:String(r.id),l:r.n}))];
+  showM(`<div style="font-size:16px;font-weight:800;margin-bottom:4px">🔒 Cambiar PINs</div>
+    <div style="font-size:13px;color:var(--s);margin-bottom:16px">4 dígitos por usuario</div>
+    ${roles.map(r=>`<div style="margin-bottom:12px"><span class="lbl">${r.l}</span>
+      <input type="password" id="p_${r.k}" maxlength="4" placeholder="••••" value="${PINS[r.k]||""}" style="text-align:center;letter-spacing:6px;font-size:18px"></div>`).join("")}
+    <button class="btn btn-o" style="margin-top:8px" onclick="savePins2()">✓ Guardar</button>
+    <button class="btn btn-g" style="margin-top:8px" onclick="closeM()">Cancelar</button>`);
+}
+function savePins2(){["admin","1","2","3","4","5"].forEach(k=>{const v=document.getElementById("p_"+k)?.value;if(v&&/^\d{4}$/.test(v))PINS[k]=v});svP();closeM();showT("✓ PINs actualizados")}
+function confReset(){
+  showM(`<div style="text-align:center"><div style="font-size:34px;margin-bottom:10px">⚠️</div>
+    <div style="font-size:15px;font-weight:800;margin-bottom:6px">¿Borrar todo?</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:20px">Se eliminarán todos los registros. No se puede deshacer.</div>
+    <button class="btn btn-o" onclick="doReset()">Sí, borrar todo</button>
+    <button class="btn btn-g" style="margin-top:8px" onclick="closeM()">Cancelar</button></div>`);
+}
+async function doReset(){try{await fbD("dias");await syncNow(true);closeM();showT("Datos eliminados","#dc2626")}catch(e){showT("⚠ Error","#dc2626")}}
+function exportCSV(){
+  // Exportar SOLO los datos del filtro activo
+  const dias=gFDias();if(!dias.length){showT("Sin registros en el período seleccionado","#dc2626");return}
+  const periodo=perLbl().replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-]/g,"").trim().replace(/\s+/g,"_");
+  let csv=`Período: ${perLbl()}\nFecha,Regional,Ger.Apertura,Cod,Hora Apertura,GPS Ap,Ger.Cierre,Cod,Hora Cierre,GPS Ci,Tiempo,Nota\n`;
+  dias.sort((a,b)=>a.fecha>b.fecha?1:-1).forEach(d=>{
+    const reg=getReg(d.rid),ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):{},t=dur(d.ap?.hora,d.ci?.hora)||"";
+    const gpsAp=d.ap?.lat?`${d.ap.lat},${d.ap.lng}`:"",gpsCi=d.ci?.lat?`${d.ci.lat},${d.ci.lng}`:"";
+    csv+=`"${d.fecha}","${reg.n}","${ga.n||""}","${ga.cod||""}","${d.ap?.hora||""}","${gpsAp}","${gc.n||""}","${gc.cod||""}","${d.ci?.hora||""}","${gpsCi}","${t}","${d.nota||""}"\n`;
+  });
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+  a.download=`visitas_${periodo}_${fd(new Date())}.csv`;a.click();showT("✓ CSV descargado ("+dias.length+" registros)");
+}
+
+// ── RENDER ──
+function R(){
+  if(!SES){rLogin();return}
+  const isA=SES.role==="admin",nm=isA?"DOZ":getReg(SES.rid).n;
+  const sc=LAST?"#16a34a":SYNC?"#f59e0b":"#dc2626",st=LAST?"● En línea":SYNC?"● Conectando...":"● Sin conexión";
+  const tabs=isA
+    ?[["REG","📋 Registro"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["MAP","🗺️ Mapa"],["HOR","⏱ Horarios"],["RES","🏆 Resumen"]]
+    :[["REG","📋 Registro"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["HOR","⏱ Horarios"]];
+  const vc=VIEW==="REG"?rReg():VIEW==="DIST"?rDist():VIEW==="CAL"?rCal():VIEW==="MAP"?rMapa():VIEW==="HOR"?rHor():rRes();
+  Q("root",`
+  <div class="hdr">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="logo">📍</div>
+      <div>
+        <div style="font-size:14px;font-weight:800">Supervisión de Visitas</div>
+        <div id="si" style="font-size:10px;font-weight:600;color:${sc}">${st}</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:12px;font-weight:700">${nm}</span>
+      <button class="btn btn-g btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </div>
+  <div class="tabs">${tabs.map(([v,l])=>`<button class="tab ${VIEW===v?"on":""}" onclick="swTab('${v}')">${l}</button>`).join("")}</div>
+  ${vc}
+  <div style="text-align:center;padding:14px;font-size:10px;color:#cbd5e1;letter-spacing:.8px">CUARTEL NEZAHUALCÓYOTL · 5 REGIONALES · 34 GERENCIAS</div>`);
+}
+
+// ── PWA ──
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+(function(){
+  try{
+    const c=document.createElement("canvas");c.width=c.height=180;const ctx=c.getContext("2d");
+    ctx.beginPath();const r=40,w=180,h=180;ctx.moveTo(r,0);ctx.lineTo(w-r,0);ctx.quadraticCurveTo(w,0,w,r);ctx.lineTo(w,h-r);ctx.quadraticCurveTo(w,h,w-r,h);ctx.lineTo(r,h);ctx.quadraticCurveTo(0,h,0,h-r);ctx.lineTo(0,r);ctx.quadraticCurveTo(0,0,r,0);ctx.closePath();
+    ctx.fillStyle="#e85d04";ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(90,72,38,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(90,72,22,0,Math.PI*2);ctx.fillStyle="#e85d04";ctx.fill();
+    ctx.beginPath();ctx.moveTo(90,155);ctx.lineTo(60,108);ctx.lineTo(120,108);ctx.closePath();ctx.fillStyle="#fff";ctx.fill();
+    const lnk=document.createElement("link");lnk.rel="apple-touch-icon";lnk.href=c.toDataURL("image/png");document.head.appendChild(lnk);
+  }catch(e){}
+})();
+
+if(SES){R();startP()}else{R()}
+</script>
+</body>
+</html>
