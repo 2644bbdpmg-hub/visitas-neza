@@ -132,8 +132,11 @@ let PINS=JSON.parse(localStorage.getItem(SKP)||"null")||JSON.parse(JSON.stringif
 let SES=JSON.parse(sessionStorage.getItem("nezas8")||"null");
 let VIEW="REG",TIPO="ap",DIAS={},SYNC=false,LAST=null,PT=null;
 let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null;
+let SEL_WEEK=null; // {year, week, start, end} semana seleccionada
+let SHOW_TARD=false; // filtro solo tardanzas
+let SEL_DAY=null; // fecha específica seleccionada
 let CAL_F=null,MAP_F=null,HOR_F=null,DIST_T=null,PER="all";
-const HOY=fd(new Date());
+function getHoy(){return fd(new Date())} // siempre fecha actual fresca
 const LIM=9*60;
 
 function svP(){localStorage.setItem(SKP,JSON.stringify(PINS))}
@@ -149,14 +152,37 @@ function grByR(rid){return rid===0?GERS:GERS.filter(g=>g.r===rid)}
 function gDias(){return Object.entries(DIAS).map(([k,v])=>({...v,_k:k}))}
 function gFDias(){
   const all=gDias();
+  // Filtro por día específico
+  if(SEL_DAY) return all.filter(d=>d.fecha===SEL_DAY);
+  // Filtro por semana operativa seleccionada
+  if(SEL_WEEK){
+    return all.filter(d=>d.fecha>=SEL_WEEK.start&&d.fecha<=SEL_WEEK.end);
+  }
   if(PER==="all")return all;
   const h=new Date();
   if(PER==="month"){const y=h.getFullYear(),m=h.getMonth();return all.filter(d=>{const dt=pd(d.fecha);return dt.getFullYear()===y&&dt.getMonth()===m})}
   if(PER==="week"){const dy=h.getDay(),mo=new Date(h);mo.setDate(h.getDate()-(dy===0?6:dy-1));mo.setHours(0,0,0,0);const su=new Date(mo);su.setDate(mo.getDate()+6);su.setHours(23,59,59,999);return all.filter(d=>{const dt=pd(d.fecha);return dt>=mo&&dt<=su})}
   return all;
 }
-function gDiaHoy(rid){return gDias().find(d=>d.rid===rid&&d.fecha===HOY)||null}
+function gDiaHoy(rid){return gDias().find(d=>d.rid===rid&&d.fecha===getHoy())||null}
 function pMin(h){if(!h)return null;const[t,m]=h.replace(" a.m.","").replace(" p.m.","").split(":").map(Number);return(h.includes("p.m.")&&t!==12?t+12:t)*60+m}
+// ── Semanas ISO ──
+function getISOWeek(d){
+  const dt=new Date(d.getTime());dt.setHours(0,0,0,0);
+  dt.setDate(dt.getDate()+4-(dt.getDay()||7));
+  const y=new Date(dt.getFullYear(),0,1);
+  return{week:Math.ceil(((dt-y)/86400000+1)/7),year:dt.getFullYear()};
+}
+function getWeekRange(year,week){
+  const jan4=new Date(year,0,4);
+  const startOfW1=new Date(jan4);startOfW1.setDate(jan4.getDate()-(jan4.getDay()||7)+1);
+  const start=new Date(startOfW1);start.setDate(startOfW1.getDate()+(week-1)*7);
+  const end=new Date(start);end.setDate(start.getDate()+6);
+  return{start:fd(start),end:fd(end)};
+}
+function weeksInYear(year){
+  const dec28=new Date(year,11,28);return getISOWeek(dec28).week;
+}
 function dur(h1,h2){
   if(!h1||!h2)return null;
   const d=pMin(h2)-pMin(h1);if(d<=0)return null;
@@ -190,14 +216,72 @@ function showM(html){const m=document.getElementById("modal");m.classList.add("s
 function closeM(){document.getElementById("modal").classList.remove("show")}
 function pfWidget(){
   const labs={all:"Histórico",month:"Este mes",week:"Esta semana"};
-  return`<div class="pf-wrap">${["all","month","week"].map(p=>`<button class="pf-btn" onclick="PER='${p}';R()" style="background:${PER===p?"#fff":"transparent"};color:${PER===p?"var(--o)":"var(--s)"};box-shadow:${PER===p?"0 1px 3px rgba(0,0,0,.1)":"none"}">${labs[p]}</button>`).join("")}</div>`
+  const hasCustom=SEL_WEEK||SEL_DAY;
+  // Calcular semana actual para el selector
+  const curWeek=getISOWeek(new Date());
+  const maxWeeks=weeksInYear(curWeek.year);
+  const selWk=SEL_WEEK?SEL_WEEK.week:curWeek.week;
+  const selYr=SEL_WEEK?SEL_WEEK.year:curWeek.year;
+  return`<div style="margin-bottom:14px">
+    <div class="pf-wrap" style="margin-bottom:8px">
+      ${["all","month","week"].map(p=>`<button class="pf-btn" onclick="SEL_WEEK=null;SEL_DAY=null;SHOW_TARD=false;PER='${p}';R()" style="background:${!hasCustom&&PER===p?"#fff":"transparent"};color:${!hasCustom&&PER===p?"var(--o)":"var(--s)"};box-shadow:${!hasCustom&&PER===p?"0 1px 3px rgba(0,0,0,.1)":"none"}">${labs[p]}</button>`).join("")}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid var(--br);border-radius:10px;padding:7px 12px;flex:1">
+        <span style="font-size:11px;font-weight:700;color:var(--s)">SEM</span>
+        <select onchange="setSemana(this.value,'${selYr}')" style="background:transparent;border:none;font-size:13px;font-weight:700;color:var(--t);padding:0;width:auto;cursor:pointer">
+          ${Array.from({length:maxWeeks},(_,i)=>{const w=i+1;const r=getWeekRange(selYr,w);return`<option value="${w}" ${selWk===w&&SEL_WEEK?"selected":""}>${w} · ${shD(r.start)}-${shD(r.end)}</option>`}).join("")}
+        </select>
+        <select onchange="setSemana('${selWk}',this.value)" style="background:transparent;border:none;font-size:13px;font-weight:700;color:var(--t);padding:0;width:auto;cursor:pointer">
+          ${[curWeek.year-1,curWeek.year,curWeek.year+1].map(y=>`<option value="${y}" ${selYr===y&&SEL_WEEK?"selected":""}>${y}</option>`).join("")}
+        </select>
+        <button onclick="setSemana('${selWk}','${selYr}')" style="background:var(--o);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer">Ver</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid var(--br);border-radius:10px;padding:7px 12px">
+        <span style="font-size:11px;font-weight:700;color:var(--s)">DÍA</span>
+        <input type="date" onchange="setDia(this.value)" value="${SEL_DAY||''}" style="background:transparent;border:none;font-size:13px;font-weight:700;color:var(--t);padding:0;width:auto;cursor:pointer">
+      </div>
+    </div>
+    ${hasCustom?`<div style="margin-top:8px;padding:6px 10px;background:#fff7ed;border-radius:8px;font-size:11px;color:#92400e;display:flex;align-items:center;justify-content:space-between">
+      <span>📅 ${perLbl()}</span>
+      <button onclick="SEL_WEEK=null;SEL_DAY=null;SHOW_TARD=false;PER='all';R()" style="background:transparent;border:none;color:var(--o);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline">× Quitar filtro</button>
+    </div>`:""}
+  </div>`;
 }
-function perLbl(){return PER==="week"?"Esta semana":PER==="month"?"Este mes":"Histórico"}
+function setSemana(week,year){
+  const w=parseInt(week),y=parseInt(year);
+  const range=getWeekRange(y,w);
+  SEL_WEEK={week:w,year:y,...range};
+  SEL_DAY=null;PER="all";SHOW_TARD=false;R();
+}
+function setDia(fecha){
+  if(!fecha){SEL_DAY=null;R();return}
+  SEL_DAY=fecha;SEL_WEEK=null;PER="all";SHOW_TARD=false;R();
+}
+function perLbl(){
+  if(SEL_DAY) return shD(SEL_DAY);
+  if(SEL_WEEK) return `Semana ${SEL_WEEK.week} (${shD(SEL_WEEK.start)} - ${shD(SEL_WEEK.end)})`;
+  return PER==="week"?"Esta semana":PER==="month"?"Este mes":"Histórico";
+}
 
 // ── SYNC ──
 async function syncNow(force=false){
   SYNC=true;
-  try{const d=await fbG("dias");DIAS=d||{};LAST=new Date();SYNC=false;if(SES&&(VIEW!=="REG"||force))R();else if(SES)updSync()}
+  try{
+    const d=await fbG("dias");DIAS=d||{};LAST=new Date();SYNC=false;
+    if(SES){
+      if(VIEW!=="REG"||force){R()}
+      else{
+        // Re-renderizar REG preservando valores del formulario
+        const vR=document.getElementById("sR")?.value;
+        const vG=document.getElementById("sG")?.value;
+        const vN=document.getElementById("sN")?.value;
+        R();
+        if(vR){const el=document.getElementById("sR");if(el){el.value=vR;updG();setTimeout(()=>{const elG=document.getElementById("sG");if(elG&&vG)elG.value=vG},50)}}
+        if(vN){const el=document.getElementById("sN");if(el)el.value=vN}
+      }
+    }
+  }
   catch(e){SYNC=false;if(SES)updSync()}
 }
 function startP(){stopP();syncNow(true);PT=setInterval(()=>syncNow(),15000)}
@@ -274,11 +358,14 @@ function rReg(){
   const sc=LAST?"#16a34a":SYNC?"#f59e0b":"#dc2626";
   let hoy="";
   if(!isA){
-    const d=gDiaHoy(rid);
+    const dPendiente=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
+    const d=dPendiente||gDiaHoy(rid);
     if(d){
       const ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):null,t=dur(d.ap?.hora,d.ci?.hora);
-      hoy=`<div class="card" style="margin-bottom:14px;border-left:4px solid var(--o)">
-        <div style="font-size:11px;font-weight:700;color:var(--o);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px">Tu día de hoy</div>
+      const esPendiente=dPendiente&&d.fecha!==getHoy();
+      hoy=`<div class="card" style="margin-bottom:14px;border-left:4px solid ${esPendiente?"#d97706":"var(--o)"}">
+        ${esPendiente?`<div style="font-size:10px;font-weight:700;color:#d97706;letter-spacing:.8px;margin-bottom:6px">⚠️ Cierre pendiente del ${shD(d.fecha)}</div>`:""}
+        <div style="font-size:11px;font-weight:700;color:${esPendiente?"#d97706":"var(--o)"};letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px">Tu día ${esPendiente?"pendiente":"de hoy"}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div style="background:#fff7ed;border-radius:8px;padding:10px">
             <div style="font-size:9px;font-weight:700;color:var(--o);letter-spacing:.8px;margin-bottom:3px">🌅 APERTURA</div>
@@ -300,17 +387,17 @@ function rReg(){
     ${hoy}
     <div class="card">
       <div class="tipo-wrap">
-        <button class="tipo-btn ${TIPO==="ap"?"ap":""}" onclick="TIPO='ap';R()" ${(()=>{if(!isA){const d=gDiaHoy(rid);return d?.ap?"disabled style='opacity:.5;cursor:not-allowed'":""} return ""})()}>🌅 Apertura</button>
-        <button class="tipo-btn ${TIPO==="ci"?"ci":""}" onclick="${(()=>{
-          if(!isA){const d=gDiaHoy(rid);if(!d?.ap)return "showT('⚠ Primero registra la Apertura','#dc2626')";if(d?.ci)return "showT('⚠ Ya registraste el cierre de hoy','#d97706')"}
-          return "TIPO='ci';R()"
-        })()}"
-        style="${(()=>{if(!isA){const d=gDiaHoy(rid);if(!d?.ap||d?.ci)return "opacity:.5;cursor:not-allowed"} return ""})()}">🌆 Cierre</button>
+        <button class="tipo-btn ${TIPO==="ap"?"ap":""}" onclick="clickAp()">🌅 Apertura</button>
+        <button class="tipo-btn ${TIPO==="ci"?"ci":""}" onclick="clickCi()">🌆 Cierre</button>
       </div>
       ${(()=>{
         if(!isA){
-          const d=gDiaHoy(rid);
+          // Buscar apertura pendiente de cierre (hoy o días anteriores)
+          const dPend=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
+          const dHoyLocal=gDiaHoy(rid);
+          const d=dPend||dHoyLocal;
           if(!d?.ap) return `<div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠️ Debes registrar <b>Apertura</b> primero antes de poder registrar el Cierre.</div>`;
+          if(dPend&&dPend.fecha!==getHoy()) return `<div style="background:#fef3c7;border:1.5px solid #fcd34d;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠️ Tienes apertura del <b>${shD(dPend.fecha)}</b> sin cierre. Registra el Cierre para completarlo.</div>`;
           if(d?.ap&&!d?.ci) return `<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#1e40af;">✓ Apertura registrada a las <b>${d.ap.hora}</b>. Cuando termines el día registra el Cierre.</div>`;
           if(d?.ap&&d?.ci) return `<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#15803d;">✅ Ya completaste tu registro de hoy. Apertura: <b>${d.ap.hora}</b> · Cierre: <b>${d.ci.hora}</b></div>`;
         }
@@ -326,10 +413,22 @@ function rReg(){
         ${isA?`<option value="">— Elige regional primero —</option>`:`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}
       </select>
       <span class="lbl">Fecha</span>
-      <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#15803d;">
-        📅 ${pd(HOY).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
-        <span style="font-size:10px;font-weight:400;color:#16a34a;display:block;margin-top:2px">Fecha automática — solo se puede registrar hoy</span>
-      </div>
+      ${(()=>{
+        // Para cierre: mostrar la fecha de la apertura pendiente
+        if(TIPO==="ci"&&!isA){
+          const pend=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
+          if(pend&&pend.fecha!==getHoy()){
+            return`<div style="background:#fef3c7;border:1.5px solid #fcd34d;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#92400e;">
+              📅 ${pd(pend.fecha).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+              <span style="font-size:10px;font-weight:400;color:#d97706;display:block;margin-top:2px">Fecha de apertura pendiente — el cierre se registrará en este día</span>
+            </div>`;
+          }
+        }
+        return`<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#15803d;">
+          📅 ${pd(getHoy()).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+          <span style="font-size:10px;font-weight:400;color:#16a34a;display:block;margin-top:2px">Fecha automática — solo se puede registrar hoy</span>
+        </div>`;
+      })()}
       <span class="lbl">Nota <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1">(opcional)</span></span>
       <textarea id="sN" rows="2" placeholder="Observaciones..." style="margin-bottom:16px"></textarea>
       <button class="btn" style="background:${TIPO==="ap"?"var(--o)":"var(--b)"};color:#fff" onclick="guardar()">
@@ -354,6 +453,23 @@ function updG(){
   if(rid===0){let h=`<option value="">— Selecciona gerencia —</option>`;REGS.filter(r=>r.id!==0).forEach(r=>{h+=`<optgroup label="${r.n}">${GERS.filter(g=>g.r===r.id).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}</optgroup>`});sel.innerHTML=h}
   else sel.innerHTML=`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("");
 }
+// Evalúan al momento del click — no al cargar la página
+function clickAp(){
+  const isA=SES.role==="admin",rid=isA?null:SES.rid;
+  if(!isA){
+    const dHoyLocal=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
+    if(dHoyLocal?.ap){showT("⚠ Ya registraste la apertura de hoy","#d97706");return}
+  }
+  TIPO="ap";R();
+}
+function clickCi(){
+  const isA=SES.role==="admin",rid=isA?null:SES.rid;
+  if(!isA){
+    const pend=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
+    if(!pend){showT("⚠ Primero registra la Apertura del día","#dc2626");return}
+  }
+  TIPO="ci";R();
+}
 async function guardar(){
   const isA=SES.role==="admin",rid=isA?parseInt(document.getElementById("sR")?.value):SES.rid;
   const gid=parseInt(document.getElementById("sG")?.value),nota=document.getElementById("sN")?.value.trim()||"";
@@ -366,7 +482,7 @@ async function guardar(){
 
   // Validar: no puede registrar Cierre sin Apertura previa
   if(TIPO==="ci"){
-    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===HOY);
+    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
     if(!dHoy||!dHoy.ap){
       showT("⚠ Debes registrar Apertura antes del Cierre","#dc2626");
       // Cambiar automáticamente a apertura
@@ -378,7 +494,7 @@ async function guardar(){
 
   // Validar que apertura no esté ya registrada
   if(TIPO==="ap"){
-    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===HOY);
+    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
     if(dHoy?.ap){showT("⚠ Ya registraste la apertura de hoy","#d97706");return}
   }
   const btn=document.querySelector("button[onclick='guardar()']");
@@ -641,7 +757,9 @@ function rMapaView(){const el=document.getElementById("mapa-div");if(el&&el._map
 function rHor(){
   const isA=SES.role==="admin",sesRid=isA?null:SES.rid;
   const diasBase=gFDias().filter(d=>isA?true:d.rid===sesRid);
-  const dias=diasBase.filter(d=>isA?(HOR_F!==null?d.rid===HOR_F:true):d.rid===sesRid).sort((a,b)=>b.fecha>a.fecha?1:-1);
+  let dias=diasBase.filter(d=>isA?(HOR_F!==null?d.rid===HOR_F:true):d.rid===sesRid).sort((a,b)=>b.fecha>a.fecha?1:-1);
+  // Filtrar solo tardanzas si está activo
+  if(SHOW_TARD) dias=dias.filter(d=>{const m=pMin(d.ap?.hora);return m!==null&&m>LIM});
   const totT=dias.filter(d=>{const m=pMin(d.ap?.hora);return m!==null&&m>LIM}).length;
   const totSC=dias.filter(d=>d.ap&&!d.ci).length;
   const regsStats=REGS.filter(r=>r.id!==0).map(r=>{
@@ -658,10 +776,18 @@ function rHor(){
   return`<div class="pg">
     ${pfWidget()}
     <div class="stats">
-      <div class="stat"><div class="stat-n" style="color:var(--o)">${dias.length}</div><div class="stat-l">Registros</div></div>
-      <div class="stat"><div class="stat-n" style="color:#dc2626">${totT}</div><div class="stat-l">Tardanzas</div></div>
+      <div class="stat" onclick="SHOW_TARD=false;R()" style="cursor:pointer;border:2px solid ${!SHOW_TARD?"var(--o)":"transparent"};transition:all .15s">
+        <div class="stat-n" style="color:var(--o)">${dias.length}</div><div class="stat-l">Registros</div></div>
+      <div class="stat" onclick="SHOW_TARD=!SHOW_TARD;R()" style="cursor:pointer;border:2px solid ${SHOW_TARD?"#dc2626":"transparent"};background:${SHOW_TARD?"#fff1f2":"#fff"};transition:all .15s" title="Clic para ver solo tardanzas">
+        <div class="stat-n" style="color:#dc2626">${totT}</div>
+        <div class="stat-l" style="color:${SHOW_TARD?"#dc2626":"var(--s)"}">⚠ Tardanzas${SHOW_TARD?" ✓":""}</div>
+      </div>
       <div class="stat"><div class="stat-n" style="color:#d97706">${totSC}</div><div class="stat-l">Sin cierre</div></div>
     </div>
+    ${SHOW_TARD?`<div style="background:#fff1f2;border:1.5px solid #fca5a5;border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:12px;color:#9f1239;display:flex;align-items:center;justify-content:space-between">
+      <span>🔴 Mostrando solo registros con tardanza (después de 9:00 a.m.)</span>
+      <button onclick="SHOW_TARD=false;R()" style="background:transparent;border:none;color:#dc2626;font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline">× Quitar</button>
+    </div>`:""}
     ${isA?`<div class="card" style="margin-bottom:14px">
       <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:13px">Promedio por Regional</div>
       ${regsStats.map(r=>{const bc=CLR[r.id]||"#e85d04",tard=r.tard>0,sinC=r.sinC>0;
@@ -810,15 +936,17 @@ function confReset(){
 }
 async function doReset(){try{await fbD("dias");await syncNow(true);closeM();showT("Datos eliminados","#dc2626")}catch(e){showT("⚠ Error","#dc2626")}}
 function exportCSV(){
-  const dias=gDias();if(!dias.length){showT("Sin registros","#dc2626");return}
-  let csv="Fecha,Regional,Ger.Apertura,Cod,Hora Apertura,GPS Ap,Ger.Cierre,Cod,Hora Cierre,GPS Ci,Tiempo,Nota\n";
+  // Exportar SOLO los datos del filtro activo
+  const dias=gFDias();if(!dias.length){showT("Sin registros en el período seleccionado","#dc2626");return}
+  const periodo=perLbl().replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-]/g,"").trim().replace(/\s+/g,"_");
+  let csv=`Período: ${perLbl()}\nFecha,Regional,Ger.Apertura,Cod,Hora Apertura,GPS Ap,Ger.Cierre,Cod,Hora Cierre,GPS Ci,Tiempo,Nota\n`;
   dias.sort((a,b)=>a.fecha>b.fecha?1:-1).forEach(d=>{
     const reg=getReg(d.rid),ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):{},t=dur(d.ap?.hora,d.ci?.hora)||"";
     const gpsAp=d.ap?.lat?`${d.ap.lat},${d.ap.lng}`:"",gpsCi=d.ci?.lat?`${d.ci.lat},${d.ci.lng}`:"";
     csv+=`"${d.fecha}","${reg.n}","${ga.n||""}","${ga.cod||""}","${d.ap?.hora||""}","${gpsAp}","${gc.n||""}","${gc.cod||""}","${d.ci?.hora||""}","${gpsCi}","${t}","${d.nota||""}"\n`;
   });
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
-  a.download="visitas_"+fd(new Date())+".csv";a.click();showT("✓ CSV descargado");
+  a.download=`visitas_${periodo}_${fd(new Date())}.csv`;a.click();showT("✓ CSV descargado ("+dias.length+" registros)");
 }
 
 // ── RENDER ──
