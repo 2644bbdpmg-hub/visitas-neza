@@ -75,6 +75,17 @@ textarea{resize:vertical}
 .pf-btn{flex:1;padding:8px 4px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:2px}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:3px solid var(--o)}
+.kpi-v{font-size:25px;font-weight:800;line-height:1.05}.kpi-l{font-size:10px;color:var(--s);font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-top:5px}
+.alert{background:#fff;border-radius:11px;padding:12px 14px;margin-bottom:9px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:4px solid #f59e0b}
+.alert.crit{border-left-color:#dc2626}.alert.ok{border-left-color:#16a34a}
+.insight{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 5px 18px rgba(15,23,42,.18)}
+.route-step{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--g)}
+.route-num{width:27px;height:27px;border-radius:50%;background:var(--o);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+@media(min-width:700px){.kpi-grid{grid-template-columns:repeat(4,1fr)}}
+@media print{.hdr,.tabs,button{display:none!important}.pg,.pg-w{max-width:none!important;padding:0!important}.card,.kpi{box-shadow:none!important;break-inside:avoid}body{background:#fff}}
 </style>
 </head>
 <body>
@@ -83,10 +94,24 @@ textarea{resize:vertical}
 <div id="toast" style="display:none;position:fixed;bottom:22px;left:50%;transform:translateX(-50%);border-radius:24px;padding:11px 20px;color:#fff;font-size:13px;font-weight:700;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)"></div>
 <script>
 const FB="https://registro-de-visitas-86eea-default-rtdb.firebaseio.com";
-async function fbG(p){const r=await fetch(FB+"/"+p+".json");return r.json()}
-async function fbP(p,d){const r=await fetch(FB+"/"+p+".json",{method:"POST",body:JSON.stringify(d)});return r.json()}
-async function fbU(p,d){const r=await fetch(FB+"/"+p+".json",{method:"PATCH",body:JSON.stringify(d)});return r.json()}
-async function fbD(p){await fetch(FB+"/"+p+".json",{method:"DELETE"})}
+const NET_TIMEOUT=12000;
+async function fbReq(p,opt={}){
+  const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),NET_TIMEOUT);
+  try{
+    const r=await fetch(FB+"/"+p+".json",{...opt,signal:ctl.signal,headers:{"Content-Type":"application/json",...(opt.headers||{})}});
+    const txt=await r.text();
+    let data=null;try{data=txt?JSON.parse(txt):null}catch(e){data=txt}
+    if(!r.ok)throw new Error((data&&data.error)||`Firebase ${r.status}`);
+    return data;
+  }catch(e){
+    if(e.name==="AbortError")throw new Error("La conexión tardó demasiado. Revisa tu señal e intenta nuevamente.");
+    throw e;
+  }finally{clearTimeout(tm)}
+}
+async function fbG(p){return fbReq(p)}
+async function fbP(p,d){return fbReq(p,{method:"POST",body:JSON.stringify(d)})}
+async function fbU(p,d){return fbReq(p,{method:"PATCH",body:JSON.stringify(d)})}
+async function fbD(p){return fbReq(p,{method:"DELETE"})}
 
 const REGS=[{id:0,n:"DOZ"},{id:1,n:"Nezahualcóyotl 1"},{id:2,n:"Nezahualcóyotl 2"},{id:3,n:"Nezahualcóyotl 3"},{id:4,n:"Nezahualcóyotl 4"},{id:5,n:"RCV Neza"}];
 const GERS=[
@@ -130,19 +155,20 @@ const SKP="nezap8";
 const DP={admin:"3693",1:"1111",2:"2222",3:"3333",4:"4444",5:"5555"};
 let PINS=JSON.parse(localStorage.getItem(SKP)||"null")||JSON.parse(JSON.stringify(DP));
 let SES=JSON.parse(sessionStorage.getItem("nezas8")||"null");
-let VIEW="REG",TIPO="ap",DIAS={},SYNC=false,LAST=null,PT=null;
+let VIEW="REG",TIPO="ap",DIAS={},SYNC=false,LAST=null,PT=null,SAVING=false;
 let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null;
 let SEL_WEEK=null; // {year, week, start, end} semana seleccionada
 let SHOW_TARD=false; // filtro solo tardanzas
 let SEL_DAY=null; // fecha específica seleccionada
 let CAL_F=null,MAP_F=null,HOR_F=null,DIST_T=null,PER="all";
+let ALERT_DAYS=14,ROUTE_RID=null;
 function getHoy(){return fd(new Date())} // siempre fecha actual fresca
 const LIM=9*60;
 
 function svP(){localStorage.setItem(SKP,JSON.stringify(PINS))}
 function svS(s){sessionStorage.setItem("nezas8",JSON.stringify(s));SES=s}
 function logout(){sessionStorage.removeItem("nezas8");SES=null;stopP();R()}
-function fd(d){return d.toISOString().split("T")[0]}
+function fd(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),dd=String(d.getDate()).padStart(2,"0");return `${y}-${m}-${dd}`}
 function pd(s){const[y,m,dd]=s.split("-").map(Number);return new Date(y,m-1,dd)}
 function shD(s){return pd(s).toLocaleDateString("es-MX",{day:"2-digit",month:"short"})}
 function hora(){return new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit",hour12:true})}
@@ -265,24 +291,23 @@ function perLbl(){
 }
 
 // ── SYNC ──
+function capForm(){return{r:document.getElementById("sR")?.value||"",g:document.getElementById("sG")?.value||"",n:document.getElementById("sN")?.value||""}}
+function restoreForm(v){
+  if(!v)return;
+  const er=document.getElementById("sR");
+  if(er&&v.r){er.value=v.r;updG()}
+  const eg=document.getElementById("sG");if(eg&&v.g)eg.value=v.g;
+  const en=document.getElementById("sN");if(en)en.value=v.n||"";
+}
 async function syncNow(force=false){
-  SYNC=true;
+  if(SAVING&&!force)return;
+  const form=VIEW==="REG"?capForm():null;
+  SYNC=true;updSync();
   try{
     const d=await fbG("dias");DIAS=d||{};LAST=new Date();SYNC=false;
-    if(SES){
-      if(VIEW!=="REG"||force){R()}
-      else{
-        // Re-renderizar REG preservando valores del formulario
-        const vR=document.getElementById("sR")?.value;
-        const vG=document.getElementById("sG")?.value;
-        const vN=document.getElementById("sN")?.value;
-        R();
-        if(vR){const el=document.getElementById("sR");if(el){el.value=vR;updG();setTimeout(()=>{const elG=document.getElementById("sG");if(elG&&vG)elG.value=vG},50)}}
-        if(vN){const el=document.getElementById("sN");if(el)el.value=vN}
-      }
-    }
+    if(SES){R();if(VIEW==="REG"&&!force)restoreForm(form)}
   }
-  catch(e){SYNC=false;if(SES)updSync()}
+  catch(e){SYNC=false;if(SES){updSync();if(force)showT("⚠ No fue posible sincronizar: "+e.message,"#dc2626")}}
 }
 function startP(){stopP();syncNow(true);PT=setInterval(()=>syncNow(),15000)}
 function stopP(){if(PT){clearInterval(PT);PT=null}}
@@ -434,38 +459,54 @@ function updG(){
   if(rid===0){let h=`<option value="">— Selecciona gerencia —</option>`;REGS.filter(r=>r.id!==0).forEach(r=>{h+=`<optgroup label="${r.n}">${GERS.filter(g=>g.r===r.id).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}</optgroup>`});sel.innerHTML=h}
   else sel.innerHTML=`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("");
 }
-// Sin bloqueos — solo cambian el tipo seleccionado
-function clickAp(){TIPO="ap";R()}
-function clickCi(){TIPO="ci";R()}
+// Cambiar tipo sin perder gerencia ni nota
+function setTipo(t){const f=capForm();TIPO=t;R();restoreForm(f)}
+function clickAp(){setTipo("ap")}
+function clickCi(){setTipo("ci")}
+function getPositionSafe(){
+  return new Promise(resolve=>{
+    if(!navigator.geolocation){resolve(null);return}
+    let done=false;const finish=v=>{if(done)return;done=true;resolve(v)};
+    const hard=setTimeout(()=>finish(null),5500);
+    try{navigator.geolocation.getCurrentPosition(
+      p=>{clearTimeout(hard);finish(p)},
+      ()=>{clearTimeout(hard);finish(null)},
+      {timeout:4000,maximumAge:0,enableHighAccuracy:true}
+    )}catch(e){clearTimeout(hard);finish(null)}
+  })
+}
 async function guardar(){
+  if(SAVING)return;
   const isA=SES.role==="admin",rid=isA?parseInt(document.getElementById("sR")?.value):SES.rid;
   const gid=parseInt(document.getElementById("sG")?.value),nota=document.getElementById("sN")?.value.trim()||"";
-  const fecha=getHoy(); // Fecha actual — siempre hoy
-  if((isNaN(rid)||(!rid&&rid!==0))||!gid){showT("Completa los campos requeridos","#dc2626");return}
+  const fecha=getHoy();
+  if((isNaN(rid)||(!rid&&rid!==0))||!gid){showT("Selecciona una gerencia antes de registrar","#dc2626");return}
   const btn=document.querySelector("button[onclick='guardar()']");
-  if(btn){btn.disabled=true;btn.textContent="Guardando..."}
-  const h=hora();
-  let lat=null,lng=null;
-  try{const pos=await new Promise((res,rej)=>navigator.geolocation?.getCurrentPosition(res,rej,{timeout:4000,maximumAge:0,enableHighAccuracy:true}));lat=parseFloat(pos.coords.latitude.toFixed(6));lng=parseFloat(pos.coords.longitude.toFixed(6))}catch(e){}
+  SAVING=true;if(btn){btn.disabled=true;btn.textContent="Guardando..."}
   try{
-    const ex=gDias().find(d=>d.rid===rid&&d.fecha===fecha);
-    const gps=lat?{lat,lng}:null;
+    // Consultar Firebase antes de guardar para evitar duplicados por datos locales desactualizados.
+    const rem=await fbG("dias")||{};DIAS=rem;
+    const ex=Object.entries(rem).map(([k,v])=>({...v,_k:k})).find(d=>d.rid===rid&&d.fecha===fecha);
+    if(ex?.[TIPO]&&!confirm(`Ya existe un ${TIPO==="ap"?"registro de apertura":"registro de cierre"} para hoy. ¿Deseas reemplazarlo?`))return;
+    const h=hora(),pos=await getPositionSafe();
+    const gps=pos?{lat:+pos.coords.latitude.toFixed(6),lng:+pos.coords.longitude.toFixed(6),acc:Math.round(pos.coords.accuracy||0)}:null;
+    const dato={gid,hora:h,...(gps||{})};
     if(TIPO==="ap"){
-      const ap={gid,hora:h,...(gps&&{lat:gps.lat,lng:gps.lng})};
-      // Si ya hay registro del día, actualizar apertura
-      if(ex)await fbU(`dias/${ex._k}`,{ap,nota:nota||ex.nota});
-      else await fbP("dias",{rid,fecha,nota,ap,ci:null});
+      if(ex)await fbU(`dias/${ex._k}`,{ap:dato,nota:nota||ex.nota||""});
+      else await fbP("dias",{rid,fecha,nota,ap:dato,ci:null});
       showT("🌅 Apertura registrada · "+h,"#e85d04");
-    } else {
-      const ci={gid,hora:h,...(gps&&{lat:gps.lat,lng:gps.lng})};
-      // Si ya hay registro del día, actualizar cierre
-      if(ex)await fbU(`dias/${ex._k}`,{ci,nota:nota||ex.nota});
-      // Si no hay registro, crear uno con solo cierre
-      else await fbP("dias",{rid,fecha,nota,ap:null,ci});
+    }else{
+      if(ex)await fbU(`dias/${ex._k}`,{ci:dato,nota:nota||ex.nota||""});
+      else await fbP("dias",{rid,fecha,nota,ap:null,ci:dato});
       showT("🌆 Cierre registrado · "+h,"#2563eb");
     }
     await syncNow(true);
-  }catch(e){showT("⚠ Error al guardar","#dc2626");if(btn){btn.disabled=false;btn.textContent=TIPO==="ap"?"🌅 Registrar Apertura":"🌆 Registrar Cierre"}}
+  }catch(e){
+    showT("⚠ No se guardó: "+(e.message||"error de conexión"),"#dc2626");
+  }finally{
+    SAVING=false;
+    const b=document.querySelector("button[onclick='guardar()']");if(b){b.disabled=false;b.textContent=TIPO==="ap"?"🌅 Registrar Apertura":"🌆 Registrar Cierre"}
+  }
 }
 async function delDia(key){try{await fbD(`dias/${key}`);await syncNow(true);showT("Registro eliminado","#94a3b8")}catch(e){showT("⚠ Error","#dc2626")}}
 function rUlt(isA,rid){
@@ -859,12 +900,94 @@ function rRes(){
       <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:13px">Opciones</div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <button class="btn btn-g" onclick="exportCSV()">📊 Exportar CSV</button>
+        <button class="btn btn-g" onclick="exportJSON()">💾 Descargar respaldo JSON</button>
+        <button class="btn btn-g" onclick="printReport()">🖨️ Imprimir / Guardar PDF</button>
+        <button class="btn btn-g" onclick="securityInfo()">🛡️ Estado de seguridad</button>
         <button class="btn btn-g" onclick="openPins()">🔒 Cambiar PINs</button>
         <button class="btn btn-r" onclick="confReset()">🗑 Borrar todos los registros</button>
       </div>
     </div>
   </div>`;
 }
+
+
+// ── TABLERO, ALERTAS Y RUTAS ──
+function dateDiff(a,b){return Math.floor((pd(b)-pd(a))/86400000)}
+function lastVisitByGer(gid){
+  const ds=gDias().filter(d=>d.ap?.gid===gid||d.ci?.gid===gid).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  return ds[0]||null;
+}
+function dashData(){
+  const ds=gFDias(),today=getHoy(),tot=ds.length;
+  const covered=new Set();ds.forEach(d=>{if(d.ap?.gid)covered.add(d.ap.gid);if(d.ci?.gid)covered.add(d.ci.gid)});
+  const late=ds.filter(d=>pMin(d.ap?.hora)>LIM).length;
+  const noClose=ds.filter(d=>d.ap&&!d.ci).length;
+  const gpsEvents=ds.reduce((n,d)=>n+(d.ap?.lat?1:0)+(d.ci?.lat?1:0),0),events=ds.reduce((n,d)=>n+(d.ap?1:0)+(d.ci?1:0),0);
+  const stale=GERS.map(g=>{const lv=lastVisitByGer(g.id);return{...g,last:lv?.fecha||null,days:lv?dateDiff(lv.fecha,today):999}}).sort((a,b)=>b.days-a.days);
+  return{ds,tot,covered,late,noClose,gpsPct:events?Math.round(gpsEvents/events*100):0,stale};
+}
+function insightText(){
+  const d=dashData(),scope=perLbl();
+  if(!d.tot)return`No hay registros en ${scope.toLowerCase()}. La prioridad es iniciar captura consistente antes de interpretar tendencias.`;
+  const worst=d.stale[0],latePct=Math.round(d.late/d.tot*100),closePct=Math.round((d.tot-d.noClose)/d.tot*100);
+  let msg=`En ${scope.toLowerCase()} se registraron ${d.tot} días de supervisión y se cubrieron ${d.covered.size} de ${GERS.length} gerencias. `;
+  msg+=d.noClose?`El ${closePct}% de los registros tiene cierre completo; quedan ${d.noClose} pendientes. `:`Todos los registros tienen cierre. `;
+  msg+=d.late?`La tardanza representa ${latePct}% de los días. `:`No se detectaron aperturas posteriores a las 9:00 a.m. `;
+  if(worst.days>=ALERT_DAYS)msg+=`${worst.n} requiere atención: ${worst.last?`su última visita fue hace ${worst.days} días`:`no tiene visitas registradas`}.`;
+  else msg+=`La cobertura reciente no presenta gerencias por encima del umbral de ${ALERT_DAYS} días.`;
+  return msg;
+}
+function rDash(){
+  const d=dashData(),cov=Math.round(d.covered.size/GERS.length*100),eq=REGS.filter(r=>r.id!==0).map(r=>eqScore(r.id)).filter(x=>x!==null),avgEq=eq.length?Math.round(eq.reduce((a,b)=>a+b,0)/eq.length):0;
+  const recent=d.ds.slice().sort((a,b)=>b.fecha.localeCompare(a.fecha)).slice(0,7);
+  return`<div class="pg-w">${pfWidget()}
+    <div class="insight"><div style="font-size:10px;letter-spacing:1px;font-weight:700;opacity:.65;margin-bottom:7px">LECTURA EJECUTIVA</div><div style="font-size:14px;line-height:1.55;font-weight:600">${insightText()}</div></div>
+    <div class="kpi-grid">
+      <div class="kpi" style="border-top-color:var(--o)"><div class="kpi-v" style="color:var(--o)">${d.tot}</div><div class="kpi-l">Días registrados</div></div>
+      <div class="kpi" style="border-top-color:#16a34a"><div class="kpi-v" style="color:#16a34a">${cov}%</div><div class="kpi-l">Cobertura</div></div>
+      <div class="kpi" style="border-top-color:#2563eb"><div class="kpi-v" style="color:#2563eb">${avgEq}%</div><div class="kpi-l">Equidad promedio</div></div>
+      <div class="kpi" style="border-top-color:${d.noClose?'#d97706':'#16a34a'}"><div class="kpi-v" style="color:${d.noClose?'#d97706':'#16a34a'}">${d.noClose}</div><div class="kpi-l">Sin cierre</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+      <div class="card"><div style="font-size:12px;font-weight:800;margin-bottom:12px">Cobertura y calidad</div>
+        ${[['GPS capturado',d.gpsPct,'#2563eb'],['Gerencias cubiertas',cov,'#16a34a'],['Puntualidad',d.tot?Math.round((d.tot-d.late)/d.tot*100):0,'#e85d04']].map(x=>`<div style="margin-bottom:13px"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:5px"><span>${x[0]}</span><span>${x[1]}%</span></div><div class="bar-bg"><div class="bar" style="width:${x[1]}%;background:${x[2]}"></div></div></div>`).join('')}
+      </div>
+      <div class="card"><div style="font-size:12px;font-weight:800;margin-bottom:12px">Prioridades inmediatas</div>
+        ${d.stale.slice(0,5).map((g,i)=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--g)"><div><div style="font-size:12px;font-weight:700">${i+1}. ${g.n}</div><div style="font-size:10px;color:var(--s)">${getReg(g.r).n}</div></div><span class="bdg" style="background:${g.days>=ALERT_DAYS?'#fee2e2':'#fef3c7'};color:${g.days>=ALERT_DAYS?'#dc2626':'#d97706'}">${g.last?g.days+' días':'Sin visita'}</span></div>`).join('')}
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:12px;font-weight:800">Últimos movimientos</div><button class="btn btn-g btn-sm" onclick="VIEW='ALERT';R()">Ver alertas</button></div>
+      ${recent.length?recent.map(d=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--g);font-size:12px"><span><b>${getReg(d.rid).n}</b> · ${getGer(d.ap?.gid).n||'Sin apertura'}</span><span style="color:var(--s)">${shD(d.fecha)}</span></div>`).join(''):`<div style="color:var(--s);font-size:13px">Sin movimientos.</div>`}
+    </div>
+  </div>`;
+}
+function rAlerts(){
+  const d=dashData(),stale=d.stale.filter(g=>g.days>=ALERT_DAYS),noGps=d.ds.filter(x=>(x.ap&&!x.ap.lat)||(x.ci&&!x.ci.lat)),late=d.ds.filter(x=>pMin(x.ap?.hora)>LIM),noClose=d.ds.filter(x=>x.ap&&!x.ci);
+  const cards=[];
+  stale.forEach(g=>cards.push({sev:'crit',title:g.n,txt:g.last?`Sin visita desde ${shD(g.last)} (${g.days} días).`:'No tiene visitas registradas.',act:`Priorizar en la próxima ruta de ${getReg(g.r).n}.`}));
+  if(noClose.length)cards.push({sev:'crit',title:`${noClose.length} registros sin cierre`,txt:'La jornada quedó incompleta y afecta el cálculo de duración.',act:'Solicitar regularización y revisar el detalle en Horarios.'});
+  if(late.length)cards.push({sev:'',title:`${late.length} aperturas tardías`,txt:'Se registraron después de las 9:00 a.m.',act:'Revisar recurrencia por regional antes de concluir incumplimiento.'});
+  if(noGps.length)cards.push({sev:'',title:`${noGps.length} registros con GPS incompleto`,txt:'La ubicación pudo ser denegada, imprecisa o no disponible.',act:'Confirmar permisos de ubicación en los dispositivos.'});
+  if(!cards.length)cards.push({sev:'ok',title:'Sin alertas críticas',txt:`No hay incidencias bajo el umbral actual de ${ALERT_DAYS} días.`,act:'Mantener la distribución y revisar nuevamente al cierre de semana.'});
+  return`<div class="pg"><div class="card" style="margin-bottom:14px"><div style="font-size:15px;font-weight:800">Centro de alertas</div><div style="font-size:12px;color:var(--s);margin-top:4px">Umbral de gerencia sin visita</div><div style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="number" min="1" max="90" value="${ALERT_DAYS}" onchange="ALERT_DAYS=Math.max(1,parseInt(this.value)||14);R()"><span style="font-size:12px;font-weight:700">días</span></div></div>
+    ${cards.map(c=>`<div class="alert ${c.sev}"><div style="font-size:13px;font-weight:800">${c.title}</div><div style="font-size:12px;color:#64748b;margin-top:4px;line-height:1.4">${c.txt}</div><div style="font-size:11px;font-weight:700;color:${c.sev==='crit'?'#dc2626':c.sev==='ok'?'#16a34a':'#d97706'};margin-top:7px">Acción: ${c.act}</div></div>`).join('')}
+  </div>`;
+}
+function hav(a,b){const R=6371,p=Math.PI/180,d1=(b.lat-a.lat)*p,d2=(b.lng-a.lng)*p,x=Math.sin(d1/2)**2+Math.cos(a.lat*p)*Math.cos(b.lat*p)*Math.sin(d2/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
+function gerCoords(gid){const pts=[];gDias().forEach(d=>{if(d.ap?.gid===gid&&d.ap.lat)pts.push({lat:d.ap.lat,lng:d.ap.lng});if(d.ci?.gid===gid&&d.ci.lat)pts.push({lat:d.ci.lat,lng:d.ci.lng})});return pts.length?pts[pts.length-1]:null}
+function routePlan(){
+  let pool=GERS.filter(g=>ROUTE_RID===null||g.r===ROUTE_RID).map(g=>({...g,coord:gerCoords(g.id),last:lastVisitByGer(g.id)})).filter(g=>g.coord);
+  pool.sort((a,b)=>((a.last?.fecha||'')>(b.last?.fecha||'')?1:-1));pool=pool.slice(0,6);if(!pool.length)return[];
+  let out=[pool.shift()];while(pool.length){const cur=out[out.length-1],n=pool.map((g,i)=>({i,d:hav(cur.coord,g.coord)})).sort((a,b)=>a.d-b.d)[0];out.push(pool.splice(n.i,1)[0])}return out;
+}
+function rRoutes(){const r=routePlan();let km=0;for(let i=1;i<r.length;i++)km+=hav(r[i-1].coord,r[i].coord);
+  return`<div class="pg"><div class="card" style="margin-bottom:14px"><div style="font-size:15px;font-weight:800">Ruta sugerida</div><div style="font-size:12px;color:var(--s);margin:4px 0 12px">Prioriza gerencias con visitas más antiguas y ordena por cercanía usando su última ubicación registrada.</div><select onchange="ROUTE_RID=this.value===''?null:parseInt(this.value);R()"><option value="">Todo el cuartel</option>${REGS.filter(x=>x.id!==0).map(x=>`<option value="${x.id}" ${ROUTE_RID===x.id?'selected':''}>${x.n}</option>`).join('')}</select></div>
+    <div class="card">${r.length?`<div style="display:flex;justify-content:space-between;margin-bottom:8px"><b>${r.length} paradas</b><span class="bdg" style="background:#fff7ed;color:var(--o)">≈ ${km.toFixed(1)} km entre puntos</span></div>${r.map((g,i)=>`<div class="route-step"><div class="route-num">${i+1}</div><div style="flex:1"><div style="font-size:13px;font-weight:800">${g.n}</div><div style="font-size:11px;color:var(--s)">${getReg(g.r).n} · Última visita: ${g.last?shD(g.last.fecha):'sin registro'}</div><a target="_blank" href="https://www.google.com/maps?q=${g.coord.lat},${g.coord.lng}" style="font-size:11px;color:var(--o);font-weight:700;text-decoration:none">Abrir ubicación ↗</a></div></div>`).join('')}<div style="font-size:10px;color:var(--s);margin-top:10px">La distancia es aproximada en línea recta; no sustituye navegación vial.</div>`:`<div style="text-align:center;color:var(--s);padding:24px">No hay suficientes ubicaciones históricas para construir la ruta.</div>`}</div>
+  </div>`;
+}
+function exportJSON(){const data={exportedAt:new Date().toISOString(),version:'2.0',dias:DIAS};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download=`respaldo_visitas_${getHoy()}.json`;a.click();showT('✓ Respaldo JSON descargado')}
+function printReport(){window.print()}
+function securityInfo(){showM(`<div style="font-size:16px;font-weight:800;margin-bottom:8px">Seguridad preparada</div><div style="font-size:13px;color:#64748b;line-height:1.55">Esta versión conserva temporalmente el acceso por PIN para no romper la operación. El paquete incluye reglas de Firebase y una guía para migrar a Firebase Authentication. La autenticación real requiere habilitar usuarios dentro de tu proyecto Firebase y desplegar las reglas.</div><button class="btn btn-o" style="margin-top:16px" onclick="closeM()">Entendido</button>`)}
 
 // ── OPCIONES ──
 function openPins(){
@@ -905,9 +1028,9 @@ function R(){
   const isA=SES.role==="admin",nm=isA?"DOZ":getReg(SES.rid).n;
   const sc=LAST?"#16a34a":SYNC?"#f59e0b":"#dc2626",st=LAST?"● En línea":SYNC?"● Conectando...":"● Sin conexión";
   const tabs=isA
-    ?[["REG","📋 Registro"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["MAP","🗺️ Mapa"],["HOR","⏱ Horarios"],["RES","🏆 Resumen"]]
+    ?[["DASH","📈 Tablero"],["REG","📋 Registro"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["MAP","🗺️ Mapa"],["HOR","⏱ Horarios"],["ALERT","🚨 Alertas"],["ROUTE","🧭 Rutas"],["RES","🏆 Resumen"]]
     :[["REG","📋 Registro"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["HOR","⏱ Horarios"]];
-  const vc=VIEW==="REG"?rReg():VIEW==="DIST"?rDist():VIEW==="CAL"?rCal():VIEW==="MAP"?rMapa():VIEW==="HOR"?rHor():rRes();
+  const vc=VIEW==="DASH"?rDash():VIEW==="REG"?rReg():VIEW==="DIST"?rDist():VIEW==="CAL"?rCal():VIEW==="MAP"?rMapa():VIEW==="HOR"?rHor():VIEW==="ALERT"?rAlerts():VIEW==="ROUTE"?rRoutes():rRes();
   Q("root",`
   <div class="hdr">
     <div style="display:flex;align-items:center;gap:10px">
