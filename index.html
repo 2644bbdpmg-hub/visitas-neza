@@ -390,11 +390,9 @@ function rReg(){
       </div>
       ${(()=>{
         if(!isA){
-          // Solo considera el registro de HOY
           const dHoyLocal=gDiaHoy(rid);
-          if(!dHoyLocal?.ap) return `<div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠️ Debes registrar <b>Apertura</b> primero antes de poder registrar el Cierre.</div>`;
-          if(dHoyLocal?.ap&&!dHoyLocal?.ci) return `<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#1e40af;">✓ Apertura registrada a las <b>${dHoyLocal.ap.hora}</b>. Cuando termines registra el Cierre.</div>`;
-          if(dHoyLocal?.ap&&dHoyLocal?.ci) return `<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#15803d;">✅ Registro completo. Apertura: <b>${dHoyLocal.ap.hora}</b> · Cierre: <b>${dHoyLocal.ci.hora}</b></div>`;
+          if(dHoyLocal?.ap&&dHoyLocal?.ci) return `<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#15803d;">✅ Registro completo hoy. Apertura: <b>${dHoyLocal.ap.hora}</b> · Cierre: <b>${dHoyLocal.ci.hora}</b></div>`;
+          if(dHoyLocal?.ap&&!dHoyLocal?.ci) return `<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#1e40af;">🌅 Apertura registrada: <b>${dHoyLocal.ap.hora}</b> en ${getGer(dHoyLocal.ap.gid).n||"—"}. Registra el Cierre al terminar.</div>`;
         }
         return "";
       })()}
@@ -436,52 +434,14 @@ function updG(){
   if(rid===0){let h=`<option value="">— Selecciona gerencia —</option>`;REGS.filter(r=>r.id!==0).forEach(r=>{h+=`<optgroup label="${r.n}">${GERS.filter(g=>g.r===r.id).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}</optgroup>`});sel.innerHTML=h}
   else sel.innerHTML=`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("");
 }
-// Evalúan al momento del click — solo validan EL DÍA DE HOY
-function clickAp(){
-  const isA=SES.role==="admin",rid=isA?null:SES.rid;
-  if(!isA){
-    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
-    if(dHoy?.ap){showT("⚠ Ya registraste la apertura de hoy","#d97706");return}
-  }
-  TIPO="ap";R();
-}
-function clickCi(){
-  const isA=SES.role==="admin",rid=isA?null:SES.rid;
-  if(!isA){
-    // Solo buscar apertura de HOY — días anteriores no bloquean
-    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
-    if(!dHoy?.ap){showT("⚠ Primero registra la Apertura de hoy","#dc2626");return}
-    if(dHoy?.ci){showT("⚠ Ya registraste el cierre de hoy","#d97706");return}
-  }
-  TIPO="ci";R();
-}
+// Sin bloqueos — solo cambian el tipo seleccionado
+function clickAp(){TIPO="ap";R()}
+function clickCi(){TIPO="ci";R()}
 async function guardar(){
   const isA=SES.role==="admin",rid=isA?parseInt(document.getElementById("sR")?.value):SES.rid;
   const gid=parseInt(document.getElementById("sG")?.value),nota=document.getElementById("sN")?.value.trim()||"";
-  const fecha=HOY; // Siempre fecha de hoy — no se puede cambiar
-  if((isNaN(rid)||(!rid&&rid!==0))||!gid){showT("Completa los campos","#dc2626");return}
-
-  // Validar que solo se registre hoy
-  const hoyReal=fd(new Date());
-  if(fecha!==hoyReal){showT("⚠ Solo puedes registrar en la fecha de hoy","#dc2626");return}
-
-  // Validar: no puede registrar Cierre sin Apertura previa
-  if(TIPO==="ci"){
-    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
-    if(!dHoy||!dHoy.ap){
-      showT("⚠ Debes registrar Apertura antes del Cierre","#dc2626");
-      // Cambiar automáticamente a apertura
-      TIPO="ap";R();return;
-    }
-    // Validar que no tenga ya cierre registrado
-    if(dHoy.ci){showT("⚠ Ya registraste el cierre de hoy","#d97706");return}
-  }
-
-  // Validar que apertura no esté ya registrada
-  if(TIPO==="ap"){
-    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
-    if(dHoy?.ap){showT("⚠ Ya registraste la apertura de hoy","#d97706");return}
-  }
+  const fecha=getHoy(); // Fecha actual — siempre hoy
+  if((isNaN(rid)||(!rid&&rid!==0))||!gid){showT("Completa los campos requeridos","#dc2626");return}
   const btn=document.querySelector("button[onclick='guardar()']");
   if(btn){btn.disabled=true;btn.textContent="Guardando..."}
   const h=hora();
@@ -492,12 +452,17 @@ async function guardar(){
     const gps=lat?{lat,lng}:null;
     if(TIPO==="ap"){
       const ap={gid,hora:h,...(gps&&{lat:gps.lat,lng:gps.lng})};
-      if(ex)await fbU(`dias/${ex._k}`,{ap});else await fbP("dias",{rid,fecha,nota,ap,ci:null});
-      showT("🌅 Apertura registrada","#e85d04");
+      // Si ya hay registro del día, actualizar apertura
+      if(ex)await fbU(`dias/${ex._k}`,{ap,nota:nota||ex.nota});
+      else await fbP("dias",{rid,fecha,nota,ap,ci:null});
+      showT("🌅 Apertura registrada · "+h,"#e85d04");
     } else {
       const ci={gid,hora:h,...(gps&&{lat:gps.lat,lng:gps.lng})};
-      if(ex)await fbU(`dias/${ex._k}`,{ci});else await fbP("dias",{rid,fecha,nota,ap:null,ci});
-      showT("🌆 Cierre registrado","#2563eb");
+      // Si ya hay registro del día, actualizar cierre
+      if(ex)await fbU(`dias/${ex._k}`,{ci,nota:nota||ex.nota});
+      // Si no hay registro, crear uno con solo cierre
+      else await fbP("dias",{rid,fecha,nota,ap:null,ci});
+      showT("🌆 Cierre registrado · "+h,"#2563eb");
     }
     await syncNow(true);
   }catch(e){showT("⚠ Error al guardar","#dc2626");if(btn){btn.disabled=false;btn.textContent=TIPO==="ap"?"🌅 Registrar Apertura":"🌆 Registrar Cierre"}}
