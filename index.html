@@ -358,14 +358,12 @@ function rReg(){
   const sc=LAST?"#16a34a":SYNC?"#f59e0b":"#dc2626";
   let hoy="";
   if(!isA){
-    const dPendiente=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
-    const d=dPendiente||gDiaHoy(rid);
+    // Solo mostrar card del día de HOY
+    const d=gDiaHoy(rid);
     if(d){
       const ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):null,t=dur(d.ap?.hora,d.ci?.hora);
-      const esPendiente=dPendiente&&d.fecha!==getHoy();
-      hoy=`<div class="card" style="margin-bottom:14px;border-left:4px solid ${esPendiente?"#d97706":"var(--o)"}">
-        ${esPendiente?`<div style="font-size:10px;font-weight:700;color:#d97706;letter-spacing:.8px;margin-bottom:6px">⚠️ Cierre pendiente del ${shD(d.fecha)}</div>`:""}
-        <div style="font-size:11px;font-weight:700;color:${esPendiente?"#d97706":"var(--o)"};letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px">Tu día ${esPendiente?"pendiente":"de hoy"}</div>
+      hoy=`<div class="card" style="margin-bottom:14px;border-left:4px solid var(--o)">
+        <div style="font-size:11px;font-weight:700;color:var(--o);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px">Tu día de hoy</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div style="background:#fff7ed;border-radius:8px;padding:10px">
             <div style="font-size:9px;font-weight:700;color:var(--o);letter-spacing:.8px;margin-bottom:3px">🌅 APERTURA</div>
@@ -392,14 +390,11 @@ function rReg(){
       </div>
       ${(()=>{
         if(!isA){
-          // Buscar apertura pendiente de cierre (hoy o días anteriores)
-          const dPend=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
+          // Solo considera el registro de HOY
           const dHoyLocal=gDiaHoy(rid);
-          const d=dPend||dHoyLocal;
-          if(!d?.ap) return `<div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠️ Debes registrar <b>Apertura</b> primero antes de poder registrar el Cierre.</div>`;
-          if(dPend&&dPend.fecha!==getHoy()) return `<div style="background:#fef3c7;border:1.5px solid #fcd34d;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠️ Tienes apertura del <b>${shD(dPend.fecha)}</b> sin cierre. Registra el Cierre para completarlo.</div>`;
-          if(d?.ap&&!d?.ci) return `<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#1e40af;">✓ Apertura registrada a las <b>${d.ap.hora}</b>. Cuando termines el día registra el Cierre.</div>`;
-          if(d?.ap&&d?.ci) return `<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#15803d;">✅ Ya completaste tu registro de hoy. Apertura: <b>${d.ap.hora}</b> · Cierre: <b>${d.ci.hora}</b></div>`;
+          if(!dHoyLocal?.ap) return `<div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;">⚠️ Debes registrar <b>Apertura</b> primero antes de poder registrar el Cierre.</div>`;
+          if(dHoyLocal?.ap&&!dHoyLocal?.ci) return `<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#1e40af;">✓ Apertura registrada a las <b>${dHoyLocal.ap.hora}</b>. Cuando termines registra el Cierre.</div>`;
+          if(dHoyLocal?.ap&&dHoyLocal?.ci) return `<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#15803d;">✅ Registro completo. Apertura: <b>${dHoyLocal.ap.hora}</b> · Cierre: <b>${dHoyLocal.ci.hora}</b></div>`;
         }
         return "";
       })()}
@@ -413,22 +408,10 @@ function rReg(){
         ${isA?`<option value="">— Elige regional primero —</option>`:`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}
       </select>
       <span class="lbl">Fecha</span>
-      ${(()=>{
-        // Para cierre: mostrar la fecha de la apertura pendiente
-        if(TIPO==="ci"&&!isA){
-          const pend=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
-          if(pend&&pend.fecha!==getHoy()){
-            return`<div style="background:#fef3c7;border:1.5px solid #fcd34d;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#92400e;">
-              📅 ${pd(pend.fecha).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
-              <span style="font-size:10px;font-weight:400;color:#d97706;display:block;margin-top:2px">Fecha de apertura pendiente — el cierre se registrará en este día</span>
-            </div>`;
-          }
-        }
-        return`<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#15803d;">
-          📅 ${pd(getHoy()).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
-          <span style="font-size:10px;font-weight:400;color:#16a34a;display:block;margin-top:2px">Fecha automática — solo se puede registrar hoy</span>
-        </div>`;
-      })()}
+      <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#15803d;">
+        📅 ${pd(getHoy()).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+        <span style="font-size:10px;font-weight:400;color:#16a34a;display:block;margin-top:2px">Fecha automática — solo se puede registrar hoy</span>
+      </div>
       <span class="lbl">Nota <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1">(opcional)</span></span>
       <textarea id="sN" rows="2" placeholder="Observaciones..." style="margin-bottom:16px"></textarea>
       <button class="btn" style="background:${TIPO==="ap"?"var(--o)":"var(--b)"};color:#fff" onclick="guardar()">
@@ -453,20 +436,22 @@ function updG(){
   if(rid===0){let h=`<option value="">— Selecciona gerencia —</option>`;REGS.filter(r=>r.id!==0).forEach(r=>{h+=`<optgroup label="${r.n}">${GERS.filter(g=>g.r===r.id).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}</optgroup>`});sel.innerHTML=h}
   else sel.innerHTML=`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("");
 }
-// Evalúan al momento del click — no al cargar la página
+// Evalúan al momento del click — solo validan EL DÍA DE HOY
 function clickAp(){
   const isA=SES.role==="admin",rid=isA?null:SES.rid;
   if(!isA){
-    const dHoyLocal=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
-    if(dHoyLocal?.ap){showT("⚠ Ya registraste la apertura de hoy","#d97706");return}
+    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
+    if(dHoy?.ap){showT("⚠ Ya registraste la apertura de hoy","#d97706");return}
   }
   TIPO="ap";R();
 }
 function clickCi(){
   const isA=SES.role==="admin",rid=isA?null:SES.rid;
   if(!isA){
-    const pend=gDias().filter(d=>d.rid===rid&&d.ap&&!d.ci).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
-    if(!pend){showT("⚠ Primero registra la Apertura del día","#dc2626");return}
+    // Solo buscar apertura de HOY — días anteriores no bloquean
+    const dHoy=gDias().find(d=>d.rid===rid&&d.fecha===getHoy());
+    if(!dHoy?.ap){showT("⚠ Primero registra la Apertura de hoy","#dc2626");return}
+    if(dHoy?.ci){showT("⚠ Ya registraste el cierre de hoy","#d97706");return}
   }
   TIPO="ci";R();
 }
