@@ -629,8 +629,8 @@ function rCal(){
           return`<div style="border-left:3px solid ${bc};padding:10px 12px;margin-bottom:8px;border-radius:0 8px 8px 0;background:#f8fafc">
             <div style="font-size:11px;font-weight:700;margin-bottom:7px;color:${bc}">${reg.n}${t?` · ⏱ ${t}`:""}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <div><div style="font-size:9px;font-weight:700;color:var(--o)">🌅 APERTURA</div><div style="font-size:12px;font-weight:700">${ga.n||"—"}</div><div style="font-size:10px;color:var(--s)">${d.ap?.hora||""}</div></div>
-              <div><div style="font-size:9px;font-weight:700;color:var(--b)">🌆 CIERRE</div><div style="font-size:12px;font-weight:700">${gc?gc.n:"Pendiente"}</div><div style="font-size:10px;color:var(--s)">${d.ci?.hora||""}</div></div>
+              <div><div style="font-size:9px;font-weight:700;color:var(--o)">🌅 APERTURA</div><div style="font-size:12px;font-weight:700">${ga.n||"—"}</div><div style="font-size:10px;color:var(--s)">${d.ap?.hora||""}</div>${d.ap?.lat?`<a href="https://www.google.com/maps?q=${d.ap.lat},${d.ap.lng}" target="_blank" style="font-size:9px;color:#e85d04;font-weight:700;text-decoration:none;display:inline-block;margin-top:3px">📌 Ver en Maps ↗</a>`:d.ap?`<div style="font-size:9px;color:#cbd5e1;margin-top:3px">Sin GPS</div>`:""}</div>
+              <div><div style="font-size:9px;font-weight:700;color:var(--b)">🌆 CIERRE</div><div style="font-size:12px;font-weight:700">${gc?gc.n:"Pendiente"}</div><div style="font-size:10px;color:var(--s)">${d.ci?.hora||""}</div>${d.ci?.lat?`<a href="https://www.google.com/maps?q=${d.ci.lat},${d.ci.lng}" target="_blank" style="font-size:9px;color:var(--b);font-weight:700;text-decoration:none;display:inline-block;margin-top:3px">📌 Ver en Maps ↗</a>`:d.ci?`<div style="font-size:9px;color:#cbd5e1;margin-top:3px">Sin GPS</div>`:""}</div>
             </div>${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:5px">📝 ${d.nota}</div>`:""}
           </div>`}).join("")}
     </div>`;
