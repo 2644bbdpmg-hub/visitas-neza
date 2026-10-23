@@ -163,7 +163,7 @@ let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null;
 let SEL_WEEK=null; // {year, week, start, end} semana seleccionada
 let SHOW_TARD=false; // filtro solo tardanzas
 let SEL_DAY=null; // fecha específica seleccionada
-let CAL_F=null,MAP_F=null,HOR_F=null,DIST_T=null,PER="all",DIST_REG_F=null;
+let CAL_F=null,MAP_F=null,HOR_F=null,DIST_T=null,PER="all",DIST_REG_F=null,DIST_SEL=0;
 let ALERT_DAYS=14,ROUTE_RID=null;
 function getHoy(){return fd(new Date())} // siempre fecha actual fresca
 const LIM=9*60;
@@ -178,6 +178,29 @@ function hora(){return new Date().toLocaleTimeString("es-MX",{hour:"2-digit",min
 function getReg(id){return REGS.find(r=>r.id===id)||{}}
 function getGer(id){return GERS.find(g=>g.id===id)||{}}
 function grByR(rid){return rid===0?GERS:GERS.filter(g=>g.r===rid)}
+function esc(t){return String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+// Siguiente día hábil (lunes a sábado)
+function nextDia(f){const d=pd(f);d.setDate(d.getDate()+1);if(d.getDay()===0)d.setDate(d.getDate()+1);return fd(d)}
+function lgD(f){return pd(f).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"})}
+function gerOpts(rid,sel){
+  const o=g=>`<option value="${g.id}" ${+sel===g.id?"selected":""}>${g.n} · ${g.cod}</option>`;
+  if(rid===0)return REGS.filter(r=>r.id!==0).map(r=>`<optgroup label="${r.n}">${GERS.filter(g=>g.r===r.id).map(o).join("")}</optgroup>`).join("");
+  return grByR(rid).map(o).join("");
+}
+// Plan comprometido para una fecha (capturado en el cierre del día anterior)
+function planPara(rid,fecha){
+  const d=gDias().filter(x=>x.rid===rid&&x.plan&&x.plan.fecha===fecha&&x.fecha<fecha).sort((a,b)=>b.fecha>a.fecha?1:-1)[0];
+  return d?d.plan:null;
+}
+function planHTML(p,titulo){
+  if(!p)return"";
+  const g=getGer(p.gid);
+  return`<div style="background:#f5f3ff;border:1.5px solid #c4b5fd;border-radius:8px;padding:9px 11px;margin-top:10px;font-size:12px;color:#4c1d95">
+    <div style="font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px">📌 ${titulo} · ${lgD(p.fecha)}</div>
+    <div style="font-weight:700;margin-bottom:4px">Apertura en ${g.n||"—"} ${g.cod?`<span style="font-weight:400;color:#7c3aed">${g.cod}</span>`:""}</div>
+    ${(p.tareas||[]).map((t,i)=>`<div style="margin-top:2px">${i+1}. ${esc(t)}</div>`).join("")}
+  </div>`;
+}
 function gDias(){return Object.entries(DIAS).map(([k,v])=>({...v,_k:k}))}
 function gFDias(){
   const all=gDias();
@@ -294,13 +317,16 @@ function perLbl(){
 }
 
 // ── SYNC ──
-function capForm(){return{r:document.getElementById("sR")?.value||"",g:document.getElementById("sG")?.value||"",n:document.getElementById("sN")?.value||""}}
+function capForm(){const v=id=>document.getElementById(id)?.value||"";return{r:v("sR"),g:v("sG"),n:v("sN"),pg:v("sPG"),t1:v("sT1"),t2:v("sT2"),t3:v("sT3"),_ci:!!document.getElementById("sPG")}}
 function restoreForm(v){
   if(!v)return;
   const er=document.getElementById("sR");
   if(er&&v.r){er.value=v.r;updG()}
   const eg=document.getElementById("sG");if(eg&&v.g)eg.value=v.g;
   const en=document.getElementById("sN");if(en)en.value=v.n||"";
+  // Solo restaurar el plan si ya se estaba capturando (evita borrar el plan precargado)
+  if(v._ci){const ep=document.getElementById("sPG");if(ep&&v.pg)ep.value=v.pg;
+    ["t1","t2","t3"].forEach((k,i)=>{const e=document.getElementById("sT"+(i+1));if(e)e.value=v[k]||""});}
 }
 async function syncNow(force=false){
   if(SAVING&&!force)return;
@@ -405,11 +431,18 @@ function rReg(){
           </div>
         </div>
         ${t?`<div style="text-align:center;margin-top:10px"><span class="bdg" style="background:#fff7ed;color:var(--o);border:1.5px solid #fed7aa">⏱ ${t}</span></div>`:""}
+        ${planHTML(d.plan,"Tu plan para")}
         <button onclick="delDia('${d._k}')" style="background:transparent;border:none;color:#cbd5e1;font-size:11px;cursor:pointer;margin-top:8px;display:block;width:100%;text-align:center">✕ Eliminar registro de hoy</button>
       </div>`;
     }
   }
+  const planHoy=!isA?planPara(rid,getHoy()):null;
+  const dHoyR=!isA?gDiaHoy(rid):null;
+  const preG=TIPO==="ap"&&planHoy&&!dHoyR?.ap?planHoy.gid:null;
+  const plCi=dHoyR?.plan||null;
+  const sigF=nextDia(getHoy());
   return`<div class="pg">
+    ${planHoy?`<div class="card" style="margin-bottom:14px;border-left:4px solid #7c3aed;padding-top:12px">${planHTML(planHoy,"Lo que te comprometiste hoy").replace('margin-top:10px','margin-top:0')}</div>`:""}
     ${hoy}
     <div class="card">
       <div class="tipo-wrap">
@@ -431,13 +464,24 @@ function rReg(){
         </select>`:""}
       <span class="lbl" ${isA?"":"style='margin-top:0'"}>Gerencia</span>
       <select id="sG" style="margin-bottom:13px">
-        ${isA?`<option value="">— Elige regional primero —</option>`:`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}
+        ${isA?`<option value="">— Elige regional primero —</option>`:`<option value="">— Selecciona gerencia —</option>`+gerOpts(rid,preG)}
       </select>
+      ${preG?`<div style="font-size:10px;color:#7c3aed;margin:-8px 0 12px">Precargada con tu plan de ayer. Cámbiala si abres en otra.</div>`:""}
       <span class="lbl">Fecha</span>
       <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#15803d;">
         📅 ${pd(getHoy()).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
         <span style="font-size:10px;font-weight:400;color:#16a34a;display:block;margin-top:2px">Fecha automática — solo se puede registrar hoy</span>
       </div>
+      ${TIPO==="ci"?`<div style="background:#f5f3ff;border:1.5px solid #c4b5fd;border-radius:10px;padding:12px 13px;margin-bottom:13px">
+        <div style="font-size:11px;font-weight:800;color:#5b21b6;letter-spacing:.6px;text-transform:uppercase;margin-bottom:2px">📌 Plan para ${lgD(sigF)}</div>
+        <div style="font-size:11px;color:#6d28d9;margin-bottom:10px">Obligatorio para registrar el cierre</div>
+        <span class="lbl" style="margin-top:0">Gerencia donde abrirás</span>
+        <select id="sPG" style="margin-bottom:10px">
+          ${isA?`<option value="">— Elige regional primero —</option>`:`<option value="">— Selecciona gerencia —</option>`+gerOpts(rid,plCi?.gid)}
+        </select>
+        <span class="lbl">3 tareas principales</span>
+        ${[1,2,3].map(i=>`<input id="sT${i}" maxlength="120" placeholder="Tarea ${i}${i===1?" (ej. revisar cartera vencida con el gerente)":""}" value="${esc(plCi?.tareas?.[i-1]||"")}" style="margin-bottom:${i<3?7:0}px">`).join("")}
+      </div>`:""}
       <span class="lbl">Nota <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1">(opcional)</span></span>
       <textarea id="sN" rows="2" placeholder="Observaciones..." style="margin-bottom:16px"></textarea>
       <button class="btn" style="background:${TIPO==="ap"?"var(--o)":"var(--b)"};color:#fff" onclick="guardar()">
@@ -457,10 +501,9 @@ function rReg(){
   </div>`;
 }
 function updG(){
-  const rid=parseInt(document.getElementById("sR")?.value),sel=document.getElementById("sG");
-  if(isNaN(rid)){sel.innerHTML=`<option value="">— Elige regional primero —</option>`;return}
-  if(rid===0){let h=`<option value="">— Selecciona gerencia —</option>`;REGS.filter(r=>r.id!==0).forEach(r=>{h+=`<optgroup label="${r.n}">${GERS.filter(g=>g.r===r.id).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}</optgroup>`});sel.innerHTML=h}
-  else sel.innerHTML=`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("");
+  const rid=parseInt(document.getElementById("sR")?.value);
+  ["sG","sPG"].forEach(id=>{const sel=document.getElementById(id);if(!sel)return;
+    sel.innerHTML=isNaN(rid)?`<option value="">— Elige regional primero —</option>`:`<option value="">— Selecciona gerencia —</option>`+gerOpts(rid);});
 }
 // Cambiar tipo sin perder gerencia ni nota
 function setTipo(t){const f=capForm();TIPO=t;R();restoreForm(f)}
@@ -484,6 +527,15 @@ async function guardar(){
   const gid=parseInt(document.getElementById("sG")?.value),nota=document.getElementById("sN")?.value.trim()||"";
   const fecha=getHoy();
   if((isNaN(rid)||(!rid&&rid!==0))||!gid){showT("Selecciona una gerencia antes de registrar","#dc2626");return}
+  let plan=null;
+  if(TIPO==="ci"){
+    const pgid=parseInt(document.getElementById("sPG")?.value);
+    const tareas=[1,2,3].map(i=>(document.getElementById("sT"+i)?.value||"").trim());
+    if(!pgid){showT("Selecciona la gerencia donde abrirás mañana","#dc2626");document.getElementById("sPG")?.focus();return}
+    const vac=tareas.findIndex(t=>t.length<4);
+    if(vac>=0){showT(`Escribe la tarea ${vac+1} (mín. 4 caracteres)`,"#dc2626");document.getElementById("sT"+(vac+1))?.focus();return}
+    plan={fecha:nextDia(fecha),gid:pgid,tareas,hora:hora()};
+  }
   const btn=document.querySelector("button[onclick='guardar()']");
   SAVING=true;if(btn){btn.disabled=true;btn.textContent="Guardando..."}
   try{
@@ -499,8 +551,8 @@ async function guardar(){
       else await fbP("dias",{rid,fecha,nota,ap:dato,ci:null});
       showT("🌅 Apertura registrada · "+h,"#e85d04");
     }else{
-      if(ex)await fbU(`dias/${ex._k}`,{ci:dato,nota:nota||ex.nota||""});
-      else await fbP("dias",{rid,fecha,nota,ap:null,ci:dato});
+      if(ex)await fbU(`dias/${ex._k}`,{ci:dato,plan,nota:nota||ex.nota||""});
+      else await fbP("dias",{rid,fecha,nota,ap:null,ci:dato,plan});
       showT("🌆 Cierre registrado · "+h,"#2563eb");
     }
     await syncNow(true);
@@ -538,16 +590,31 @@ function rUlt(isA,rid){
           <div style="font-size:10px;color:var(--s)">${d.ci?.hora||""}</div>
         </div>
       </div>
-      ${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:8px">📝 ${d.nota}</div>`:""}
+      ${(()=>{const pl=planPara(d.rid,d.fecha);if(!pl||!d.ap)return"";
+        const ok=pl.gid===d.ap.gid;
+        return`<div style="font-size:11px;margin-top:8px;color:${ok?"#15803d":"#b45309"}">${ok?"✅ Abrió donde lo planeó":`⚠ Planeó abrir en <b>${getGer(pl.gid).n||"—"}</b>`}</div>`})()}
+      ${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:8px">📝 ${esc(d.nota)}</div>`:""}
+      ${planHTML(d.plan,"Plan para")}
     </div>`;
   }).join("");
 }
 
 // ── DISTRIBUCIÓN ──
+function distSel(){
+  const opts=[...REGS.map(r=>[r.id,r.n]),["ALL","Todas"]];
+  return`<div class="card" style="margin-bottom:14px;padding:12px 14px">
+    <div style="font-size:10px;font-weight:800;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px">Ver distribución de</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${opts.map(([id,n])=>{const on=DIST_SEL===id,bc=id==="ALL"?"#475569":(CLR[id]||"#e85d04");
+        return`<button onclick="DIST_SEL=${id==="ALL"?"'ALL'":id};R()" style="padding:7px 13px;border-radius:20px;border:1.5px solid ${on?bc:"var(--br)"};background:${on?bc:"#fff"};color:${on?"#fff":"var(--s)"};font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">${id===0?"🔑 ":""}${n}</button>`}).join("")}
+    </div>
+  </div>`;
+}
 function rDist(){
-  const isA=SES.role==="admin",show=isA?REGS:REGS.filter(r=>r.id===SES.rid);
-  setTimeout(()=>{if(DIST_T!==null){const el=document.getElementById("rc-"+DIST_T);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});DIST_T=null}},150);
-  return`<div class="pg">${pfWidget()}${show.map(r=>{
+  const isA=SES.role==="admin";
+  if(isA&&DIST_T!==null){DIST_SEL=DIST_T;DIST_T=null}
+  const show=isA?(DIST_SEL==="ALL"?REGS:REGS.filter(r=>r.id===DIST_SEL)):REGS.filter(r=>r.id===SES.rid);
+  return`<div class="pg">${isA?distSel():""}${pfWidget()}${show.map(r=>{
     if(r.id===0){
       const tot=gFDias().filter(d=>d.rid===0).length,cs=GERS.map(g=>({...g,v:vcnt(g.id,0)})).sort((a,b)=>b.v-a.v),mx=Math.max(...cs.map(c=>c.v),1);
       return`<div id="rc-0" class="card" style="margin-bottom:14px;scroll-margin-top:130px">
@@ -1069,11 +1136,11 @@ function exportCSV(){
   // Exportar SOLO los datos del filtro activo
   const dias=gFDias();if(!dias.length){showT("Sin registros en el período seleccionado","#dc2626");return}
   const periodo=perLbl().replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-]/g,"").trim().replace(/\s+/g,"_");
-  let csv=`Período: ${perLbl()}\nFecha,Regional,Ger.Apertura,Cod,Hora Apertura,GPS Ap,Ger.Cierre,Cod,Hora Cierre,GPS Ci,Tiempo,Nota\n`;
+  let csv=`Período: ${perLbl()}\nFecha,Regional,Ger.Apertura,Cod,Hora Apertura,GPS Ap,Ger.Cierre,Cod,Hora Cierre,GPS Ci,Tiempo,Nota,Plan siguiente día,Plan gerencia,Tarea 1,Tarea 2,Tarea 3\n`;
   dias.sort((a,b)=>a.fecha>b.fecha?1:-1).forEach(d=>{
     const reg=getReg(d.rid),ga=getGer(d.ap?.gid),gc=d.ci?getGer(d.ci.gid):{},t=dur(d.ap?.hora,d.ci?.hora)||"";
     const gpsAp=d.ap?.lat?`${d.ap.lat},${d.ap.lng}`:"",gpsCi=d.ci?.lat?`${d.ci.lat},${d.ci.lng}`:"";
-    csv+=`"${d.fecha}","${reg.n}","${ga.n||""}","${ga.cod||""}","${d.ap?.hora||""}","${gpsAp}","${gc.n||""}","${gc.cod||""}","${d.ci?.hora||""}","${gpsCi}","${t}","${d.nota||""}"\n`;
+    csv+=`"${d.fecha}","${reg.n}","${ga.n||""}","${ga.cod||""}","${d.ap?.hora||""}","${gpsAp}","${gc.n||""}","${gc.cod||""}","${d.ci?.hora||""}","${gpsCi}","${t}","${(d.nota||"").replace(/"/g,'""')}","${d.plan?.fecha||""}","${getGer(d.plan?.gid).n||""}",${[0,1,2].map(i=>`"${(d.plan?.tareas?.[i]||"").replace(/"/g,'""')}"`).join(",")}\n`;
   });
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
   a.download=`visitas_${periodo}_${fd(new Date())}.csv`;a.click();showT("✓ CSV descargado ("+dias.length+" registros)");

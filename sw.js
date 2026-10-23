@@ -1,5 +1,5 @@
 // Service Worker – Visitas Cuartel Neza
-const CACHE = "visitas-neza-v1";
+const CACHE = "visitas-neza-v2";
 const ASSETS = [
   "/visitas-neza/",
   "/visitas-neza/index.html"
