@@ -54,18 +54,21 @@ textarea{resize:vertical}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);align-items:flex-end;justify-content:center;z-index:200}
 .modal-bg.show{display:flex}
 .modal-box{background:var(--w);border-radius:20px 20px 0 0;padding:22px 18px 30px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .cal-head{font-size:10px;font-weight:700;color:var(--s);text-align:center;padding:5px 0}
-.cal-cell{min-height:62px;background:var(--w);border-radius:7px;padding:4px;cursor:pointer;border:1.5px solid var(--br);position:relative}
+.cal-cell{min-height:78px;background:var(--w);border-radius:8px;padding:5px 4px;cursor:pointer;border:1.5px solid var(--br);display:flex;flex-direction:column;gap:3px;overflow:hidden}
 .cal-cell.sel,.cal-cell.today{border-color:var(--o)}
 .cal-cell.sel{background:#fff7ed}
 .cal-cell.wknd{background:#fafafa}
-.cal-cell.empty{background:transparent;border:none;cursor:default}
-.cal-pip{font-size:8px;font-weight:700;color:#fff;border-radius:3px;padding:1px 3px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cal-n{font-size:11px;font-weight:700}
+.cal-cell.empty{background:transparent;border:none;cursor:default;min-height:0}
+.cal-hd{display:flex;align-items:center;justify-content:space-between;gap:3px;line-height:1;flex-shrink:0;min-height:14px}
+.cal-body{display:flex;flex-direction:column;gap:2px;overflow:hidden;flex:1}
+.cal-pip{font-size:8px;line-height:1.35;font-weight:700;color:#fff;border-radius:3px;padding:1px 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+.cal-more{font-size:8px;line-height:1.2;color:var(--s);font-weight:700;text-align:center;flex-shrink:0}
+.cal-n{font-size:11px;font-weight:700;line-height:1}
 .cal-n.hoy{color:var(--o)}
 .cal-n.wk{color:var(--s)}
-.cal-badge{position:absolute;top:3px;right:3px;width:13px;height:13px;background:var(--o);border-radius:50%;font-size:7px;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.cal-badge{width:14px;height:14px;min-width:14px;background:var(--o);border-radius:50%;font-size:8px;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0}
 .div{height:1px;background:var(--g);margin:13px 0}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .stat{background:var(--w);border-radius:10px;padding:13px 8px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
@@ -160,7 +163,7 @@ let CY=new Date().getFullYear(),CM=new Date().getMonth(),CDS=null;
 let SEL_WEEK=null; // {year, week, start, end} semana seleccionada
 let SHOW_TARD=false; // filtro solo tardanzas
 let SEL_DAY=null; // fecha específica seleccionada
-let CAL_F=null,MAP_F=null,HOR_F=null,DIST_T=null,PER="all";
+let CAL_F=null,MAP_F=null,HOR_F=null,DIST_T=null,PER="all",DIST_REG_F=null;
 let ALERT_DAYS=14,ROUTE_RID=null;
 function getHoy(){return fd(new Date())} // siempre fecha actual fresca
 const LIM=9*60;
@@ -553,7 +556,12 @@ function rDist(){
           <span class="bdg" style="background:#fff7ed;color:var(--o);border:1.5px solid #fed7aa">Cuartel completo</span>
         </div>
         <div class="div"></div>
-        ${REGS.filter(x=>x.id!==0).map(rg=>`<div style="margin-bottom:14px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+          <button onclick="DIST_REG_F=null;R()" style="padding:6px 12px;border-radius:20px;border:1.5px solid ${DIST_REG_F===null?"var(--o)":"var(--br)"};background:${DIST_REG_F===null?"var(--o)":"#fff"};color:${DIST_REG_F===null?"#fff":"var(--s)"};font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Todas</button>
+          ${REGS.filter(x=>x.id!==0).map(rg=>{const on=DIST_REG_F===rg.id,bc=CLR[rg.id]||"#e85d04";
+            return`<button onclick="DIST_REG_F=${rg.id};R()" style="padding:6px 12px;border-radius:20px;border:1.5px solid ${on?bc:"var(--br)"};background:${on?bc:"#fff"};color:${on?"#fff":"var(--s)"};font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">${rg.n}</button>`}).join("")}
+        </div>
+        ${REGS.filter(x=>x.id!==0&&(DIST_REG_F===null||x.id===DIST_REG_F)).map(rg=>`<div style="margin-bottom:14px">
           <div style="font-size:10px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid var(--g)">${rg.n}</div>
           ${cs.filter(g=>g.r===rg.id).map(g=>{const pct=Math.round(g.v/mx*100),bc=bCol(g.v,mx);return`<div style="margin-bottom:7px">
             <div style="display:flex;justify-content:space-between;margin-bottom:3px">
@@ -661,10 +669,14 @@ function rCal(){
     const ds=CY+"-"+String(CM+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
     const its=byD[ds]||[];const isTod=ds===todayS,isSel=ds===CDS,isWk=((sdow+day-1)%7)>=5;
     grid+=`<div onclick="CDS='${ds}';R()" class="cal-cell${isTod||isSel?" today":""}${isSel?" sel":""}${isWk?" wknd":""}">
-      <div class="cal-n${isTod?" hoy":isWk?" wk":""}">${day}</div>
-      ${its.slice(0,2).map(d=>{const bc=CLR[d.rid]||"#e85d04",ga=getGer(d.ap?.gid);return`<div class="cal-pip" style="background:${bc}">${ga.n?(ga.n.replace("Gcc ","").replace("LCV ","")):"?"}</div>`}).join("")}
-      ${its.length>2?`<div style="font-size:8px;color:var(--s);font-weight:700;text-align:center">+${its.length-2}</div>`:""}
-      ${its.length>0?`<div class="cal-badge">${its.length}</div>`:""}
+      <div class="cal-hd">
+        <span class="cal-n${isTod?" hoy":isWk?" wk":""}">${day}</span>
+        ${its.length>0?`<span class="cal-badge">${its.length}</span>`:""}
+      </div>
+      <div class="cal-body">
+        ${its.slice(0,2).map(d=>{const bc=CLR[d.rid]||"#e85d04",ga=getGer(d.ap?.gid);return`<div class="cal-pip" style="background:${bc}">${ga.n?(ga.n.replace("Gcc ","").replace("LCV ","")):"?"}</div>`}).join("")}
+        ${its.length>2?`<div class="cal-more">+${its.length-2}</div>`:""}
+      </div>
     </div>`;
   }
   grid+=`</div>`;
@@ -683,7 +695,8 @@ function rCal(){
 let _map=null;
 function rMapa(){
   const pts=[];
-  gDias().forEach(d=>{
+  const fdias=gFDias();
+  fdias.forEach(d=>{
     if(d.ap?.lat)pts.push({...d,tipo:"ap",lat:d.ap.lat,lng:d.ap.lng,hora:d.ap.hora,gid:d.ap.gid});
     if(d.ci?.lat)pts.push({...d,tipo:"ci",lat:d.ci.lat,lng:d.ci.lng,hora:d.ci.hora,gid:d.ci.gid});
   });
@@ -712,10 +725,11 @@ function rMapa(){
   },200);
   return`<div class="pg" style="max-width:100%;padding:0">
     <div style="padding:14px 14px 0">
+      ${pfWidget()}
       <div class="stats" style="margin-bottom:12px">
-        <div class="stat"><div class="stat-n" style="color:var(--o)">${gDias().length}</div><div class="stat-l">Total días</div></div>
+        <div class="stat"><div class="stat-n" style="color:var(--o)">${fdias.length}</div><div class="stat-l">Días</div></div>
         <div class="stat"><div class="stat-n" style="color:#16a34a">${pts.length}</div><div class="stat-l">Puntos GPS</div></div>
-        <div class="stat"><div class="stat-n" style="color:var(--s)">${gDias().length-Math.floor(pts.length/2)}</div><div class="stat-l">Sin GPS</div></div>
+        <div class="stat"><div class="stat-n" style="color:var(--s)">${Math.max(0,fdias.length-Math.floor(pts.length/2))}</div><div class="stat-l">Sin GPS</div></div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
         <button onclick="MAP_F=null;rMapaView()" style="display:flex;align-items:center;gap:4px;border-radius:20px;padding:3px 10px;border:2px solid ${MAP_F===null?"#1e293b":"#e2e8f0"};background:${MAP_F===null?"#1e293b":"transparent"};cursor:pointer">
@@ -730,7 +744,7 @@ function rMapa(){
       </div>
     </div>
     ${pts.length===0
-      ?`<div style="text-align:center;padding:40px 20px"><div style="font-size:38px;margin-bottom:12px">🗺️</div><div style="font-size:15px;font-weight:800;color:#1e293b;margin-bottom:6px">Sin ubicaciones GPS aún</div><div style="font-size:13px;color:#94a3b8">Las ubicaciones se capturan automáticamente al registrar.</div></div>`
+      ?`<div style="text-align:center;padding:40px 20px"><div style="font-size:38px;margin-bottom:12px">🗺️</div><div style="font-size:15px;font-weight:800;color:#1e293b;margin-bottom:6px">Sin ubicaciones GPS</div><div style="font-size:13px;color:#94a3b8">No hay puntos en <b>${perLbl()}</b>. Cambia el período arriba.</div></div>`
       :`<div id="mapa-div" style="height:calc(100vh - 200px);width:100%;min-height:320px"></div>
        <div style="padding:12px 14px">
          ${vis.slice().reverse().slice(0,10).map(p=>{const reg=getReg(p.rid),ger=getGer(p.gid),bc=CLR[p.rid]||"#e85d04";
@@ -753,6 +767,22 @@ function rHor(){
   if(SHOW_TARD) dias=dias.filter(d=>{const m=pMin(d.ap?.hora);return m!==null&&m>LIM});
   const totT=dias.filter(d=>{const m=pMin(d.ap?.hora);return m!==null&&m>LIM}).length;
   const totSC=dias.filter(d=>d.ap&&!d.ci).length;
+  // Días esperados del período (Lun-Sáb, nunca futuros) para detectar días sin registro
+  const hoyDS=getHoy();
+  function diasEsperados(){
+    let ini=null,fin=null;
+    if(SEL_DAY){ini=SEL_DAY;fin=SEL_DAY}
+    else if(SEL_WEEK){ini=SEL_WEEK.start;fin=SEL_WEEK.end}
+    else if(PER==="week"){const h=new Date(),dy=h.getDay(),mo=new Date(h);mo.setDate(h.getDate()-(dy===0?6:dy-1));const su=new Date(mo);su.setDate(mo.getDate()+6);ini=fd(mo);fin=fd(su)}
+    else if(PER==="month"){const h=new Date();ini=fd(new Date(h.getFullYear(),h.getMonth(),1));fin=fd(new Date(h.getFullYear(),h.getMonth()+1,0))}
+    if(!ini)return[];
+    if(fin>hoyDS)fin=hoyDS;
+    if(ini>fin)return[];
+    const out=[];let c=pd(ini);const f=pd(fin);
+    while(c<=f){if(c.getDay()!==0)out.push(fd(c));c=new Date(c.getTime()+86400000)}
+    return out;
+  }
+  const DESP=diasEsperados();
   const regsStats=REGS.filter(r=>r.id!==0).map(r=>{
     const rd=diasBase.filter(d=>d.rid===r.id&&d.ap?.hora);
     const mins=rd.map(d=>pMin(d.ap.hora)).filter(m=>m!==null);
@@ -761,19 +791,26 @@ function rHor(){
     const sinC=diasBase.filter(d=>d.rid===r.id&&d.ap&&!d.ci).length;
     const durs=diasBase.filter(d=>d.rid===r.id&&d.ap?.hora&&d.ci?.hora).map(d=>pMin(d.ci.hora)-pMin(d.ap.hora)).filter(d=>d>0);
     const avgDur=durs.length?Math.round(durs.reduce((a,b)=>a+b,0)/durs.length):null;
-    return{...r,avgMin,tard,sinC,avgDur,total:rd.length};
+    const falt=DESP.filter(ds=>!diasBase.some(d=>d.rid===r.id&&d.fecha===ds));
+    return{...r,avgMin,tard,sinC,avgDur,total:rd.length,falt};
   });
+  const faltRegs=isA?(HOR_F!==null?regsStats.filter(r=>r.id===HOR_F):regsStats):regsStats.filter(r=>r.id===sesRid);
+  const faltItems=[];faltRegs.forEach(r=>r.falt.forEach(ds=>faltItems.push({rid:r.id,fecha:ds})));
+  faltItems.sort((a,b)=>b.fecha>a.fecha?1:b.fecha<a.fecha?-1:0);
+  const totFalt=faltItems.length;
   function mToH(m){if(m===null)return"—";const h=Math.floor(m/60),mn=m%60,ap=h>=12?"p.m.":"a.m.",hh=h>12?h-12:h===0?12:h;return`${hh}:${String(mn).padStart(2,"0")} ${ap}`}
   return`<div class="pg">
     ${pfWidget()}
-    <div class="stats">
+    <div class="stats" style="grid-template-columns:repeat(4,1fr);gap:7px">
       <div class="stat" onclick="SHOW_TARD=false;R()" style="cursor:pointer;border:2px solid ${!SHOW_TARD?"var(--o)":"transparent"};transition:all .15s">
-        <div class="stat-n" style="color:var(--o)">${dias.length}</div><div class="stat-l">Registros</div></div>
+        <div class="stat-n" style="color:var(--o);font-size:21px">${dias.length}</div><div class="stat-l">Registros</div></div>
       <div class="stat" onclick="SHOW_TARD=!SHOW_TARD;R()" style="cursor:pointer;border:2px solid ${SHOW_TARD?"#dc2626":"transparent"};background:${SHOW_TARD?"#fff1f2":"#fff"};transition:all .15s" title="Clic para ver solo tardanzas">
-        <div class="stat-n" style="color:#dc2626">${totT}</div>
-        <div class="stat-l" style="color:${SHOW_TARD?"#dc2626":"var(--s)"}">⚠ Tardanzas${SHOW_TARD?" ✓":""}</div>
+        <div class="stat-n" style="color:#dc2626;font-size:21px">${totT}</div>
+        <div class="stat-l" style="color:${SHOW_TARD?"#dc2626":"var(--s)"}">⚠ Tarde${SHOW_TARD?" ✓":""}</div>
       </div>
-      <div class="stat"><div class="stat-n" style="color:#d97706">${totSC}</div><div class="stat-l">Sin cierre</div></div>
+      <div class="stat"><div class="stat-n" style="color:#d97706;font-size:21px">${totSC}</div><div class="stat-l">Sin cierre</div></div>
+      <div class="stat" ${totFalt>0?`onclick="document.getElementById('sec-falt')&&document.getElementById('sec-falt').scrollIntoView({behavior:'smooth',block:'center'})" style="cursor:pointer;background:#f1f5f9;border:2px solid #94a3b8"`:`style="background:#f0fdf4;border:2px solid #86efac"`}>
+        <div class="stat-n" style="color:${totFalt>0?"#475569":"#16a34a"};font-size:21px">${totFalt}</div><div class="stat-l">🚫 Sin registro</div></div>
     </div>
     ${SHOW_TARD?`<div style="background:#fff1f2;border:1.5px solid #fca5a5;border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:12px;color:#9f1239;display:flex;align-items:center;justify-content:space-between">
       <span>🔴 Mostrando solo registros con tardanza (después de 9:00 a.m.)</span>
@@ -781,7 +818,7 @@ function rHor(){
     </div>`:""}
     ${isA?`<div class="card" style="margin-bottom:14px">
       <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:13px">Promedio por Regional</div>
-      ${regsStats.map(r=>{const bc=CLR[r.id]||"#e85d04",tard=r.tard>0,sinC=r.sinC>0;
+      ${regsStats.map(r=>{const bc=CLR[r.id]||"#e85d04",tard=r.tard>0,sinC=r.sinC>0,nf=r.falt.length;
         return`<div onclick="HOR_F=HOR_F===${r.id}?null:${r.id};R()" style="display:flex;align-items:center;gap:11px;padding:10px;border-radius:10px;cursor:pointer;background:${HOR_F===r.id?bc+"15":"transparent"};border:1.5px solid ${HOR_F===r.id?bc:"transparent"};margin-bottom:6px;transition:all .15s">
           <div style="width:10px;height:10px;border-radius:50%;background:${bc};flex-shrink:0"></div>
           <div style="flex:1">
@@ -795,10 +832,30 @@ function rHor(){
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
             ${tard?`<span style="background:#fee2e2;color:#dc2626;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">⚠ ${r.tard} tarde${r.tard!==1?"s":""}</span>`:""}
             ${sinC?`<span style="background:#fef3c7;color:#d97706;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">🔓 ${r.sinC} sin cierre</span>`:""}
-            ${!tard&&!sinC&&r.total>0?`<span style="background:#dcfce7;color:#16a34a;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">✓ Al día</span>`:""}
+            ${nf>0?`<span style="background:#e2e8f0;color:#475569;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">🚫 ${nf} sin registro</span>`:""}
+            ${!tard&&!sinC&&nf===0&&r.total>0?`<span style="background:#dcfce7;color:#16a34a;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">✓ Al día</span>`:""}
           </div>
         </div>`}).join("")}
       ${HOR_F!==null?`<div style="text-align:center;margin-top:6px"><button onclick="HOR_F=null;R()" style="background:transparent;border:none;color:var(--o);font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline">× Ver todos</button></div>`:""}
+    </div>`:""}
+    ${!SHOW_TARD&&DESP.length>0?`<div id="sec-falt" style="margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px">🚫 Días sin registro · ${perLbl()}</div>
+      ${totFalt===0?`<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:14px 15px;font-size:13px;color:#15803d;font-weight:700;text-align:center">✓ Todos los días del período tienen registro</div>`
+      :`<div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:12px;padding:11px 13px;margin-bottom:10px;font-size:11px;color:#475569">
+          Se revisaron <b>${DESP.length}</b> día${DESP.length!==1?"s":""} hábil${DESP.length!==1?"es":""} (lun–sáb, sin contar fechas futuras). Faltan <b>${totFalt}</b> registro${totFalt!==1?"s":""}.
+        </div>
+        ${faltItems.map(f=>{const rg=getReg(f.rid),bc=CLR[f.rid]||"#e85d04";
+          const dl=pd(f.fecha).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"});
+          return`<div style="background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid ${bc};display:flex;align-items:center;gap:11px">
+            <div style="width:34px;height:34px;min-width:34px;border-radius:50%;background:#f1f5f9;border:1.5px dashed #94a3b8;display:flex;align-items:center;justify-content:center;font-size:15px">🚫</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:700;color:${bc}">${rg.n}</div>
+              <div style="font-size:11px;color:var(--s);text-transform:capitalize">${dl}</div>
+            </div>
+            <span class="bdg" style="background:#e2e8f0;color:#475569">Sin apertura ni cierre</span>
+          </div>`}).join("")}`}
+    </div>`:!SHOW_TARD?`<div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:11px 13px;margin-bottom:16px;font-size:11px;color:#9a3412">
+      💡 Selecciona <b>Esta semana</b>, <b>Este mes</b> o una <b>semana específica</b> arriba para detectar los días sin registro.
     </div>`:""}
     <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px">Detalle de Registros ${HOR_F!==null?"· "+(REGS.find(r=>r.id===HOR_F)||{}).n:""}</div>
     ${dias.length===0?`<div style="text-align:center;padding:30px;color:#cbd5e1;font-size:14px">Sin registros en este período</div>`
