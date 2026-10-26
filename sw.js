@@ -1,41 +1,20 @@
-// Service Worker – Visitas Cuartel Neza
-const CACHE = "visitas-neza-v3";
-const ASSETS = [
-  "/visitas-neza/",
-  "/visitas-neza/index.html"
-];
-
-// Instalación: cachear assets
-self.addEventListener("install", e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())
-  );
+const CACHE="visitas-neza-v3";
+const ASSETS=["./","./index.html","./manifest.json","./apple-touch-icon.png","./icon-192.png","./icon-512.png","./favicon-32.png","./favicon-16.png"];
+self.addEventListener("install",e=>{
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS).catch(()=>{})));
 });
-
-// Activación: limpiar caches viejos
-self.addEventListener("activate", e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
+self.addEventListener("activate",e=>{
+  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
 });
-
-// Fetch: Network first, cache fallback
-self.addEventListener("fetch", e => {
-  // Solo cachear assets propios (no Firebase)
-  if(!e.request.url.includes("firebaseio.com") &&
-     !e.request.url.includes("googleapis.com") &&
-     !e.request.url.includes("openstreetmap") &&
-     !e.request.url.includes("unpkg.com")) {
-    e.respondWith(
-      fetch(e.request)
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-          return res;
-        })
-        .catch(() => caches.match(e.request))
-    );
-  }
+self.addEventListener("fetch",e=>{
+  if(e.request.method!=="GET")return;
+  if(e.request.url.indexOf("firebaseio.com")>-1)return;
+  e.respondWith(
+    fetch(e.request).then(r=>{
+      const cp=r.clone();
+      caches.open(CACHE).then(c=>c.put(e.request,cp).catch(()=>{}));
+      return r;
+    }).catch(()=>caches.match(e.request).then(r=>r||caches.match("./index.html")))
+  );
 });
