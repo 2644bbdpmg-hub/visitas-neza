@@ -172,6 +172,7 @@ let SHOW_TARD=false; // filtro solo tardanzas
 let SEL_DAY=null; // fecha específica seleccionada
 let CAL_F=null,MAP_F=null,HOR_F=null,DIST_T=null,PER="all",DIST_REG_F=null;
 let ALERT_DAYS=14,ROUTE_RID=null;
+let PLAN_DAY=null; // fecha seleccionada en el visor Plan vs Real
 function getHoy(){return fd(new Date())} // siempre fecha actual fresca
 const LIM=9*60;
 
@@ -301,13 +302,75 @@ function perLbl(){
 }
 
 // ── SYNC ──
-function capForm(){return{r:document.getElementById("sR")?.value||"",g:document.getElementById("sG")?.value||"",n:document.getElementById("sN")?.value||""}}
+function capForm(){
+  const cks={};document.querySelectorAll("input[id^='ck']").forEach(c=>{cks[c.id]=c.checked});
+  return{
+    r:document.getElementById("sR")?.value||"",
+    g:document.getElementById("sG")?.value||"",
+    n:document.getElementById("sN")?.value||"",
+    pf:document.getElementById("pF")?.value||"",
+    pg:document.getElementById("pG")?.value||"",
+    pa:document.getElementById("pA")?.value||"",
+    ot:document.getElementById("sOtras")?.value||"",
+    ju:document.getElementById("sJust")?.value||"",
+    pn:document.getElementById("pNo")?.value||"0",
+    pm:document.getElementById("pMot")?.value||"",
+    pj:document.getElementById("pJust")?.value||"",
+    cks
+  };
+}
 function restoreForm(v){
   if(!v)return;
   const er=document.getElementById("sR");
   if(er&&v.r){er.value=v.r;updG()}
   const eg=document.getElementById("sG");if(eg&&v.g)eg.value=v.g;
   const en=document.getElementById("sN");if(en)en.value=v.n||"";
+  const pf=document.getElementById("pF");if(pf&&v.pf)pf.value=v.pf;
+  const pg=document.getElementById("pG");if(pg&&v.pg)pg.value=v.pg;
+  const pa=document.getElementById("pA");if(pa)pa.value=v.pa||"";
+  const ot=document.getElementById("sOtras");if(ot)ot.value=v.ot||"";
+  const ju=document.getElementById("sJust");if(ju)ju.value=v.ju||"";
+  const pm=document.getElementById("pMot");if(pm&&v.pm)pm.value=v.pm;
+  const pj=document.getElementById("pJust");if(pj)pj.value=v.pj||"";
+  if(v.pn==="1")togPlan(1);
+  if(v.cks)Object.keys(v.cks).forEach(id=>{const c=document.getElementById(id);if(c)c.checked=v.cks[id]});
+  chkDesvio();
+}
+// ── PLAN DEL DÍA SIGUIENTE ──
+function cap1(t){return t?t.charAt(0).toUpperCase()+t.slice(1):t}
+function nextLaboral(ds){const d=pd(ds);d.setDate(d.getDate()+1);if(d.getDay()===0)d.setDate(d.getDate()+1);return fd(d)}
+// Registro (del día anterior) que declaró el plan para una fecha dada
+function planPara(rid,fecha){return gDias().find(d=>d.rid===rid&&d.plan&&d.plan.fecha===fecha)||null}
+function getPlan(rid,fecha){const r=planPara(rid,fecha);return r?r.plan:null}
+// Alterna el plan entre "sí me presento" y "no me presento"
+function togPlan(no){
+  const h=document.getElementById("pNo");if(!h)return;
+  h.value=no?"1":"0";
+  const si=document.getElementById("p-si"),nn=document.getElementById("p-no");
+  const bs=document.getElementById("pb-si"),bn=document.getElementById("pb-no");
+  if(si)si.style.display=no?"none":"block";
+  if(nn)nn.style.display=no?"block":"none";
+  if(bs){bs.style.borderColor=no?"var(--br)":"var(--o)";bs.style.background=no?"#fff":"#fff7ed";bs.style.color=no?"var(--s)":"var(--o)"}
+  if(bn){bn.style.borderColor=no?"#475569":"var(--br)";bn.style.background=no?"#f1f5f9":"#fff";bn.style.color=no?"#1e293b":"var(--s)"}
+}
+// Compara la gerencia declarada contra la que se está registrando y muestra/oculta la alerta
+function chkDesvio(){
+  const box=document.getElementById("desv-box");if(!box)return;
+  const isA=SES.role==="admin",rid=isA?parseInt(document.getElementById("sR")?.value):SES.rid;
+  const gid=parseInt(document.getElementById("sG")?.value);
+  const p=(isNaN(rid)||rid===null)?null:getPlan(rid,getHoy());
+  if(!p||isNaN(gid)||!gid){box.style.display="none";return}
+  const t=document.getElementById("desv-txt"),tt=document.getElementById("desv-tit");
+  if(p.noAsiste){
+    if(tt)tt.textContent="⚠️ HABÍAS DECLARADO QUE NO TE PRESENTABAS";
+    if(t)t.innerHTML=`Declaraste <b>${p.motivo||"ausencia"}</b> para hoy y te estás registrando en <b>${getGer(gid).n||"—"}</b>. Explica el motivo del cambio para poder guardar.`;
+    box.style.display="block";return;
+  }
+  if(!p.gid||p.gid===gid){box.style.display="none";return}
+  const gp=getGer(p.gid),gr=getGer(gid);
+  if(tt)tt.textContent="⚠️ NO ES LA GERENCIA QUE DECLARASTE";
+  if(t)t.innerHTML=`Declaraste presentarte en <b>${gp.n||"—"}</b>${gp.cod?" · "+gp.cod:""} y te estás registrando en <b>${gr.n||"—"}</b>${gr.cod?" · "+gr.cod:""}. Explica el motivo para poder guardar.`;
+  box.style.display="block";
 }
 async function syncNow(force=false){
   if(SAVING&&!force)return;
@@ -436,15 +499,89 @@ function rReg(){
           <option value="">— Selecciona —</option>
           ${REGS.map(r=>`<option value="${r.id}">${r.n}</option>`).join("")}
         </select>`:""}
+      ${TIPO==="ap"?(()=>{const p=isA?null:getPlan(rid,getHoy());
+        return p?`<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:10px;padding:10px 13px;margin-bottom:13px">
+          <div style="font-size:9px;font-weight:700;color:#1e40af;letter-spacing:.8px;margin-bottom:4px">🎯 TE COMPROMETISTE A PRESENTARTE EN</div>
+          <div style="font-size:14px;font-weight:800;color:#1e40af">${getGer(p.gid).n||"—"}</div>
+          <div style="font-size:10px;color:#2563eb">${getGer(p.gid).cod||""}</div>
+        </div>`:""})():""}
       <span class="lbl" ${isA?"":"style='margin-top:0'"}>Gerencia</span>
-      <select id="sG" style="margin-bottom:13px">
+      <select id="sG" ${TIPO==="ap"?'onchange="chkDesvio()"':""} style="margin-bottom:13px">
         ${isA?`<option value="">— Elige regional primero —</option>`:`<option value="">— Selecciona gerencia —</option>`+grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}
       </select>
+      ${TIPO==="ap"?`<div id="desv-box" style="display:none;background:#fff1f2;border:2px solid #dc2626;border-radius:10px;padding:12px 13px;margin-bottom:13px">
+        <div id="desv-tit" style="font-size:11px;font-weight:800;color:#dc2626;letter-spacing:.5px;margin-bottom:6px">⚠️ NO ES LA GERENCIA QUE DECLARASTE</div>
+        <div id="desv-txt" style="font-size:12px;color:#9f1239;line-height:1.5;margin-bottom:9px"></div>
+        <textarea id="sJust" rows="3" placeholder="¿Por qué te estás presentando en otra gerencia?" style="background:#fff;border-color:#fca5a5"></textarea>
+        <div style="font-size:10px;color:#dc2626;font-weight:700;margin-top:5px">Obligatorio para registrar la apertura</div>
+      </div>`:""}
       <span class="lbl">Fecha</span>
       <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:11px 13px;margin-bottom:13px;font-size:13px;font-weight:700;color:#15803d;">
         📅 ${pd(getHoy()).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
         <span style="font-size:10px;font-weight:400;color:#16a34a;display:block;margin-top:2px">Fecha automática — solo se puede registrar hoy</span>
       </div>
+      ${TIPO==="ci"?(()=>{
+        const p=isA?null:getPlan(rid,getHoy());
+        const acts=p&&p.acts&&p.acts.length?p.acts:null;
+        let h=`<div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:10px;padding:13px;margin-bottom:14px">
+          <div style="font-size:10px;font-weight:800;color:#475569;letter-spacing:.8px;margin-bottom:9px">✅ ACTIVIDADES QUE COMPROMETISTE HOY</div>`;
+        if(acts){
+          h+=acts.map((a,i)=>`<label style="display:flex;align-items:flex-start;gap:9px;background:#fff;border:1.5px solid var(--br);border-radius:9px;padding:10px 11px;margin-bottom:7px;cursor:pointer">
+            <input type="checkbox" id="ck${i}" style="width:19px;height:19px;min-width:19px;margin:0;accent-color:#16a34a;cursor:pointer">
+            <span style="font-size:13px;line-height:1.4;color:var(--t)">${a}</span>
+          </label>`).join("");
+          h+=`<div style="font-size:10px;color:var(--s);margin-top:2px;margin-bottom:10px">Palomea únicamente las que sí realizaste.</div>`;
+        }else{
+          h+=`<div style="font-size:12px;color:#94a3b8;padding:4px 0 10px">Sin plan declarado para hoy. Registra tu cierre normal y declara el plan de mañana abajo.</div>`;
+        }
+        h+=`<span class="lbl" style="margin-top:0">Otras actividades que realizaste <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1">(opcional)</span></span>
+          <textarea id="sOtras" rows="2" placeholder="Actividades fuera del plan..."></textarea>
+        </div>`;
+        return h;
+      })():""}
+      ${TIPO==="ci"?(()=>{
+        const esSab=pd(getHoy()).getDay()===6,req=!esSab;
+        const destino=nextLaboral(getHoy());
+        const dlDest=pd(destino).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"});
+        return`<div style="background:${req?"#fff7ed":"#f8fafc"};border:2px solid ${req?"var(--o)":"#cbd5e1"};border-radius:10px;padding:13px;margin-bottom:14px">
+        <div style="font-size:10px;font-weight:800;color:${req?"var(--o)":"#475569"};letter-spacing:.8px;margin-bottom:4px">🎯 PLAN DEL SIGUIENTE DÍA · ${req?"OBLIGATORIO":"OPCIONAL"}</div>
+        ${esSab?`<div style="font-size:11px;color:#475569;line-height:1.45;margin-bottom:10px">Mañana es <b>domingo (descanso)</b>, así que no es obligatorio. Si quieres puedes dejar declarado desde ahora tu plan del <b>${cap1(dlDest)}</b>.</div>`
+        :`<div style="font-size:11px;color:#9a3412;line-height:1.45;margin-bottom:10px">Declara dónde te presentas y qué vas a realizar el <b>${cap1(dlDest)}</b>. Se valida contra tu registro real de ese día.</div>`}
+        <input type="hidden" id="pNo" value="0">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <button type="button" id="pb-si" onclick="togPlan(0)" style="padding:10px 8px;border-radius:9px;border:2px solid var(--o);background:#fff;color:var(--o);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit">✓ Sí me presento</button>
+          <button type="button" id="pb-no" onclick="togPlan(1)" style="padding:10px 8px;border-radius:9px;border:2px solid var(--br);background:#fff;color:var(--s);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit">✕ No me presento</button>
+        </div>
+        <span class="lbl" style="margin-top:0">Fecha</span>
+        <input type="date" id="pF" value="${destino}" style="margin-bottom:11px">
+        <div id="p-si">
+          <span class="lbl" style="margin-top:0">Gerencia donde me presento</span>
+          <select id="pG" style="margin-bottom:11px">
+            <option value="">— Selecciona gerencia —</option>
+            ${isA?REGS.filter(r=>r.id!==0).map(r=>`<optgroup label="${r.n}">${GERS.filter(g=>g.r===r.id).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}</optgroup>`).join(""):grByR(rid).map(g=>`<option value="${g.id}">${g.n} · ${g.cod}</option>`).join("")}
+          </select>
+          <span class="lbl" style="margin-top:0">Actividades que voy a realizar</span>
+          <textarea id="pA" rows="4" placeholder="Una actividad por línea. Ejemplo:&#10;Revisión de indicadores con el gerente&#10;Acompañamiento en campo con 2 gestores&#10;Seguimiento a promesas de pago"></textarea>
+          <div style="font-size:10px;color:${req?"#9a3412":"#64748b"};font-weight:700;margin-top:5px">Escribe una actividad por línea</div>
+        </div>
+        <div id="p-no" style="display:none">
+          <span class="lbl" style="margin-top:0">Motivo por el que no me presento</span>
+          <select id="pMot" style="margin-bottom:11px">
+            <option value="">— Selecciona motivo —</option>
+            <option value="Vacaciones">Vacaciones</option>
+            <option value="Permiso">Permiso</option>
+            <option value="Incapacidad">Incapacidad</option>
+            <option value="Día económico">Día económico</option>
+            <option value="Descanso">Descanso</option>
+            <option value="Comisión / Junta fuera">Comisión / Junta fuera</option>
+            <option value="Capacitación">Capacitación</option>
+            <option value="Otro">Otro</option>
+          </select>
+          <span class="lbl" style="margin-top:0">Justificación</span>
+          <textarea id="pJust" rows="3" placeholder="Detalla el motivo (quién autorizó, periodo, etc.)"></textarea>
+          <div style="font-size:10px;color:#475569;font-weight:700;margin-top:5px">El motivo es obligatorio si no te vas a presentar</div>
+        </div>
+      </div>`})():""}
       <span class="lbl">Nota <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#cbd5e1">(opcional)</span></span>
       <textarea id="sN" rows="2" placeholder="Observaciones..." style="margin-bottom:16px"></textarea>
       <button class="btn" style="background:${TIPO==="ap"?"var(--o)":"var(--b)"};color:#fff" onclick="guardar()">
@@ -502,12 +639,49 @@ async function guardar(){
     const gps=pos?{lat:+pos.coords.latitude.toFixed(6),lng:+pos.coords.longitude.toFixed(6),acc:Math.round(pos.coords.accuracy||0)}:null;
     const dato={gid,hora:h,...(gps||{})};
     if(TIPO==="ap"){
+      // Desviación respecto al plan declarado el día anterior
+      const pl=getPlan(rid,fecha);
+      if(pl&&(pl.noAsiste||(pl.gid&&pl.gid!==gid))){
+        const just=document.getElementById("sJust")?.value.trim()||"";
+        if(!just){showT("Escribe la justificación: no coincide con lo que declaraste","#dc2626");chkDesvio();const jb=document.getElementById("sJust");if(jb)jb.focus();return}
+        dato.desv={planGid:pl.gid||null,planNo:!!pl.noAsiste,planMotivo:pl.motivo||"",just};
+      }
       if(ex)await fbU(`dias/${ex._k}`,{ap:dato,nota:nota||ex.nota||""});
       else await fbP("dias",{rid,fecha,nota,ap:dato,ci:null});
-      showT("🌅 Apertura registrada · "+h,"#e85d04");
+      showT(dato.desv?"🌅 Apertura registrada con desviación · "+h:"🌅 Apertura registrada · "+h,dato.desv?"#dc2626":"#e85d04");
     }else{
-      if(ex)await fbU(`dias/${ex._k}`,{ci:dato,nota:nota||ex.nota||""});
-      else await fbP("dias",{rid,fecha,nota,ap:null,ci:dato});
+      // 1) Cumplimiento de las actividades comprometidas para hoy
+      const pl=getPlan(rid,fecha);
+      if(pl&&pl.acts&&pl.acts.length){
+        dato.cump={acts:pl.acts.map((a,i)=>({t:a,ok:!!document.getElementById("ck"+i)?.checked})),
+                   otras:document.getElementById("sOtras")?.value.trim()||""};
+      }else{
+        const ot=document.getElementById("sOtras")?.value.trim()||"";
+        if(ot)dato.cump={acts:[],otras:ot};
+      }
+      // 2) Plan del siguiente día — obligatorio salvo el sábado
+      const esSab=pd(fecha).getDay()===6;
+      const pNo=document.getElementById("pNo")?.value==="1";
+      const pF=document.getElementById("pF")?.value||"";
+      const pG=parseInt(document.getElementById("pG")?.value);
+      const pA=(document.getElementById("pA")?.value||"").split("\n").map(s=>s.trim()).filter(Boolean);
+      const pMot=document.getElementById("pMot")?.value||"";
+      const pJ=(document.getElementById("pJust")?.value||"").trim();
+      let plan=null;
+      if(pNo){
+        if(!pMot){showT("Selecciona el motivo por el que no te presentas","#dc2626");return}
+        if(pMot==="Otro"&&!pJ){showT("Describe el motivo en la justificación","#dc2626");return}
+        plan={fecha:pF||nextLaboral(fecha),noAsiste:true,motivo:pMot,just:pJ,ts:h};
+      }else if(pG&&pA.length){
+        plan={fecha:pF||nextLaboral(fecha),gid:pG,acts:pA,ts:h};
+      }else if(!esSab){
+        if(!pG){showT("Selecciona la gerencia donde te presentas mañana","#dc2626");return}
+        showT("Escribe al menos una actividad para mañana","#dc2626");return;
+      }
+      const upd={ci:dato,nota:nota||ex?.nota||""};
+      if(plan)upd.plan=plan;
+      if(ex)await fbU(`dias/${ex._k}`,upd);
+      else await fbP("dias",{rid,fecha,nota,ap:null,...upd});
       showT("🌆 Cierre registrado · "+h,"#2563eb");
     }
     await syncNow(true);
@@ -857,7 +1031,7 @@ function rHor(){
             <div style="width:34px;height:34px;min-width:34px;border-radius:50%;background:#f1f5f9;border:1.5px dashed #94a3b8;display:flex;align-items:center;justify-content:center;font-size:15px">🚫</div>
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:700;color:${bc}">${rg.n}</div>
-              <div style="font-size:11px;color:var(--s);text-transform:capitalize">${dl}</div>
+              <div style="font-size:11px;color:var(--s)">${cap1(dl)}</div>
             </div>
             <span class="bdg" style="background:#e2e8f0;color:#475569">Sin apertura ni cierre</span>
           </div>`}).join("")}`}
@@ -904,6 +1078,103 @@ function rHor(){
           ${d.nota?`<div style="font-size:11px;color:#d97706;margin-top:9px;padding:7px 9px;background:#fffbeb;border-radius:8px">📝 ${d.nota}</div>`:""}
         </div>`;
       }).join("")}
+  </div>`;
+}
+
+// ── PLAN VS REAL ──
+function setPlanDay(f){if(f){PLAN_DAY=f;R()}}
+function planDayShift(n){const d=pd(PLAN_DAY);d.setDate(d.getDate()+n);PLAN_DAY=fd(d);R()}
+function rPlan(){
+  const isA=SES.role==="admin",sesRid=isA?null:SES.rid;
+  const F=PLAN_DAY||nextLaboral(getHoy());
+  const dl=pd(F).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  const esFuturo=F>getHoy(),esHoy=F===getHoy();
+  const regs=REGS.filter(r=>r.id!==0&&(isA?true:r.id===sesRid));
+  const filas=regs.map(r=>{
+    const plan=getPlan(r.id,F);
+    const real=gDias().find(d=>d.rid===r.id&&d.fecha===F)||null;
+    return{r,plan,real};
+  });
+  const conPlan=filas.filter(f=>f.plan).length;
+  const desv=filas.filter(f=>f.real?.ap?.desv).length;
+  const ausen=filas.filter(f=>f.plan?.noAsiste).length;
+  return`<div class="pg">
+    <div class="card" style="margin-bottom:14px;padding:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--s);letter-spacing:.8px;text-transform:uppercase;margin-bottom:9px">Fecha a revisar</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+        <button onclick="planDayShift(-1)" style="padding:9px 12px;border-radius:9px;border:1.5px solid var(--br);background:#fff;color:var(--s);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit">‹</button>
+        <input type="date" id="plD" value="${F}" onchange="setPlanDay(this.value)" style="flex:1;text-align:center;font-weight:700">
+        <button onclick="planDayShift(1)" style="padding:9px 12px;border-radius:9px;border:1.5px solid var(--br);background:#fff;color:var(--s);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit">›</button>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--o);text-align:center">${cap1(dl)}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:10px">
+        <button onclick="setPlanDay('${nextLaboral(getHoy())}')" style="padding:6px 12px;border-radius:20px;border:1.5px solid ${F===nextLaboral(getHoy())?"var(--o)":"var(--br)"};background:${F===nextLaboral(getHoy())?"var(--o)":"#fff"};color:${F===nextLaboral(getHoy())?"#fff":"var(--s)"};font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Mañana</button>
+        <button onclick="setPlanDay('${getHoy()}')" style="padding:6px 12px;border-radius:20px;border:1.5px solid ${esHoy?"var(--o)":"var(--br)"};background:${esHoy?"var(--o)":"#fff"};color:${esHoy?"#fff":"var(--s)"};font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Hoy</button>
+      </div>
+    </div>
+    <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat"><div class="stat-n" style="color:var(--o);font-size:21px">${conPlan}/${filas.length}</div><div class="stat-l">Declararon</div></div>
+      <div class="stat"><div class="stat-n" style="color:${desv>0?"#dc2626":"#16a34a"};font-size:21px">${desv}</div><div class="stat-l">⚠ Desviación</div></div>
+      <div class="stat"><div class="stat-n" style="color:#475569;font-size:21px">${ausen}</div><div class="stat-l">Ausencias</div></div>
+    </div>
+    ${esFuturo?`<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:11px;color:#1e40af">🔮 Fecha futura: aquí ves lo que <b>declararon</b>. La comparación contra lo real aparece cuando registren su apertura.</div>`:""}
+    ${filas.map(({r,plan,real})=>{
+      const bc=CLR[r.id]||"#e85d04";
+      const gp=plan&&plan.gid?getGer(plan.gid):null;
+      const gr=real?.ap?.gid?getGer(real.ap.gid):null;
+      const dv=real?.ap?.desv||null;
+      const cump=real?.ci?.cump||null;
+      let estado,ecol,ebg;
+      if(plan?.noAsiste){estado="No se presenta";ecol="#475569";ebg="#f1f5f9"}
+      else if(!plan){estado="Sin declarar";ecol="#94a3b8";ebg="#f8fafc"}
+      else if(dv){estado="Desviación";ecol="#dc2626";ebg="#fee2e2"}
+      else if(gr&&gp&&gr.id===gp.id){estado="Cumplió ubicación";ecol="#16a34a";ebg="#dcfce7"}
+      else if(!real?.ap){estado="Pendiente";ecol="#d97706";ebg="#fef3c7"}
+      else{estado="Registrado";ecol="#16a34a";ebg="#dcfce7"}
+      return`<div style="background:#fff;border-radius:12px;padding:15px;margin-bottom:11px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid ${bc}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px">
+          <span style="font-size:14px;font-weight:800;color:${bc}">${r.n}</span>
+          <span class="bdg" style="background:${ebg};color:${ecol};white-space:nowrap">${estado}</span>
+        </div>
+        ${plan?.noAsiste?`<div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:10px;padding:11px 12px">
+          <div style="font-size:9px;font-weight:700;color:#475569;letter-spacing:.8px;margin-bottom:4px">🏖 AUSENCIA DECLARADA</div>
+          <div style="font-size:14px;font-weight:800;color:#1e293b">${plan.motivo||"—"}</div>
+          ${plan.just?`<div style="font-size:11px;color:#475569;margin-top:5px;line-height:1.45">${plan.just}</div>`:""}
+          <div style="font-size:10px;color:#94a3b8;margin-top:5px">Declarado el ${shD(planPara(r.id,F)?.fecha||"")} a las ${plan.ts||"—"}</div>
+        </div>`
+        :!plan?`<div style="background:#f8fafc;border:1.5px dashed #cbd5e1;border-radius:10px;padding:13px;text-align:center;font-size:12px;color:#94a3b8">No declaró dónde se presentaría este día</div>`
+        :`<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:${dv||cump||(plan.acts&&plan.acts.length)?"11px":"0"}">
+          <div style="background:#eff6ff;border-radius:10px;padding:10px;border:1.5px solid #93c5fd">
+            <div style="font-size:9px;font-weight:700;color:#1e40af;letter-spacing:.8px;margin-bottom:4px">🎯 DECLARÓ</div>
+            <div style="font-size:12px;font-weight:700;color:#1e3a8a;line-height:1.3">${gp?gp.n:"—"}</div>
+            <div style="font-size:10px;color:#2563eb">${gp?gp.cod:""}</div>
+          </div>
+          <div style="background:${dv?"#fff1f2":gr?"#f0fdf4":"#fffbeb"};border-radius:10px;padding:10px;border:1.5px solid ${dv?"#fca5a5":gr?"#86efac":"#fcd34d"}">
+            <div style="font-size:9px;font-weight:700;color:${dv?"#dc2626":gr?"#16a34a":"#d97706"};letter-spacing:.8px;margin-bottom:4px">📍 SE PRESENTÓ</div>
+            <div style="font-size:12px;font-weight:700;color:${dv?"#9f1239":gr?"#15803d":"#92400e"};line-height:1.3">${gr?gr.n:"Sin registro"}</div>
+            <div style="font-size:10px;color:var(--s)">${real?.ap?.hora||""}</div>
+          </div>
+        </div>
+        ${dv?`<div style="background:#fff1f2;border:1.5px solid #fca5a5;border-radius:10px;padding:11px 12px;margin-bottom:11px">
+          <div style="font-size:9px;font-weight:800;color:#dc2626;letter-spacing:.8px;margin-bottom:4px">⚠️ JUSTIFICACIÓN DE LA DESVIACIÓN</div>
+          <div style="font-size:12px;color:#9f1239;line-height:1.5">${dv.just||"—"}</div>
+        </div>`:""}
+        ${plan.acts&&plan.acts.length?`<div style="background:#f8fafc;border:1.5px solid var(--br);border-radius:10px;padding:11px 12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <div style="font-size:9px;font-weight:700;color:#475569;letter-spacing:.8px">📋 ACTIVIDADES COMPROMETIDAS</div>
+            ${cump?`<span style="font-size:10px;font-weight:800;color:${cump.acts.filter(a=>a.ok).length===cump.acts.length?"#16a34a":"#d97706"}">${cump.acts.filter(a=>a.ok).length}/${cump.acts.length}</span>`:""}
+          </div>
+          ${(cump&&cump.acts.length?cump.acts:plan.acts.map(a=>({t:a,ok:null}))).map(a=>`<div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:5px">
+            <span style="font-size:12px;min-width:15px;line-height:1.4">${a.ok===null?"◻️":a.ok?"✅":"❌"}</span>
+            <span style="font-size:12px;line-height:1.4;color:${a.ok===false?"#94a3b8":"var(--t)"};${a.ok===false?"text-decoration:line-through":""}">${a.t}</span>
+          </div>`).join("")}
+          ${cump&&cump.otras?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--br)">
+            <div style="font-size:9px;font-weight:700;color:var(--o);letter-spacing:.8px;margin-bottom:3px">➕ ACTIVIDADES ADICIONALES</div>
+            <div style="font-size:12px;color:#9a3412;line-height:1.45">${cump.otras}</div>
+          </div>`:""}
+          ${!cump?`<div style="font-size:10px;color:#94a3b8;margin-top:6px">El check de cumplimiento aparece cuando registre su cierre.</div>`:""}
+        </div>`:""}`}
+      </div>`}).join("")}
   </div>`;
 }
 
@@ -1092,9 +1363,9 @@ function R(){
   const isA=SES.role==="admin",nm=isA?"DOZ":getReg(SES.rid).n;
   const sc=LAST?"#16a34a":SYNC?"#f59e0b":"#dc2626",st=LAST?"● En línea":SYNC?"● Conectando...":"● Sin conexión";
   const tabs=isA
-    ?[["DASH","📈 Tablero"],["REG","📋 Registro"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["MAP","🗺️ Mapa"],["HOR","⏱ Horarios"],["ALERT","🚨 Alertas"],["ROUTE","🧭 Rutas"],["RES","🏆 Resumen"]]
-    :[["REG","📋 Registro"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["HOR","⏱ Horarios"]];
-  const vc=VIEW==="DASH"?rDash():VIEW==="REG"?rReg():VIEW==="DIST"?rDist():VIEW==="CAL"?rCal():VIEW==="MAP"?rMapa():VIEW==="HOR"?rHor():VIEW==="ALERT"?rAlerts():VIEW==="ROUTE"?rRoutes():rRes();
+    ?[["DASH","📈 Tablero"],["REG","📋 Registro"],["PLAN","🎯 Plan vs Real"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["MAP","🗺️ Mapa"],["HOR","⏱ Horarios"],["ALERT","🚨 Alertas"],["ROUTE","🧭 Rutas"],["RES","🏆 Resumen"]]
+    :[["REG","📋 Registro"],["PLAN","🎯 Mi Plan"],["DIST","📊 Distribución"],["CAL","📅 Calendario"],["HOR","⏱ Horarios"]];
+  const vc=VIEW==="DASH"?rDash():VIEW==="REG"?rReg():VIEW==="DIST"?rDist():VIEW==="CAL"?rCal():VIEW==="MAP"?rMapa():VIEW==="HOR"?rHor():VIEW==="PLAN"?rPlan():VIEW==="ALERT"?rAlerts():VIEW==="ROUTE"?rRoutes():rRes();
   Q("root",`
   <div class="hdr">
     <div style="display:flex;align-items:center;gap:10px">
